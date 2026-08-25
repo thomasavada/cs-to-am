@@ -101,6 +101,16 @@ tr.tot td{border-bottom:none;border-top:4px solid var(--ink);font-weight:700;fon
 .fdrop{display:flex;align-items:baseline;gap:12px;margin:0 0 6px 8px;
   border-left:4px solid var(--muted);padding:4px 0 8px 16px}
 .fdrop b.n{font:700 24px/1 'Space Grotesk',Helvetica,sans-serif;color:var(--bad)}
+.url{font:400 20px/1.3 'JetBrains Mono',ui-monospace,monospace;color:var(--muted)}
+a.go{display:inline-block;padding:9px 18px;margin:5px 8px 5px 0;background:var(--ink);color:var(--lemon);
+  font:400 19px/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.03em;text-decoration:none;
+  border:3px solid var(--ink);white-space:nowrap}
+a.go:hover{background:var(--lemon);color:var(--ink)}
+.ink a.go{background:var(--lemon);color:var(--ink);border-color:var(--lemon)}
+.ink a.go:hover{background:transparent;color:var(--lemon)}
+.lemon a.go{background:var(--ink);color:var(--lemon);border-color:var(--ink)}
+.lemon a.go:hover{background:transparent;color:var(--ink)}
+a.go:after{content:" ↗";opacity:.65}
 .dots{display:grid;gap:3px}
 .dots i{display:block;width:100%;aspect-ratio:1}
 
@@ -214,6 +224,10 @@ def stack(segs):
         out+=(f'<div style="flex:{w} 1 auto;background:{bg};color:{fg}">'
               f'<div class="{vc}">{v}</div>'+(f'<div class="k">{k}</div>' if w>=7 else '')+'</div>')
     return f'<div class="stack">{out}</div>'
+
+def link(url, label=None):
+    """A clickable chip. The deck's click-to-advance handler ignores <a>, so these open cleanly."""
+    return f'<a class="go" href="https://{url}" target="_blank" rel="noopener">{label or url}</a>'
 
 def img(src, cls='photo'):
     return f'<img src="{src}" alt="">' if src else '<div class="bs mut">image missing</div>'
@@ -494,13 +508,67 @@ def WN(q, yt, yb, nt, nb, note, num=None, kicker=None):
                     f'<div class="b">{nb}</div>','ink'), note, kicker=kicker, num=num)
 
 def BRANDBEAT(n, q, note, num, brand='', url=''):
-    head = (f'<div class="t mt">{brand}</div><div class="bs mut" style="font-family:\'JetBrains Mono\',monospace">{url}</div>'
+    chips = ''.join(link(u.strip()) for u in url.split('&middot;')) if url else ''
+    head = (f'<div class="t mt">{brand}</div><div class="mt">{chips}</div>'
             if brand else '<div class="t mt">On the screen.<br>Together.</div>')
     return slide(
      cell(1,13,1,4,f'<div class="l mut">Today&rsquo;s brand &middot; breakdown {n}</div>'+head)
      +cell(1,13,4,7,f'<div class="st">{q}</div>','lemon')
      +cell(1,13,7,9,'<div class="b">Fill it on the sheet as we go. This is the same sheet you use alone in forty minutes.</div>','ink'),
      note, kicker='Open it live', num=num)
+
+# ── session 1: live store examples, clickable ──
+_STORES = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Open all four. Same rule, four different numbers.</div>'
+   '<div class="t mt">Why is free shipping <em>$30</em> here and <em>$95</em> there?</div>')
+ +cell(1,4,2,6,'<div class="c3">Rae Wellness</div><div class="n-sm mt">$30</div>'
+   '<div class="bs mut">supplements, $19.99&ndash;$30</div><div class="mt">'+link('raewellness.co')+'</div>')
+ +cell(4,7,2,6,'<div class="c3">Crown Affair</div><div class="n-sm mt">$75</div>'
+   '<div class="bs mut">haircare, mid-price</div><div class="mt">'+link('crownaffair.com')+'</div>','lemon')
+ +cell(7,10,2,6,'<div class="c3">Halfdays</div><div class="n-sm mt">$95</div>'
+   '<div class="bs mut">outerwear</div><div class="mt">'+link('halfdays.com')+'</div>')
+ +cell(10,13,2,6,'<div class="c3">HexClad</div><div class="n-sm mt">free</div>'
+   '<div class="bs mut">$100+ pans</div><div class="mt">'+link('hexclad.com')+'</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Each number sits <em>just above</em> where that shop&rsquo;s average order '
+   'already lands.</div>'
+   '<div class="b mt mut">It is not a guess and it is not copied. It is the one lever that raises the basket '
+   'without touching the price &mdash; and you can read it off four sites in two minutes.</div>','ink'),
+ 'Open all four in tabs before the session. Let the room guess the reason before you tell them. This is the first time they see a business decision they can read from the outside, and it is a good one to start with because the answer is clean.',
+ kicker='Open them live'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">Bought once, or bought again? Go and decide.</div>')
+ +cell(1,7,2,6,'<div class="c3">Open these</div><div class="rule"></div>'
+   '<div>'+link('hexclad.com','hexclad.com')+link('halfdays.com','halfdays.com')+'</div>'
+   '<div>'+link('raewellness.co','raewellness.co')+link('crownaffair.com','crownaffair.com')+'</div>'
+   '<div class="bs mt2 mut">For each: does it run out? wear out? is there a next size, next drop, next flavour?</div>')
+ +cell(7,13,2,6,'<div class="c3 lem">Then predict the stack</div>'
+   '<div class="bs mt">Bought once &rarr; expect <b>bundles and upsells</b>.</div>'
+   '<div class="bs mt">Bought again &rarr; expect <b>subscription and email</b>.</div>'
+   '<div class="bs mt2">Say it out loud <b>before</b> you look at the source.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Then look. <em>Were you right?</em></div>'
+   '<div class="b mt mut">This is the whole skill in one exercise: read the product, predict the business, '
+   'check yourself. Being roughly right, fast, beats being precisely right, slowly.</div>','lemon'),
+ 'Do this live in tabs. It is the first time they make a prediction and get graded by reality in the same minute, which is where the confidence comes from.',
+ kicker='Open them live'),
+
+slide(
+ cell(1,7,1,5,'<div class="l mut">And the one they all learn from</div>'
+   '<div class="t mt">Dollar Shave Club, <em>today</em></div>'
+   '<div class="b mt2">Fourteen years after the video. Still a subscription. Still a starter set.</div>'
+   '<div class="mt">'+link('dollarshaveclub.com')+'</div>')
+ +cell(7,13,1,5,'<div class="c3">Look for</div><div class="rule"></div>'
+   '<div class="bs">the <b>$4.99 starter set</b> &mdash; a cheap first order on purpose</div>'
+   '<div class="bs mt">how fast they push you to <b>subscribe</b></div>'
+   '<div class="bs mt">how little the razor itself is discussed</div>','lemon')
+ +cell(1,13,5,9,'<div class="st">They still sell the <em>second order</em>, not the first.</div>'
+   '<div class="b mt mut">The cheap starter set is not generosity. It is the order-1 table from earlier: '
+   'lose a little to win the customer, then make the money on every box after. '
+   'You are looking at the arithmetic we just did on a whiteboard, running in public.</div>','ink'),
+ 'Close the money half here. The video showed them the idea; the live site shows them it still runs. Ask the room to find where the site pushes subscription — it is everywhere once you look.',
+ kicker='Open it live'),
+]
 
 # ═════════════════ SESSION 2 — BREAK DOWN A BRAND ═════════════════
 S2=[
@@ -558,7 +626,7 @@ slide(
  cell(1,8,1,5,'<div class="l mut">Click the ad. Land on the page.</div>'
    '<div class="t mt">Does the page <em>repeat the promise?</em></div>'
    '<div class="b mt2">Same photo? Same claim? Same price? Same offer?</div>')
- +cell(8,13,1,5,'<div class="tag">facebook.com/ads/library</div>'
+ +cell(8,13,1,5,'<div>'+link('facebook.com/ads/library','Meta Ad Library')+'</div>'
    '<div class="b mt2">An ad is not a picture of a product. It is <b>an argument aimed at one person</b>: '
    'name her problem, prove it, make it urgent.</div>')
  +cell(1,13,5,9,'<div class="st">The most common way to waste $30 in this business:</div>'
@@ -676,6 +744,59 @@ slide(
    '<div class="bs mt">Walk your own store. Mark where you would quit.</div>'
    '<div class="bs mt">Three tickets &mdash; which step is each really about?</div>','ink'),
  'Stop before paying. Nobody buys anything on the projector.', kicker='They do it', num='16'),
+]
+
+# ── session 1: live store examples, clickable ──
+_STORES = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Open all four. Same rule, four different numbers.</div>'
+   '<div class="t mt">Why is free shipping <em>$30</em> here and <em>$95</em> there?</div>')
+ +cell(1,4,2,6,'<div class="c3">Rae Wellness</div><div class="n-sm mt">$30</div>'
+   '<div class="bs mut">supplements, $19.99&ndash;$30</div><div class="mt">'+link('raewellness.co')+'</div>')
+ +cell(4,7,2,6,'<div class="c3">Crown Affair</div><div class="n-sm mt">$75</div>'
+   '<div class="bs mut">haircare, mid-price</div><div class="mt">'+link('crownaffair.com')+'</div>','lemon')
+ +cell(7,10,2,6,'<div class="c3">Halfdays</div><div class="n-sm mt">$95</div>'
+   '<div class="bs mut">outerwear</div><div class="mt">'+link('halfdays.com')+'</div>')
+ +cell(10,13,2,6,'<div class="c3">HexClad</div><div class="n-sm mt">free</div>'
+   '<div class="bs mut">$100+ pans</div><div class="mt">'+link('hexclad.com')+'</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Each number sits <em>just above</em> where that shop&rsquo;s average order '
+   'already lands.</div>'
+   '<div class="b mt mut">It is not a guess and it is not copied. It is the one lever that raises the basket '
+   'without touching the price &mdash; and you can read it off four sites in two minutes.</div>','ink'),
+ 'Open all four in tabs before the session. Let the room guess the reason before you tell them. This is the first time they see a business decision they can read from the outside, and it is a good one to start with because the answer is clean.',
+ kicker='Open them live'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">Bought once, or bought again? Go and decide.</div>')
+ +cell(1,7,2,6,'<div class="c3">Open these</div><div class="rule"></div>'
+   '<div>'+link('hexclad.com','hexclad.com')+link('halfdays.com','halfdays.com')+'</div>'
+   '<div>'+link('raewellness.co','raewellness.co')+link('crownaffair.com','crownaffair.com')+'</div>'
+   '<div class="bs mt2 mut">For each: does it run out? wear out? is there a next size, next drop, next flavour?</div>')
+ +cell(7,13,2,6,'<div class="c3 lem">Then predict the stack</div>'
+   '<div class="bs mt">Bought once &rarr; expect <b>bundles and upsells</b>.</div>'
+   '<div class="bs mt">Bought again &rarr; expect <b>subscription and email</b>.</div>'
+   '<div class="bs mt2">Say it out loud <b>before</b> you look at the source.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Then look. <em>Were you right?</em></div>'
+   '<div class="b mt mut">This is the whole skill in one exercise: read the product, predict the business, '
+   'check yourself. Being roughly right, fast, beats being precisely right, slowly.</div>','lemon'),
+ 'Do this live in tabs. It is the first time they make a prediction and get graded by reality in the same minute, which is where the confidence comes from.',
+ kicker='Open them live'),
+
+slide(
+ cell(1,7,1,5,'<div class="l mut">And the one they all learn from</div>'
+   '<div class="t mt">Dollar Shave Club, <em>today</em></div>'
+   '<div class="b mt2">Fourteen years after the video. Still a subscription. Still a starter set.</div>'
+   '<div class="mt">'+link('dollarshaveclub.com')+'</div>')
+ +cell(7,13,1,5,'<div class="c3">Look for</div><div class="rule"></div>'
+   '<div class="bs">the <b>$4.99 starter set</b> &mdash; a cheap first order on purpose</div>'
+   '<div class="bs mt">how fast they push you to <b>subscribe</b></div>'
+   '<div class="bs mt">how little the razor itself is discussed</div>','lemon')
+ +cell(1,13,5,9,'<div class="st">They still sell the <em>second order</em>, not the first.</div>'
+   '<div class="b mt mut">The cheap starter set is not generosity. It is the order-1 table from earlier: '
+   'lose a little to win the customer, then make the money on every box after. '
+   'You are looking at the arithmetic we just did on a whiteboard, running in public.</div>','ink'),
+ 'Close the money half here. The video showed them the idea; the live site shows them it still runs. Ask the room to find where the site pushes subscription — it is everywhere once you look.',
+ kicker='Open it live'),
 ]
 
 # ═════════════════ SESSION 2 — WHY PEOPLE COME BACK ═════════════════
@@ -963,6 +1084,98 @@ _RANK = slide(
    '<b>Recommending someone else&rsquo;s fix first is how you earn the conversation about ours.</b></div>','lemon'),
  'This is the most senior thing in the session. Anyone can list problems. Ranking them by people-lost and cost-to-fix is judgement — and being honest that we come last is what makes the recommendation credible when we finally do come up.',
  num='15')
+
+# ── audit a winner first: an ICP-matched store, and a Plus store ──
+_WINNER = [
+slide(
+ cell(1,13,1,3,'<div class="l mut">Before we go looking for what is broken</div>'
+   '<div class="t mt">You cannot see <em>wrong</em><br>until you have seen <em>right.</em></div>')
+ +cell(1,7,3,7,'<div class="c3">What we could do</div><div class="rule"></div>'
+   '<div class="b">Hand you a list of faults and send you hunting. You would find some &mdash; and have '
+   'no idea whether the rest of the shop was fine or a disaster.</div>')
+ +cell(7,13,3,7,'<div class="c3">What we are going to do</div><div class="rule"></div>'
+   '<div class="b">Audit <b>a store that matches our ICP</b>, all the way through. '
+   'That becomes the picture you compare everything else against.</div>','lemon')
+ +cell(1,13,7,9,'<div class="st">Every diagnosis is a <em>comparison.</em> First you need something to compare to.</div>','ink'),
+ 'Give a room a checklist of faults and they become fault-finders. Give them a working machine first and they can tell the difference - which is the actual skill.'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">An ICP-matched store</div>'
+   '<div class="t mt">Crown<br>Affair</div>'
+   '<div>'+link('crownaffair.com')+'</div>'
+   '<div class="rule"></div>'
+   '<div class="b">Haircare. Oil, shampoo, tools. Things that <b>run out</b>.</div>')
+ +cell(7,13,1,4,'<div class="c3">What to notice</div>'
+   '<div class="bs mt">Not whether it is pretty. <b>Whether every step has something doing a job.</b></div>','lemon')
+ +cell(7,13,4,6,'<div class="c3">Free shipping at $75</div>'
+   '<div class="bs mt">That number sits just above where their average order already lands. Deliberate.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Fill the sheet as we go. Same questions &mdash; on a shop that <em>works.</em></div>'),
+ 'Open the real site and let them look before you say anything. Ask what they notice first - usually the quiz.',
+ kicker='Open it live'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">Every step, and what is doing the job</div>')
+ +cell(1,5,2,5,'<div class="c3">Get people in</div><div class="rule"></div>'
+   '<div class="bs"><b>Klaviyo</b> &mdash; email at scale</div>'
+   '<div class="bs"><b>Attentive + Postscript</b> &mdash; SMS</div>')
+ +cell(5,9,2,5,'<div class="c3">On the site</div><div class="rule"></div>'
+   '<div class="bs"><b>A product quiz</b> &mdash; find your hair type</div>'
+   '<div class="bs"><b>Okendo</b> &mdash; reviews with faces</div>')
+ +cell(9,13,2,5,'<div class="c3">Pay</div><div class="rule"></div>'
+   '<div class="bs"><b>Bundles</b> &mdash; pre-built sets</div>'
+   '<div class="bs"><b>Free shipping $75</b></div>')
+ +cell(1,5,5,8,'<div class="c3">After the order</div><div class="rule"></div>'
+   '<div class="bs"><b>Gorgias</b> &mdash; support with order context</div>')
+ +cell(5,9,5,8,'<div class="c3">Come back</div><div class="rule"></div>'
+   '<div class="bs"><b>Recharge</b> &mdash; subscribe and refill</div>'
+   '<div class="bs">the product genuinely runs out</div>','lemon')
+ +cell(9,13,5,8,'<div class="c3">Money</div><div class="rule"></div>'
+   '<div class="bs">bundles raise the basket, subscription raises the lifetime</div>')
+ +cell(1,13,8,9,'<div class="c3">Nothing here is an accident. Somebody chose each one &mdash; and pays for it monthly.</div>','ink'),
+ 'Walk each box on the real site. This is the reference model: a full machine, every step covered. When they read a broken shop next, the gaps will be obvious because this picture is in their head.'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">So what is missing?</div>'
+   '<div class="t mt">Type <em>/pages/rewards</em>.</div>')
+ +cell(1,7,3,7,'<div class="n-lg">404</div>'
+   '<div class="ls mut">no loyalty &middot; and no competitor installed either</div>','lemon')
+ +cell(7,13,3,7,'<div class="ch">A shop doing nearly everything right</div>'
+   '<div class="b mt2">Quiz, reviews, bundles, email, SMS, subscription, support, a threshold set on purpose.</div>'
+   '<div class="b mt2">And <b>nothing</b> giving a customer a reason to choose <b>them</b> over the next haircare brand.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">That gap is the whole reason this job exists.</div>'
+   '<div class="b mt mut">Not because their shop is bad &mdash; because it is <b>good</b>, and they have '
+   'run out of the easy fixes. <b>This is what a merchant ready for us looks like from the outside.</b></div>'),
+ 'This is the payoff. They now know what ready-for-us looks like - not a struggling shop, a strong one with one gap. Session four turns this into the ICP checklist.',
+ kicker='Open it live'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">And this is what a Plus store looks like</div>'
+   '<div class="t mt">HexClad</div>'
+   '<div>'+link('hexclad.com')+'</div>'
+   '<div class="rule"></div>'
+   '<div class="b">Bigger merchant, bigger stack &mdash; and you can tell from the source in under a minute.</div>')
+ +cell(7,13,1,6,'<div class="c3">How to tell it is Plus</div><div class="rule"></div>'
+   '<ul><li class="bs"><b>Checkout extensions</b> &mdash; the checkout itself is customised</li>'
+   '<li class="bs"><b>Markets</b> &mdash; more than one country and currency</li>'
+   '<li class="bs"><b>B2B</b> on the same store</li>'
+   '<li class="bs">Shop Pay everywhere, many payment options</li>'
+   '<li class="bs">A deeper stack &mdash; and usually a competitor already in it</li></ul>','lemon')
+ +cell(1,13,6,9,'<div class="st">Why it matters: a Plus merchant asking about <em>checkout</em> is asking a real question.</div>'
+   '<div class="b mt mut">The same question from a standard-plan merchant often has no answer &mdash; '
+   'their checkout cannot be changed. Knowing which one you are talking to saves everybody a week.</div>','ink'),
+ 'Standard Shopify checkout is mostly fixed; Plus can be customised with extensions and scripts. If CS cannot tell the difference they will promise things that are impossible, or refuse things that are easy.',
+ kicker='Open it live'),
+
+slide(
+ cell(1,13,1,3,'<div class="d">Now you have a <em>picture</em><br>in your head.</div>')
+ +cell(1,13,3,6,'<div class="st">Everything from here is: what does this shop have that Crown Affair has &mdash; '
+   'and what is <em>missing?</em></div>')
+ +cell(1,13,6,9,'<div class="b">That is what diagnosis actually is. Not spotting faults. '
+   '<b>Comparing against a machine you already understand.</b></div>'
+   '<div class="b mt2 mut">It works both ways &mdash; sometimes the shop you are reading has something '
+   'Crown Affair does not, and that is worth noticing too.</div>','ink'),
+ 'Hold this frame for the rest of the session. Every decoder row, every leak, every broken checkout is a comparison against the working machine they just walked.'),
+]
 
 # ── one deep dive per decoder row ──
 _DD_AOV = slide(
@@ -1317,7 +1530,7 @@ slide(
 
 slide(
  cell(1,7,1,6,'<div class="l mut">The textbook case</div>'
-   '<div class="t mt">rae<br>wellness</div><div class="rule"></div>'
+   '<div class="t mt">rae<br>wellness</div><div>'+link('raewellness.co')+'</div><div class="rule"></div>'
    '<ul><li class="bs">Recharge, heavily used</li><li class="bs">Klaviyo</li>'
    '<li class="bs">Wellness &mdash; natural repurchase</li></ul>'
    '<div class="ch mt2">/pages/rewards<br><em>&rarr; 404</em></div>')
@@ -1582,13 +1795,13 @@ slide(
 ]
 
 # ── SESSION 1: why we are here + how a shop makes money ──
-SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16,17)]
+SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2]] + [S1[i] for i in (8,9,10,11,12,13)] + [_STORES[0]] + [S1[i] for i in (14,)] + [_STORES[1]] + [S1[i] for i in (16,17)]
 
 # ── SESSION 2: how to read a shop ──
 SESS2 = [TITLE('Goal: given a shop you have never seen, find what is actually wrong with it — and say which problem to fix first. Today we diagnose one together, then you diagnose another alone.',
   'Session Two','What is<br><em>wrong</em><br>with this shop?',
   ('Troubleshooting a real business.','Every merchant complaint is a symptom. Today you learn to find the cause.'),'Trouble-<br>shooting')] \
-  + [_DIAGNOSE] + [S2[i] for i in (1,2,3)] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
+  + [_DIAGNOSE] + _WINNER + [S2[i] for i in (1,2,3)] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
 
 
 S4.insert(4, slide(

@@ -7,7 +7,10 @@
 ## Prep
 - [ ] Deck open, press **S** to check speaker notes
 - [ ] DSC video queued, sound tested — [youtube.com/watch?v=RBHMf7BNd8o](https://www.youtube.com/watch?v=RBHMf7BNd8o)
-- [ ] **Halfdays** open in a tab — find the hero jacket price before the room does
+- [ ] **Open every store tab before you start** — the deck has clickable links, but pre-load them:
+      [halfdays.com](https://halfdays.com) · [crownaffair.com](https://crownaffair.com) ·
+      [raewellness.co](https://raewellness.co) · [hexclad.com](https://hexclad.com) ·
+      [dollarshaveclub.com](https://dollarshaveclub.com)
 - [ ] Whiteboard + a working marker · teardown sheets printed
 
 ## Run of show — 2 hours
@@ -21,11 +24,23 @@
 | 0:30 | The shirt question → the $100 shoe → Nike vs adidas → where did $92 go | slides |
 | 0:38 | Two laws + the discount arithmetic | slides |
 | 0:42 | **Dollar Shave Club** | ▶ watch 90s + discuss |
+| 0:47 | **DSC today, live** — still a subscription, still a $4.99 starter set | ◉ live |
 | 0:47 | **Brand beat** — what does Halfdays cost them to make? | ◉ live |
 | 0:51 | **Build order 1 on the whiteboard** | ✎ live — do not show the total |
-| 0:58 | Why would anybody run this? → order 2 → allowable CAC → once vs again → two fears | slides |
+| 0:58 | Why would anybody run this? → order 2 → allowable CAC | slides |
+| 1:04 | **Four shops, four shipping thresholds — open all four** | ◉ live |
+| 1:08 | Bought once vs bought again — **predict the stack, then check** | ◉ live |
+| 1:14 | The two fears, as arithmetic | slides |
 | 1:08 | **Rep: teardown §0–1, pairs** | ▲ 45 min |
 | 1:53 | Report out | — |
+
+## The deck is not the demo
+Every store on a slide is a **clickable chip** — click it and the real site opens in a new tab.
+Clicking a link does **not** advance the slide, so you can jump out to the browser and come back.
+Use the slides as the spine and the browser as the evidence.
+
+**Three live beats:** DSC today · four shipping thresholds side by side · predict-then-check on
+bought-once vs bought-again.
 
 ## The beat that must not be rushed
 **The whiteboard build.** Order 1, line by line, with the room. They have to feel the $60 disappear.
