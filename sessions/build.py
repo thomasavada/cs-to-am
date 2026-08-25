@@ -29,7 +29,7 @@ img,svg{max-width:100%;max-height:100%}
 
 .frame{position:absolute;inset:40px;display:grid;grid-template-columns:repeat(12,1fr);
   grid-template-rows:repeat(8,1fr);gap:12px}
-.card{background:var(--paper);position:relative;overflow:hidden;padding:36px 40px;display:flex;
+.card{background:var(--paper);position:relative;overflow:hidden;padding:26px 34px;display:flex;
   flex-direction:column;justify-content:center}
 .card.ink{background:var(--ink);color:var(--paper)}
 .card.lemon{background:var(--lemon);color:var(--ink)}
@@ -218,7 +218,7 @@ slide(
    '<div class="ch mt2">The<br>basics</div>','lemon')
  +cell(1,13,7,9,'<div class="st">A shop is a business, not a website.</div>'
    '<div class="b mt mut">Two hours. No app. No Joy. One real brand, broken down together.</div>'),
- 'Goal: a shop is a business, not a website. Tonight is arithmetic on real things. We break down one real brand together as we go, and you break down another at the end.'),
+ 'Goal: a shop is a business, not a website. Today is arithmetic on real things. We break down one real brand together as we go, and you break down another at the end.'),
 
 slide(
  cell(1,8,1,6,'<div class="l mut">Question one</div>'
@@ -229,7 +229,7 @@ slide(
    '<b>how much does it cost to run a business?</b></div>')
  +cell(8,13,4,6,'<div class="c3">Then ask the second one</div>'
    '<div class="bs mt">&ldquo;How much of that do you <b>keep</b>?&rdquo; Almost everyone says half.</div>','lemon')
- +cell(1,13,6,9,'<div class="ch">By the end of tonight you will know why <em>half</em> is wildly wrong.</div>','ink'),
+ +cell(1,13,6,9,'<div class="ch">By the end of today you will know why <em>half</em> is wildly wrong.</div>','ink'),
  'Shout it out. Write every answer on the board and judge none of them. Someone will say sixty. Keep them up there — you come back to them at the end.',
  kicker='Ask the room', num='02'),
 
@@ -315,7 +315,7 @@ slide(
  kicker='youtube.com/watch?v=RBHMf7BNd8o', num='08'),
 
 slide(
- cell(1,13,1,4,'<div class="l mut">Tonight&rsquo;s brand &middot; breakdown 1</div>'
+ cell(1,13,1,4,'<div class="l mut">Today&rsquo;s brand &middot; breakdown 1</div>'
    '<div class="t mt">On the screen.<br>Together.</div>')
  +cell(1,13,4,7,'<div class="st">What does it sell &mdash; and what do you think it <em>costs them to make?</em></div>','lemon')
  +cell(1,13,7,9,'<div class="b">Fill it on the sheet as we go. This is the same sheet you use alone in forty minutes.</div>','ink'),
@@ -403,7 +403,7 @@ slide(
  +cell(1,13,6,9,'<div class="st">One question &mdash; <em>bought once, or bought again?</em> &mdash; '
    'predicts most of what a merchant does.</div>'
    '<div class="b mt mut">Including whether they need us at all. Session four is built on this.</div>','ink'),
- 'Ask the room which one tonight brand is. Hold onto this — it comes back as the whole of session four.',
+ 'Ask the room which one Halfdays is. Hold onto this — it comes back as the whole of session four.',
  num='15'),
 
 slide(
@@ -432,7 +432,7 @@ slide(
 
 slide(
  cell(1,8,1,9,'<div class="l mut">Now you &middot; 50 minutes</div>'
-   '<div class="t mt">A brand you have <em>not</em> seen tonight.</div>'
+   '<div class="t mt">A brand you have <em>not</em> seen today.</div>'
    '<div class="rule"></div>'
    '<ul><li class="b">Pairs. Teardown sheet <b>&sect;0&ndash;1</b></li>'
    '<li class="b">Same questions we just did together</li>'
@@ -461,17 +461,18 @@ def WN(q, yt, yb, nt, nb, note, num=None, kicker=None):
      +cell(7,13,3,9,f'<div class="l lem">Why not</div><div class="ch mt">{nt}</div><div class="rule"></div>'
                     f'<div class="b">{nb}</div>','ink'), note, kicker=kicker, num=num)
 
-def BRANDBEAT(n, q, note, num):
+def BRANDBEAT(n, q, note, num, brand='', url=''):
+    head = (f'<div class="t mt">{brand}</div><div class="bs mut" style="font-family:\'JetBrains Mono\',monospace">{url}</div>'
+            if brand else '<div class="t mt">On the screen.<br>Together.</div>')
     return slide(
-     cell(1,13,1,4,f'<div class="l mut">Tonight&rsquo;s brand &middot; breakdown {n}</div>'
-                    '<div class="t mt">On the screen.<br>Together.</div>')
+     cell(1,13,1,4,f'<div class="l mut">Today&rsquo;s brand &middot; breakdown {n}</div>'+head)
      +cell(1,13,4,7,f'<div class="st">{q}</div>','lemon')
      +cell(1,13,7,9,'<div class="b">Fill it on the sheet as we go. This is the same sheet you use alone in forty minutes.</div>','ink'),
      note, kicker='Open it live', num=num)
 
 # ═════════════════ SESSION 2 — BREAK DOWN A BRAND ═════════════════
 S2=[
-TITLE('Goal: open a brand you have never seen and say what it is doing, and where it loses people. Tonight we do one together, slowly, then you do one alone.',
+TITLE('Goal: open a brand you have never seen and say what it is doing, and where it loses people. Today we do one together, slowly, then you do one alone.',
  'Session Two','Break<br>down<br><em>a brand</em>',
  ('The method. Phones out.','One sheet, any brand, no login. First time 45 minutes. By next month, fifteen.'),'The<br>method'),
 
@@ -517,8 +518,8 @@ slide(
    'that is normal, not failure.</div>','ink'),
  'Nine steps from stranger to paid. Walking a brand means finding the leak, not repairing it.', num='04'),
 
-BRANDBEAT(1,'Where does tonight&rsquo;s brand get its <em>people</em> from?',
- 'Ad Library first — are they running ads, and what do the ads promise? Then: Instagram linked? A blog? A quiz? A popup? Name the main door out loud before moving on.','05'),
+BRANDBEAT(1,'Where do they get their <em>people</em> from?',
+ 'Ad Library first — are they running ads, and what do the ads promise? Then: Instagram linked? A blog? A quiz? A popup? Name the main door out loud before moving on.','05','Halfdays','halfdays.com'),
 
 slide(
  cell(1,8,1,5,'<div class="l mut">Click the ad. Land on the page.</div>'
@@ -530,7 +531,7 @@ slide(
  +cell(1,13,5,9,'<div class="st">The most common way to waste $30 in this business:</div>'
    '<div class="ch mt2 lem">the ad promises one thing and the page says another.</div>'
    '<div class="b mt2 mut">She assumes she misread it, and leaves. Nobody ever tells the merchant.</div>','ink'),
- 'Do this live with tonight brand. Find a real ad, click through, and judge the match as a room.',
+ 'Do this live with Halfdays. Find a real ad, click through, and judge the match as a room.',
  kicker='Open it live', num='06'),
 
 WN('Should a shop run a popup?',
@@ -540,7 +541,7 @@ WN('Should a shop run a popup?',
  'No &mdash; not like that',
  'Fires instantly, on mobile, before she has seen anything &mdash; she bounces. And the 10% goes to people '
  'who would have paid full price. <b>Fear #2 in the first thirty seconds.</b>',
- 'A popup is not good or bad. Timing and offer decide which column it lands in. Trigger tonight brand popup live and let the room judge which one it is.',
+ 'A popup is not good or bad. Timing and offer decide which column it lands in. Trigger the Halfdays popup live and let the room judge which one it is.',
  num='07', kicker='Open it live'),
 
 slide(
@@ -552,7 +553,7 @@ slide(
    '<div class="b mt">Cheaper than any copy you could write. With faces, better still.</div>','lemon')
  +cell(7,13,4,6,'<div class="c3">And a hidden returns policy kills the sale</div>'
    '<div class="bs mt mut">A stranger will not risk $42 on a shop that will not say what happens if it fails.</div>')
- +cell(1,13,6,9,'<div class="b">On tonight&rsquo;s brand: are there reviews? With faces? '
+ +cell(1,13,6,9,'<div class="b">On today&rsquo;s brand: are there reviews? With faces? '
    'Is the returns policy findable in <b>one click</b>?</div>','ink'),
  'These three questions are what a product page is FOR. Everything on it either answers one of them or is decoration.', num='08'),
 
@@ -607,7 +608,7 @@ slide(
    'klaviyo &middot; attentive &middot; recharge<br>appstle &middot; skio &middot; smile &middot; yotpo<br>'
    'loyaltylion &middot; rivo &middot; growave<br>okendo &middot; judge.me &middot; gorgias<br>rebuy &middot; subscribe</div>','ink')
  +cell(1,13,6,9,'<div class="st">Sixty seconds, and you know more than <em>a discovery call</em> would tell you.</div>','lemon'),
- 'Do it live on tonight brand. It is genuinely fun to watch.', kicker='Open it live', num='13'),
+ 'Do it live on Halfdays. It is genuinely fun to watch.', kicker='Open it live', num='13'),
 
 slide(
  cell(1,13,1,2,'<div class="t">The stack is a <em>confession</em></div>')
@@ -626,8 +627,8 @@ slide(
    'The stack tells you what the owner is afraid of <b>before they say a word</b>.</div>','ink'),
  'This is the AM read, and it is the single most useful thing in the whole course.', num='14'),
 
-BRANDBEAT(2,'What is tonight&rsquo;s owner <em>paying to fix</em> &mdash; and is it their real leak?',
- 'This is the session landing. Read their stack, name the fear, then ask whether that fear matches where you actually watched people fall out on the path. Often it does not — and that gap is the job.','15'),
+BRANDBEAT(2,'What are they <em>paying to fix</em> &mdash; and is it their real leak?',
+ 'Halfdays runs Klaviyo, Yotpo Reviews and Rebuy — and no loyalty. Rebuy says they think their orders are too thin. Klaviyo says they want to reach people again. Nothing says they have solved coming back. Now ask whether that matches where you actually watched people fall out.','15','Halfdays','halfdays.com'),
 
 slide(
  cell(1,8,1,9,'<div class="l mut">Now you &middot; 50 minutes</div>'
@@ -645,9 +646,9 @@ slide(
 
 # ═════════════════ SESSION 2 — WHY PEOPLE COME BACK ═════════════════
 S3=[
-TITLE('Goal: why a person buys a second time, and what actually makes them. Tonight we break down TWO brands — one with a strong reason to return, one with none.',
+TITLE('Goal: why a person buys a second time, and what actually makes them. Today we break down TWO brands — one with a strong reason to return, one with none.',
  'Session Two','Why people<br>come<br><em>back</em>',
- ('Retention and loyalty. Our own subject.','Last session ended when she paid. Everything tonight is after the money changed hands.'),'Our<br>subject'),
+ ('Retention and loyalty. Our own subject.','Last session ended when she paid. Everything today is after the money changed hands.'),'Our<br>subject'),
 
 slide(
  cell(1,13,1,3,'<div class="l mut">The wait</div>'
@@ -676,12 +677,12 @@ slide(
  +cell(7,13,6,9,'<div class="ch">Week 6 is worth more than <em>the ad</em> that found her.</div>','lemon'),
  'You arrive before she runs out and before she thinks about alternatives. One automated email, sent to someone who already likes them, beats thirty dollars of advertising.', num='03'),
 
-BRANDBEAT(1,'What does tonight&rsquo;s brand send you <em>after</em> you buy?',
- 'Use their own inbox — they placed real orders in the build track. Put a real confirmation, shipping note and review request on screen. Then ask: did anyone get a "running low" email? Almost nobody will have. That absence is the finding.','04'),
+BRANDBEAT(1,'What do they send you <em>after</em> you buy?',
+ 'Crown Affair runs Klaviyo, Attentive AND Postscript plus Recharge — the fullest owned-channel stack you will see. Every way back from the last ten minutes is installed here except one: ours. Also use the team own inbox from their build-track orders.','04','Crown Affair','crownaffair.com'),
 
 slide(
  cell(1,13,1,4,'<div class="d">Why would a human buy<br><em>this</em> twice?</div>')
- +cell(1,13,4,6,'<div class="st">Ask it about <b>both</b> brands on the table tonight.</div>')
+ +cell(1,13,4,6,'<div class="st">Ask it about <b>both</b> brands on the table today.</div>')
  +cell(1,13,6,9,'<div class="b">Let the room struggle on the weak one. <b>Do not rescue them.</b> '
    'The struggle is the lesson, and it is the whole setup for the last session.</div>','ink'),
  'This is the question the entire course has been walking toward.', kicker='Ask the room', num='05'),
@@ -690,10 +691,10 @@ WN('Does a loyalty program help this shop?',
  'Lumi &mdash; a refill brand',
  '$42 moisturizer, runs out every 8 weeks. She has to rebuy <b>something</b> &mdash; points decide it is Lumi, '
  'and decide it is <b>now</b> rather than in three weeks.',
- 'HexClad &mdash; premium cookware',
- 'A pan is a five-year decision. Give her 400 points and they <b>expire before they are worth anything</b>. '
- 'You added a widget, a cost and a promise &mdash; and produced no second order. Their second order is <b>an accessory</b>, not a point.',
- 'Some very good brands should not run a points program. If you cannot say that out loud you are selling, not advising. HexClad answer is referral and range — sell them a lid, a knife, another size, or get them to bring someone new.',
+ 'HexClad &mdash; a $300 pan',
+ 'A pan is a five-year decision. Points on a refill cycle would <b>expire before they were worth anything</b>. '
+ 'And yet &mdash; <b>HexClad runs a loyalty program.</b> Go and look at what it actually rewards.',
+ 'Do NOT say HexClad should not run loyalty — they do run it, Rivo is installed, and the room can check in thirty seconds. Say: they run it, so go and look at what it rewards. They will find referral and buying the NEXT thing — a lid, a knife, another size — not re-buying the same pan. That is the high-ticket answer, and the brand proves it instead of being a strawman.',
  num='06'),
 
 slide(
@@ -816,6 +817,95 @@ S1.append(slide(
  'The threshold rule is the concrete one to remember: one dollar above where their average order sits today. Set it lower and it does nothing; set it far higher and it reads as a wall. Source: Chase Chappell, and it matches what we see in accounts.',
  num='23'))
 
+# ── the real board: every field, filed by funnel step ──
+_STACKMAP = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">The short list was seven apps. Here is the real board.</div>'
+   '<div class="t mt">~28 fields. <em>One</em> of them is ours.</div>')
+ +cell(1,4,2,7,'<div class="ls lem">GET PEOPLE IN</div><div class="rule"></div>'
+   '<div class="bs"><b>Creator/affiliate</b><br><span class="mut">GOAFFPRO &middot; Refersion &middot; Superfiliate</span></div>'
+   '<div class="bs mt"><b>Attribution</b><br><span class="mut">Northbeam &middot; Triple Whale</span></div>'
+   '<div class="bs mt"><b>Server-side events</b><br><span class="mut">Elevar</span></div>'
+   '<div class="bs mt"><b>Post-purchase survey</b><br><span class="mut">Fairing</span></div>','ink')
+ +cell(4,7,2,7,'<div class="ls mut">ON THE SITE</div><div class="rule"></div>'
+   '<div class="bs"><b>Capture</b><br><span class="mut">Alia &middot; Privy &middot; Dotdigital</span></div>'
+   '<div class="bs mt"><b>Reviews</b><br><span class="mut">Okendo &middot; Judge.me &middot; Fera &middot; Yotpo Reviews</span></div>'
+   '<div class="bs mt"><b>Quiz</b> <span class="mut">Octane AI</span> &middot; <b>Video</b> <span class="mut">Tolstoy</span></div>'
+   '<div class="bs mt"><b>Search</b> <span class="mut">Algolia &middot; Nosto</span></div>'
+   '<div class="bs mt"><b>Landing</b> <span class="mut">PageFly &middot; Replo &middot; Weaverse</span></div>')
+ +cell(7,10,2,7,'<div class="ls mut">PAY</div><div class="rule"></div>'
+   '<div class="bs"><b>Subscriptions</b><br><span class="mut">Recharge &middot; Skio &middot; Appstle</span></div>'
+   '<div class="bs mt"><b>Bundles/upsell</b> <span class="mut">Rebuy</span></div>'
+   '<div class="bs mt"><b>Checkout</b> <span class="mut">Checkout Blocks &middot; Shop Pay</span></div>'
+   '<div class="bs mt"><b>BNPL</b> <span class="mut">Klarna &middot; Afterpay</span></div>'
+   '<div class="bs mt"><b>Price testing</b> <span class="mut">Intelligems</span></div>'
+   '<div class="bs mt"><b>Tax &middot; Cross-border</b> <span class="mut">Avalara &middot; Global-e</span></div>')
+ +cell(10,13,2,7,'<div class="ls mut">AFTER THE ORDER</div><div class="rule"></div>'
+   '<div class="bs"><b>Tracking</b> <span class="mut">AfterShip</span></div>'
+   '<div class="bs mt"><b>Order editing</b> <span class="mut">Order Editing</span></div>'
+   '<div class="bs mt"><b>Returns</b><br><span class="mut">Loop &middot; Happy Returns &middot; Redo</span></div>'
+   '<div class="bs mt"><b>Support</b> <span class="mut">Gorgias</span></div>'
+   '<div class="rule"></div><div class="ls lem">COME BACK &mdash; ours</div>'
+   '<div class="bs mt"><b>Email</b> <span class="mut">Klaviyo &middot; Drip</span> &middot; <b>SMS</b> <span class="mut">Attentive &middot; Postscript</span></div>'
+   '<div class="bs mt"><b>Loyalty</b><br><span class="mut">Joy &middot; Smile &middot; Rivo &middot; LoyaltyLion &middot; Yotpo &middot; BON</span></div>','lemon')
+ +cell(1,13,7,9,'<div class="st">A merchant&rsquo;s day is spent on the <em>other twenty-seven.</em></div>'
+   '<div class="b mt mut">If we walk in talking only about points, we are talking about about 4% of their board. '
+   'The AM read is the whole board &mdash; which is why you learn the path before you learn the app.</div>','ink'),
+ 'This is the scale check. Not a criticism of Joy — a reminder that our field is one worry among many, and that six named competitors all ship the same points, tiers and referrals. That is session one argument made concrete: the app cannot be why they choose us.',
+ num='28a'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">A name in the source is a signal, not a verdict</div>'
+   '<div class="t mt">Same word. <em>Opposite</em> conclusion.</div>')
+ +cell(1,7,2,6,'<div class="ch">yotpo-product-reviews</div><div class="rule"></div>'
+   '<div class="b">Yotpo <b>Reviews</b> &mdash; on-site trust. Nothing to do with loyalty.</div>'
+   '<div class="bs mt2 mut">Rae Wellness runs exactly this, and has <b>no</b> loyalty program.</div>')
+ +cell(7,13,2,6,'<div class="ch">loyalty-program &middot; swell &middot; Rivo.global_config</div><div class="rule"></div>'
+   '<div class="b">Yotpo <b>Loyalty</b> / Rivo / Smile &mdash; <b>a competitor is installed.</b></div>'
+   '<div class="bs mt2">HexClad runs exactly this.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Confirm <em>which product</em> before you tell anyone a brand already has loyalty.</div>'
+   '<div class="b mt mut">And check it is switched <b>on</b> &mdash; a disabled flag in the source is not a live install. '
+   'Getting this wrong on a call is the fastest way to lose a merchant&rsquo;s trust.</div>','lemon'),
+ 'Yotpo sells reviews, SMS and loyalty as separate products. Four false Rivo hits have been observed from dead theme CSS alone. This slide is what separates a careful read from a guess.',
+ num='28b'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">One job, taken to ten out of ten</div>'
+   '<div class="t mt">Alia</div>'
+   '<div class="bs mut" style="font-family:\'JetBrains Mono\',monospace">field: capture &mdash; a popup</div>'
+   '<div class="rule"></div>'
+   '<div class="b">Everyone ships a popup. Alia&rsquo;s whole company rests on noticing what a normal one <b>does</b>.</div>')
+ +cell(7,13,1,6,'<div class="ch">&ldquo;Blanket discount popups buy signups that never convert &mdash; '
+   'and <em>train shoppers to wait for 15% off.</em>&rdquo;</div>'
+   '<div class="bs mt2">Their words, not ours.</div>','lemon')
+ +cell(1,13,6,9,'<div class="st">That is <b>fear #2</b>, and the deals trap, in one sentence.</div>'
+   '<div class="b mt2 mut">Alia did not build a better popup. They noticed the popup was <b>causing</b> '
+   'the merchant&rsquo;s problem &mdash; so they made the coupon <b>earned</b> instead of given. '
+   'Then went deep, not wide: twelve researched formats, AI triggering, testing. One job, done to ten.</div>','ink'),
+ 'The question is never "what does this app do". It is "what does this app BELIEVE?" Alia believes a blanket discount is a leak. Joy has to be able to say what it believes too — and if nobody in the room can, that is the finding.',
+ num='28c'),
+
+slide(
+ cell(1,7,1,4,'<div class="l mut">An app that exists because of <em>one ticket</em></div>'
+   '<div class="t mt">Order<br>Editing</div>'
+   '<div class="bs mut" style="font-family:\'JetBrains Mono\',monospace">one job: let her fix an unfulfilled order</div>')
+ +cell(7,13,1,4,'<div class="b">&ldquo;A wrong address, size, variant or forgotten item becomes a support ticket '
+   '&mdash; and can turn into a <b>mis-shipment</b> if the warehouse acts first.&rdquo;</div>'
+   '<div class="bs mt2">You have all worked this ticket. Somebody built a company around it.</div>','lemon')
+ +cell(1,13,4,7,'<table style="font-size:24px">'
+   '<tr><td>She mistypes her address</td><td class="r mut">30 seconds of her time</td></tr>'
+   '<tr><td>She emails support</td><td class="r mut">a ticket in your queue</td></tr>'
+   '<tr><td>The warehouse ships first</td><td class="r mut">a parcel in the wrong place</td></tr>'
+   '<tr><td>Refund or reship</td><td class="r">the order&rsquo;s whole margin, gone</td></tr>'
+   '<tr class="tot"><td>She tells someone</td><td class="r">and leaves a review</td></tr></table>','flat')
+ +cell(1,13,7,9,'<div class="st">A ticket is never just a ticket. It has a <em>cost downstream</em> &mdash; '
+   'and that cost is why the app exists.</div>'
+   '<div class="b mt mut">See the chain and you stop clearing tickets and start reading them as '
+   '<b>evidence about the business</b>. That is the whole difference between the two jobs.</div>','ink'),
+ 'Use this one with our team specifically — they have lived it. It is the moment "apps are solutions" stops being abstract, because they already know the pain the solution was built for.',
+ num='28d'),
+]
+
 # ── the ways back: inserted after the brand beat, before "why would a human buy twice" ──
 WAYS = [
 slide(
@@ -855,7 +945,7 @@ slide(
    '<div class="b mt2">Roughly a hundred times more expensive per message than email &mdash; '
    'and read by almost everyone, almost immediately.</div>')
  +cell(7,13,1,5,'<div class="c3 lem">So use it for</div>'
-   '<ul><li class="bs">a drop going live</li><li class="bs">a sale ending tonight</li>'
+   '<ul><li class="bs">a drop going live</li><li class="bs">a sale ending today</li>'
    '<li class="bs">back in stock</li><li class="bs">an order problem</li></ul>','ink')
  +cell(1,13,5,9,'<div class="ch">Never for a newsletter.</div>'
    '<div class="b mt2">Overuse and she does not just ignore it &mdash; <b>she unsubscribes</b>, '
@@ -924,7 +1014,7 @@ slide(
 
 # ═════════════════ SESSION 3 — BRING IT TOGETHER ═════════════════
 S4=[
-TITLE('Goal: given a real merchant, say whether it is ours, whether it needs us, and what to do. Tonight: two brands side by side, one of which we should turn down.',
+TITLE('Goal: given a real merchant, say whether it is ours, whether it needs us, and what to do. Today: two brands side by side, one of which we should turn down.',
  'Session Three','Bring it<br><em>together</em>',
  ('A real merchant. A real call.','Two brands side by side &mdash; and one of them we are going to turn down.'),'The<br>verdict'),
 
@@ -933,7 +1023,7 @@ slide(
    '<ul><li class="b">How does this shop make money on one order?</li>'
    '<li class="b">How do people arrive, and where do they quit?</li>'
    '<li class="b">Why would someone buy twice &mdash; and what is the brand doing about it?</li></ul>')
- +cell(8,13,1,6,'<div class="ch">Tonight we add the last one:</div>'
+ +cell(8,13,1,6,'<div class="ch">Today we add the last one:</div>'
    '<div class="st mt2">So what do we <em>tell them?</em></div>','lemon')
  +cell(1,13,6,9,'<div class="st">And you still have not opened Joy <em>once.</em></div>','ink'),
  'Let that land. This is the moment the course pays off.', num='02'),
@@ -946,7 +1036,7 @@ slide(
    'plus a CRM that remembers birthdays and order history.</div>','lemon')
  +cell(7,13,4,9,'<div class="ch">We do not sell an app.</div>'
    '<div class="ch mt2 lem">We sell the solution the app is <em>made of.</em></div>','ink'),
- 'Let them say yes first. Then say no. Everything tonight depends on this reframe.',
+ 'Let them say yes first. Then say no. Everything today depends on this reframe.',
  kicker='Ask the room', num='03'),
 
 slide(
@@ -1130,7 +1220,7 @@ slide(
    '<div class="d mt">How a shop<br>works &mdash; and<br>how to <em>read one</em></div>','ink')
  +cell(10,13,1,7,'<div class="l">Joy<br>CS &rarr; AM</div><div class="ch mt2">The<br>basics</div>','lemon')
  +cell(1,13,7,9,'<div class="st">A shop is a business, not a website.</div>'
-   '<div class="b mt mut">But first: why we are all sitting here on a weekday evening.</div>'),
+   '<div class="b mt mut">But first: why we are all sitting here on a working day.</div>'),
  'Goal: a shop is a business, not a website. Before any of that, ten minutes on why this course exists at all — because if they think it is extra homework for a promotion, they will not do the reps.'),
 
 slide(
@@ -1212,12 +1302,48 @@ slide(
  +cell(7,13,3,7,'<ul><li class="b">Fewer angry follow-ups, because you solved <b>the real thing</b></li>'
    '<li class="b">Faster replies, because you are not decoding word by word</li>'
    '<li class="b">The copy-forward loop &mdash; the part that makes the job feel bad &mdash; <b>stops</b></li></ul>','lemon')
- +cell(1,13,7,9,'<div class="st">So tonight we do not open Joy. We start with <em>the business.</em></div>','ink'),
+ +cell(1,13,7,9,'<div class="st">So today we do not open Joy. We start with <em>the business.</em></div>','ink'),
  'This is the slide that decides whether they do the reps. If they think it is a promotion track they will half-do it. If they believe it makes Monday easier, they will show up.',
  num='07'),
 ]
 
-MERGED = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3,11,12,13,14,15)]
+MERGED = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3,11,12,13)] + _STACKMAP + [S2[i] for i in (14,15)]
+
+
+S4.insert(4, slide(
+ cell(1,13,1,3,'<div class="l mut">And here is how merchants actually decide</div>'
+   '<div class="t mt">They do not buy features.<br>They buy <em>a number.</em></div>')
+ +cell(1,7,3,6,'<div class="c3">Rivo &mdash; a loyalty competitor</div><div class="rule"></div>'
+   '<div class="b"><b>19 case studies.</b> Each card: <b>one hero number</b> '
+   '&mdash; &ldquo;$450K in 90 days&rdquo; &mdash; and <b>no feature list at all</b>.</div>')
+ +cell(1,7,6,8,'<div class="bs mut">their category banner</div>'
+   '<div class="c3 mt">55&times; ROI &middot; 3.1&times; repeat &middot; +4% revenue &middot; 9,000+ brands</div>','ink')
+ +cell(7,13,3,6,'<div class="ch">We have the results too</div>'
+   '<div class="b mt">1700% ROI. 450% ROI. $110K in 14 days. All real, all ours.</div>','lemon')
+ +cell(7,13,6,8,'<div class="ch">And almost no public page saying so</div>'
+   '<div class="bs mt">A <b>packaging</b> gap, not a results gap.</div>','ink')
+ +cell(1,13,8,9,'<div class="c3">A CS person who can say <em>what result to expect, and by when</em> '
+   'is worth more than one who configures faster.</div>'),
+ 'Real, and it happened: asked "what apps does Avada have?", the answer was "we have twenty apps." The other side stopped wanting to talk — not because twenty is too few, but because the answer read as "these people do not know what problem they solve." The right answer starts at the problem, never at the catalogue. That is exactly what we are training out of CS.',
+ num='04a'))
+
+S4.insert(5, slide(
+ cell(1,13,1,3,'<div class="l mut">A test you can run on yourself, and on any pair reporting back</div>'
+   '<div class="t mt">The <em>&ldquo;why&rdquo;</em> chain</div>')
+ +cell(1,7,3,7,'<div class="b">&ldquo;They should run a subscription.&rdquo;</div>'
+   '<div class="b mt"><b>What for?</b> &mdash; &ldquo;to increase LTV.&rdquo;</div>'
+   '<div class="b mt"><b>Why does LTV need increasing?</b></div>'
+   '<div class="b mt"><b>To what number? Why that number?</b></div>'
+   '<div class="b mt"><b>What do they get there that they do not get now?</b></div>')
+ +cell(7,13,3,7,'<div class="ch">Same for AOV</div>'
+   '<div class="b mt2">&ldquo;They need higher AOV.&rdquo;</div>'
+   '<div class="ch mt2">How much is <em>low?</em><br>How much is <em>enough?</em><br>Enough <em>for what?</em></div>','lemon')
+ +cell(1,13,7,9,'<div class="st">If the chain breaks anywhere, the business was not understood &mdash; '
+   'no matter how full the sheet is.</div>'
+   '<div class="b mt mut">Three questions and you find out immediately whether somebody read the business '
+   'or repeated a word they have heard on calls.</div>','ink'),
+ 'Use this as the report-out standard for the rep tonight. It is fast, it is fair, and it cannot be bluffed.',
+ num='04b'))
 
 if __name__=='__main__':
     os.chdir(D)

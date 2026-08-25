@@ -21,7 +21,7 @@ Everything the four sessions point at. **Check every link the day before.**
 
 | Tool | URL | Used in |
 |---|---|---|
-| **Meta Ad Library** | [facebook.com/ads/library](https://www.facebook.com/ads/library/) | S2 — find a live ad for tonight's brand, then click through to the landing page |
+| **Meta Ad Library** | [facebook.com/ads/library](https://www.facebook.com/ads/library/) | S2 — find a live ad for today's brand, then click through to the landing page |
 | **View Page Source** | right-click → View Page Source → Ctrl-F | S4 — the stack read. Genuinely fun to watch live. |
 | `/pages/rewards` | append to any Shopify store | S4 — a 404 means no loyalty |
 | **Rae Wellness** | [raewellness.co](https://raewellness.co/) | S4 — the textbook ICP case, live |
@@ -107,13 +107,17 @@ Not blocking, but each one saves a live-demo risk:
 
 ---
 
-## Brand list — **still to pick**
+## Brand list — **picked and verified**
 
-Every session needs real brands chosen in advance. Blocking for S2 onward.
+Full detail, with what each one teaches: [`material/cases/brand-list.md`](../material/cases/brand-list.md).
+Verified live 2026-08-25 — **re-check the week before you teach.**
 
-| Slot | Needs | Candidates |
+| Session | Role | Brand |
 |---|---|---|
-| Strong ICP fit | Recharge/Klaviyo, no loyalty | Rae Wellness, Crown Affair, Divi |
-| Deliberate non-fit | bought-once, or already has a rival loyalty app | HexClad |
-| Live Joy merchants | 3–4, so teardowns are immediately useful | *pull from the account list* |
-| S3 pairing | one strong repeat reason, one weak | a refill brand + a one-time brand |
+| 1 | the live breakdown | **Halfdays** — apparel, Klaviyo + Rebuy, no loyalty, free ship $95 |
+| 2 | strong repeat reason | **Crown Affair** — haircare, Klaviyo + Attentive + Postscript + Recharge, no loyalty |
+| 2 | weak repeat reason | **HexClad** — $100+ pans — *and it runs Rivo loyalty anyway* |
+| 3 | strong ICP fit | **Rae Wellness** — Recharge + Klaviyo, no loyalty, `/rewards` 404 |
+| 3 | not ours | **HexClad** — fails the checklist: Rivo already installed |
+
+Still needed: **3–4 live Joy merchants**, so teardown output is useful to the team. Only Thomas can supply those.

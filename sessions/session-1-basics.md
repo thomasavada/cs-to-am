@@ -9,7 +9,7 @@
 ## Prep
 - [ ] Deck open, press **S** to check speaker notes
 - [ ] DSC video queued, sound tested — [youtube.com/watch?v=RBHMf7BNd8o](https://www.youtube.com/watch?v=RBHMf7BNd8o)
-- [ ] **Tonight's brand walked yourself the night before** — know where its popup fires
+- [ ] **Today's brand walked yourself the night before** — know where its popup fires
 - [ ] Ad Library open with that brand searched · brand site in a second tab, not logged in
 - [ ] Practise the view-source demo once
 - [ ] Whiteboard + working marker · teardown sheets printed
