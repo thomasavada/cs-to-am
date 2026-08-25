@@ -14,9 +14,10 @@ Plain markdown. Not in Obsidian yet. Not a product certification. Not English cl
 questions.md       Thomas's raw gaps. The source everything answers.
 
 sessions/          WHAT HAPPENS IN THE ROOM
-  session-N.html     the deck — open in a browser, arrows to move, S for notes
+  session-N.html     the deck — Neo-Grid Bold, fixed 16:9, self-contained
   session-N.md       the runsheet — prep, timing, live beats, homework
   resources.md       every video, link, live tool and number, with sources
+  assets/            sneaker art (codex) + store screenshots, embedded as data URIs
   build.py           regenerates the decks: python3 build.py
 
 material/          WHAT YOU REFERENCE
@@ -34,16 +35,17 @@ handouts/          WHAT THEY HOLD
 **Two zones.** `sessions/` is the training itself — mixed format, live sites, video, drills.
 `material/` is the knowledge, atomized one concept per file, so a session can point at exactly what it needs.
 
-### The four sessions
+### The three sessions
 
-Each is one topic, one goal. Model → method → domain → judgement.
+Each is one topic, one goal. Model+method &rarr; domain &rarr; judgement.
+Decks are **Neo-Grid Bold** (frontend-slides by zarazhangrui) — fixed 16:9, open in any browser,
+**← →** to move, **S** for speaker notes, **Cmd-P** to export PDF.
 
 | | Session | Goal | Lands on |
 |---|---|---|---|
-| **1** | **The basics** — how a shop makes money | a shop is a business, not a website | *The business is not the shirt. It is the second shirt.* |
-| **2** | **Break down a brand** | open any brand, say what it does and where it leaks | *"Conversion is down" is not a problem.* |
-| **3** | **Why people come back** — retention & loyalty | why someone buys twice, and what makes them | *Loyalty buys timing and preference, not affection.* |
-| **4** | **Bring it together** | is it ours, does it need us, what do we say | *"Not yet" is a correct answer.* |
+| **1** | **How a shop works, and how to read one** *(2.5h)* | a shop is a business, not a website | *The business is not the shirt. It is the second shirt.* |
+| **2** | **Why people come back** | why someone buys twice, and what makes them | *Loyalty buys timing and preference, not affection.* |
+| **3** | **Bring it together** | is it ours, does it need us, what do we say | *"Not yet" is a correct answer.* |
 
 Joy appears on a screen only **after** the graduation gate — placement and on-brand config,
 from `material/loyalty/5` and `/6`.
@@ -55,10 +57,9 @@ TALK  (20–25 min, no Joy)
   │
 BUILD TRACK  ── launch a real store, to standard, runs throughout
   │
-S1  the basics          money, price, the six boxes
-S2  break down a brand   the journey, the leaks, the stack read
-S3  why they come back   retention, points vs credit, tiers, referral
-S4  bring it together    ICP, stage, the verdict, the prescription
+S1  how a shop works     money, price, the shoe, the path, the stack read
+S2  why they come back   retention, points vs credit, tiers, referral
+S3  bring it together    ICP, stage, the verdict, the prescription
 
     (handouts/ teardown-sheet + shop-map are on the table for all four)
   │

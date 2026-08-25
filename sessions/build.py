@@ -1,771 +1,930 @@
 #!/usr/bin/env python3
-"""Builds the four session decks as self-contained HTML. Run: python3 build.py"""
-import html as H, os
+"""Session decks — Neo-Grid Bold (frontend-slides by zarazhangrui).
+Fixed 1920x1080 stage, 12x8 grid, Space Grotesk + JetBrains Mono, neon lemon on putty ecru.
+Run: python3 build.py"""
+import os, html as H
+
+D = os.path.dirname(os.path.abspath(__file__))
+def _asset(n):
+    p = os.path.join(D, 'assets', n + '.datauri')
+    return open(p).read().strip() if os.path.exists(p) else ''
+SNEAKER, DSC, RAE404 = _asset('sneaker'), _asset('dsc-store'), _asset('rae-404')
 
 CSS = """
+:root{--paper:#F5F4EF;--bg:#ECECE8;--ink:#0A0A0A;--lemon:#E6FF3D;--muted:#8A8A85;--stage-bg:#1A1A1A}
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d1117;--fg:#e6edf3;--dim:#8b949e;--acc:#f0b429;--good:#3fb950;--bad:#f85149;--line:#30363d;--card:#161b22}
-html,body{height:100%}
-body{background:var(--bg);color:var(--fg);font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;overflow:hidden}
-.deck{height:100vh;display:flex;align-items:center;justify-content:center;padding:4vh 5vw}
-.s{display:none;width:100%;max-width:1100px;animation:in .25s ease}
-.s.on{display:block}
-@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-h1{font-size:clamp(38px,6.5vw,84px);line-height:1.05;letter-spacing:-.03em;font-weight:800}
-h2{font-size:clamp(28px,4.2vw,56px);line-height:1.1;letter-spacing:-.02em;font-weight:750;margin-bottom:.6em}
-p,li{font-size:clamp(18px,2.1vw,30px);line-height:1.45}
-ul{list-style:none}
-li{margin:.5em 0;padding-left:1.4em;position:relative}
-li:before{content:"";position:absolute;left:0;top:.62em;width:.5em;height:.5em;background:var(--acc);border-radius:50%}
-.badge{display:inline-block;font-size:clamp(11px,1.2vw,15px);font-weight:800;letter-spacing:.16em;
-  padding:.45em 1em;border-radius:99px;margin-bottom:1.1em;text-transform:uppercase}
-.b-watch{background:#7c3aed;color:#fff}.b-look{background:#0969da;color:#fff}
-.b-board{background:var(--acc);color:#0d1117}.b-ask{background:#db6d28;color:#fff}
-.b-drill{background:var(--good);color:#0d1117}.b-slide{background:var(--line);color:var(--dim)}
-.punch{font-size:clamp(30px,5vw,68px);line-height:1.15;font-weight:800;letter-spacing:-.02em}
-.punch em{color:var(--acc);font-style:normal}
-table{width:100%;border-collapse:collapse;margin:.5em 0;font-size:clamp(15px,1.9vw,26px)}
-th,td{padding:.5em .7em;text-align:left;border-bottom:1px solid var(--line)}
-th{color:var(--dim);font-size:.82em;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
-td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-tr.tot td{border-top:2px solid var(--fg);border-bottom:none;font-weight:800;font-size:1.12em;padding-top:.5em}
-.neg{color:var(--bad)}.pos{color:var(--good)}.acc{color:var(--acc)}.dim{color:var(--dim)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:2.2em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1em 1.3em}
-.card h3{font-size:clamp(17px,2vw,27px);margin-bottom:.4em}
-a{color:var(--acc)}
-.res{font-size:clamp(15px,1.7vw,22px);background:var(--card);border:1px solid var(--line);
-  border-left:4px solid var(--acc);border-radius:8px;padding:.8em 1em;margin-top:1em;word-break:break-all}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-.bar{background:var(--card);border-radius:6px;height:clamp(30px,4.5vw,58px);position:relative;display:flex;align-items:center;
-  padding:0 .8em;font-weight:800;font-size:clamp(15px,2vw,28px);color:#0d1117}
-#hud{position:fixed;bottom:14px;right:20px;color:var(--dim);font-size:13px;font-variant-numeric:tabular-nums;z-index:9}
-#ttl{position:fixed;bottom:14px;left:20px;color:var(--dim);font-size:13px;z-index:9}
-#notes{position:fixed;left:0;right:0;bottom:0;max-height:42vh;overflow:auto;background:#161b22;
-  border-top:2px solid var(--acc);padding:1.1em 1.6em 2.4em;display:none;z-index:8;font-size:17px;line-height:1.55}
-#notes.on{display:block}
-#notes b{color:var(--acc);display:block;margin-bottom:.35em;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--stage-bg)}
+.deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg)}
+.deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;transform-origin:0 0;background:var(--bg)}
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;display:block;
+  visibility:hidden;opacity:0;pointer-events:none;background:var(--bg)}
+.slide.active{visibility:visible;opacity:1;pointer-events:auto;z-index:1}
+img,svg{max-width:100%;max-height:100%}
 
-/* ── illustration components ── */
-.viz{margin:1em 0}
-.cap{font-size:clamp(12px,1.3vw,17px);color:var(--dim);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.5em}
-.stack{display:flex;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.45)}
-.stack>div{padding:1.1em .5em .9em;text-align:center;min-width:0}
-.stack .v{font-size:clamp(17px,2.4vw,32px);font-weight:800;line-height:1;color:#0d1117}
-.stack .k{font-size:clamp(10px,1.15vw,15px);margin-top:.45em;color:rgba(13,17,23,.72);font-weight:700;letter-spacing:.04em}
-.scale{display:flex;justify-content:space-between;margin-top:.5em;font-size:clamp(12px,1.4vw,19px);color:var(--dim);font-weight:700}
-.rail{position:relative;height:clamp(38px,5vw,62px);border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
-.fill{position:absolute;inset:0 auto 0 0;border-radius:10px;display:flex;align-items:center;padding:0 1em;
-  font-weight:800;font-size:clamp(15px,2.1vw,29px);color:#0d1117;white-space:nowrap}
-.row{display:grid;grid-template-columns:clamp(72px,9vw,132px) 1fr;align-items:center;gap:1em;margin:.7em 0}
-.row .lbl{font-size:clamp(12px,1.4vw,19px);color:var(--dim);text-align:right;font-weight:700;letter-spacing:.06em}
-.over{display:flex;gap:2px}
-.over>div{padding:.75em .3em;text-align:center;font-size:clamp(10px,1.15vw,15px);font-weight:800;color:#0d1117;
-  border-radius:4px;overflow:hidden;white-space:nowrap}
-.mark{position:absolute;top:-8px;bottom:-8px;width:0;border-left:2px dashed var(--fg)}
-.fun{display:flex;align-items:flex-end;gap:clamp(3px,.6vw,8px);height:clamp(120px,17vw,220px)}
-.fun>div{flex:1;border-radius:6px 6px 0 0;position:relative;
-  background:linear-gradient(180deg,#2f6fb0,#1b3a5c)}
-.fun span{position:absolute;bottom:-1.9em;left:50%;transform:translateX(-50%);font-size:clamp(9px,1.05vw,14px);color:var(--dim);white-space:nowrap}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,28px)}
-.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:clamp(14px,1.8vw,26px)}
-.tile.hot{border-color:var(--acc)}
-.tile h4{font-size:clamp(14px,1.7vw,23px);font-weight:800;margin-bottom:.45em}
-.tile p,.tile li{font-size:clamp(12px,1.45vw,20px);line-height:1.45}
-.tile ul{margin-top:.4em}.tile li{padding-left:1em;margin:.28em 0}
-.tile li:before{width:.34em;height:.34em;top:.6em}
-.dots{display:grid;gap:2px}
-.tl{position:relative;height:clamp(78px,10vw,120px);margin-top:1.6em}
-.tl:before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;background:var(--line);border-radius:2px}
-.tl i{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--dim)}
-.tl i.big{width:22px;height:22px;box-shadow:0 0 0 6px rgba(240,180,41,.16)}
-.tl b{position:absolute;transform:translateX(-50%);font-size:clamp(11px,1.3vw,17px);white-space:nowrap;font-weight:700}
-.tl s{position:absolute;transform:translateX(-50%);font-size:clamp(10px,1.15vw,15px);color:var(--dim);text-decoration:none}
-.pill{display:inline-block;padding:.3em .9em;border-radius:99px;font-size:clamp(11px,1.3vw,17px);font-weight:800}
-@media print{body{overflow:visible;background:#fff;color:#000}.deck{display:block;height:auto;padding:0}
-  .s{display:block!important;page-break-after:always;padding:6vh 5vw;min-height:96vh}#hud,#ttl,#notes{display:none}}
+.frame{position:absolute;inset:40px;display:grid;grid-template-columns:repeat(12,1fr);
+  grid-template-rows:repeat(8,1fr);gap:12px}
+.card{background:var(--paper);position:relative;overflow:hidden;padding:36px 40px;display:flex;
+  flex-direction:column;justify-content:center}
+.card.ink{background:var(--ink);color:var(--paper)}
+.card.lemon{background:var(--lemon);color:var(--ink)}
+.card.photo{background:#000;padding:0;justify-content:stretch}
+.card.photo img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;max-height:none}
+.card.contain{background:#0d1117;padding:0}
+.card.contain img{width:100%;height:100%;object-fit:contain;display:block;max-height:none}
+.card.flat{justify-content:flex-start}
+.card.plain{background:transparent;padding:0}
+
+.d{font:700 132px/0.92 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.02em;text-transform:uppercase}
+.t{font:700 88px/0.95 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.015em;text-transform:uppercase}
+.st{font:700 56px/1 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
+.n{font:700 156px/0.9 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.03em}
+.n-lg{font:700 240px/0.85 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.04em}
+.n-sm{font:700 96px/0.9 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.03em}
+.ch{font:700 44px/1 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
+.c3{font:700 30px/1.05 'Space Grotesk',Helvetica,Arial,sans-serif;text-transform:uppercase}
+.b{font:400 28px/1.35 'Space Grotesk',Helvetica,Arial,sans-serif}
+.bs{font:400 22px/1.45 'Space Grotesk',Helvetica,Arial,sans-serif}
+.l{font:400 24px/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+.ls{font:400 16px/1.3 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+.lx{font:400 14px/1.3 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.mut{color:var(--muted)}.lem{color:var(--lemon)}.inkc{color:var(--ink)}
+b,strong{font-weight:700}
+em{font-style:normal;background:var(--lemon);color:var(--ink);padding:0 .14em}
+.ink em{background:var(--lemon);color:var(--ink)}
+.lemon em{background:var(--ink);color:var(--lemon)}
+.mt{margin-top:20px}.mt2{margin-top:32px}.mb{margin-bottom:16px}
+ul{list-style:none}
+li{position:relative;padding-left:34px;margin:14px 0}
+li:before{content:"";position:absolute;left:0;top:.52em;width:16px;height:4px;background:var(--ink)}
+.ink li:before{background:var(--lemon)}.lemon li:before{background:var(--ink)}
+
+table{width:100%;border-collapse:collapse}
+td,th{padding:11px 0;text-align:left;border-bottom:2px solid rgba(10,10,10,.13);
+  font:400 26px/1.2 'Space Grotesk',Helvetica,Arial,sans-serif}
+.ink td,.ink th{border-color:rgba(245,244,239,.18)}
+th{font:400 16px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+tr.tot td{border-bottom:none;border-top:4px solid var(--ink);font-weight:700;font-size:32px;padding-top:14px}
+.ink tr.tot td{border-top-color:var(--lemon)}
+
+.stack{display:flex;height:132px;border:4px solid var(--ink)}
+.stack>div{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-right:4px solid var(--ink);overflow:hidden;min-width:70px;flex-shrink:0}
+.stack>div:last-child{border-right:none}
+.stack .v{font:700 40px/1 'Space Grotesk',sans-serif}
+.stack .k{font:400 13px/1.15 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;
+  margin-top:7px;text-align:center;padding:0 6px;opacity:.72}
+.stack .v.sm{font-size:24px;letter-spacing:-.02em}
+.bar{height:74px;border:4px solid var(--ink);display:flex;align-items:center;padding:0 20px;
+  font:700 34px/1 'Space Grotesk',sans-serif}
+.tag{display:inline-block;padding:9px 20px;font:400 18px/1 'JetBrains Mono',monospace;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--paper)}
+.tag.lem{background:var(--lemon);color:var(--ink)}
+.rule{height:4px;background:var(--ink);margin:22px 0}
+.ink .rule{background:var(--lemon)}
+.pn{position:absolute;left:40px;bottom:40px;z-index:5;background:var(--ink);color:var(--paper);
+  padding:9px 16px;font:400 20px/1 'JetBrains Mono',monospace;letter-spacing:.05em}
+.kick{position:absolute;right:40px;top:40px;z-index:5;background:var(--lemon);color:var(--ink);
+  padding:9px 18px;font:400 18px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase}
+.dots{display:grid;gap:3px}
+.dots i{display:block;width:100%;aspect-ratio:1}
+
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:44vh;overflow:auto;background:#0A0A0A;
+  color:#F5F4EF;border-top:6px solid #E6FF3D;padding:20px 30px 34px;display:none;z-index:1000;
+  font:400 19px/1.55 'Space Grotesk',Helvetica,Arial,sans-serif}
+#notes.on{display:block}
+#notes b{display:block;color:#E6FF3D;font:400 13px/1 'JetBrains Mono',monospace;
+  letter-spacing:.16em;text-transform:uppercase;margin-bottom:9px}
+#hud{position:fixed;right:16px;bottom:12px;z-index:1000;color:#8A8A85;
+  font:400 13px/1 'JetBrains Mono',monospace;letter-spacing:.06em}
+@media print{html,body{width:1920px;height:auto;overflow:visible;background:#fff}
+ .deck-viewport{position:static;overflow:visible}
+ .deck-stage{position:static;width:auto;height:auto;transform:none!important}
+ .slide{position:relative;visibility:visible!important;opacity:1!important;break-after:page}
+ #notes,#hud{display:none!important}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.2s!important}}
 """
 
 JS = """
-const S=[...document.querySelectorAll('.s')];let i=0;
+const stage=document.querySelector('.deck-stage'),S=[...document.querySelectorAll('.slide')];
 const N=document.getElementById('notes'),NB=document.getElementById('nb'),HUD=document.getElementById('hud');
-function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,k)=>s.classList.toggle('on',k===i));
- HUD.textContent=(i+1)+' / '+S.length;NB.innerHTML=S[i].dataset.notes||'<i class=dim>no notes</i>';
- location.hash=i+1;}
+let i=0;
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);
+ stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`;}
+function go(n){i=Math.max(0,Math.min(S.length-1,n));
+ S.forEach((s,k)=>s.classList.toggle('active',k===i));
+ HUD.textContent=(i+1)+' / '+S.length;
+ NB.innerHTML=S[i].dataset.notes||'<span style="color:#8A8A85">no notes</span>';
+ if(location.hash!=='#'+(i+1))location.hash=i+1;}
+addEventListener('resize',fit);
+addEventListener('hashchange',()=>go(parseInt(location.hash.slice(1)||'1')-1));
 addEventListener('keydown',e=>{
  if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();go(i+1)}
  else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(i-1)}
  else if(e.key==='Home')go(0); else if(e.key==='End')go(S.length-1);
  else if(e.key.toLowerCase()==='s'||e.key.toLowerCase()==='n')N.classList.toggle('on');});
 addEventListener('click',e=>{if(e.target.tagName!=='A')go(i+1)});
-go(parseInt(location.hash.slice(1)||'1')-1);
+fit();go(parseInt(location.hash.slice(1)||'1')-1);
 """
 
-def badge(k):
-    m={'watch':'▶ watch together','look':'◉ open it live','board':'✎ whiteboard',
-       'ask':'? ask the room','drill':'▲ they do it','slide':''}
-    return f'<span class="badge b-{k}">{m[k]}</span>' if m.get(k) else ''
+def cell(c1,c2,r1,r2,inner,cls=''):
+    return (f'<div class="card {cls}" style="grid-column:{c1}/{c2};grid-row:{r1}/{r2}">{inner}</div>')
 
-def build(fn, title, subtitle, slides):
-    out=[]
-    for s in slides:
-        k=s.get('k','slide')
-        notes=H.escape(s.get('n','')).replace('\n','<br>')
-        body=badge(k)+s['h']
-        out.append(f'<section class="s" data-notes="{notes}">{body}</section>')
-    doc=f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>{H.escape(title)}</title>
-<style>{CSS}</style></head><body>
-<div class="deck">{''.join(out)}</div>
-<div id="ttl">{H.escape(subtitle)} &nbsp;·&nbsp; <span class="dim">S = notes &nbsp; ← → = move</span></div>
-<div id="hud"></div><div id="notes"><b>say</b><div id="nb"></div></div>
-<script>{JS}</script></body></html>"""
+def slide(frame_html, notes='', kicker=None, num=None):
+    extra = (f'<div class="kick">{kicker}</div>' if kicker else '') + (f'<div class="pn">{num}</div>' if num else '')
+    return {'html':f'<div class="frame">{frame_html}</div>{extra}','n':notes}
+
+def build(fn, title, slides):
+    secs=''
+    for k,s in enumerate(slides):
+        s.setdefault('n','')
+        secs+=f'<section class="slide" data-notes="{H.escape(s["n"])}">{s["html"]}</section>'
+    doc=(f'<!doctype html><html lang="en"><head><meta charset="utf-8">'
+         f'<meta name="viewport" content="width=device-width,initial-scale=1"><title>{H.escape(title)}</title>'
+         '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+         '<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">'
+         f'<style>{CSS}</style></head><body>'
+         f'<div class="deck-viewport"><div class="deck-stage">{secs}</div></div>'
+         '<div id="hud"></div><div id="notes"><b>say</b><div id="nb"></div></div>'
+         f'<script>{JS}</script></body></html>')
     open(fn,'w').write(doc)
-    print(f'  {fn}  ({len(slides)} slides)')
+    print(f'  {fn}  {len(slides)} slides  {len(doc)//1024}KB')
 
-# ─────────────────────────── ILLUSTRATIONS (HTML/CSS) ───────────────────────────
-import os as _os
-_D = _os.path.dirname(_os.path.abspath(__file__))
-_p = _os.path.join(_D,'assets','sneaker.datauri')
-SNEAKER = open(_p).read().strip() if _os.path.exists(_p) else ''
-
-GR = {'gold':'linear-gradient(160deg,#ffd166,#e0a020)','amber':'linear-gradient(160deg,#e0a020,#a8761a)',
-      'bronze':'linear-gradient(160deg,#a8761a,#6b4a12)','deep':'linear-gradient(160deg,#6b4a12,#3d2a09)',
-      'green':'linear-gradient(160deg,#5ddb7a,#2f9946)','red':'linear-gradient(160deg,#ff7b72,#c9382f)',
-      'slate':'linear-gradient(160deg,#6b7280,#3f4650)','steel':'linear-gradient(160deg,#4a5560,#2b323b)'}
-
-def viz_shoe(brand='adidas'):
-    """The $100 shoe, opened up. Source: Brands Vietnam / Tri Thuc Tre, from Nike & adidas 2015 filings."""
-    D_ = {'adidas':[(21,'make it','gold'),(5,'ship, insure, customs','amber'),(8,'marketing','bronze'),
-                    (13,'staff &amp; everything else','deep'),(1,'tax','steel'),(2,'PROFIT','red'),
-                    (50,'the shop that sells it','slate')],
-          'nike':  [(22,'make it','gold'),(5,'ship, insure, customs','amber'),(5,'marketing','bronze'),
-                    (11,'staff &amp; everything else','deep'),(2,'tax','steel'),(5,'PROFIT','red'),
-                    (50,'the shop that sells it','slate')]}[brand]
-    bar=''.join(
-        f'<div style="flex:{w};background:{GR[g]}">'
-        + (f'<div class="v">${w}</div><div class="k">{k}</div>' if w>=8 else
-           f'<div class="v" style="font-size:clamp(11px,1.4vw,19px)">${w}</div>')
-        + '</div>' for w,k,g in D_)
-    legend=''.join(
-        f'<span style="display:inline-flex;align-items:center;gap:.45em;margin-right:1.4em;white-space:nowrap">'
-        f'<i style="width:.85em;height:.85em;border-radius:3px;background:{GR[g]};display:inline-block"></i>'
-        f'<b>${w}</b> <span class="dim">{k}</span></span>' for w,k,g in D_ if w<8)
-    prof = next(w for w,k,_ in D_ if k=='PROFIT')
-    img = (f'<img src="{SNEAKER}" alt="" style="width:clamp(88px,13vw,190px);border-radius:14px;flex:none">'
-           if SNEAKER else '')
-    return ('<div class="viz">'
-            '<div style="display:flex;gap:clamp(14px,2.4vw,34px);align-items:center;margin-bottom:.9em">'
-            + img +
-            '<div style="flex:1"><div class="cap" style="margin-bottom:.3em">one $100 shoe</div>'
-            '<p style="font-size:clamp(15px,2.1vw,30px);line-height:1.3">You have held one of these.<br>'
-            '<b class="acc">Where does the hundred dollars actually go?</b></p></div></div>'
-            f'<div class="stack" style="min-height:clamp(74px,9vw,116px)">{bar}</div>'
-            f'<div style="margin-top:.7em;font-size:clamp(11px,1.35vw,18px)">{legend}</div>'
-            '<div style="margin-top:1em;display:flex;align-items:center;gap:.8em;flex-wrap:wrap">'
-            f'<span class="pill" style="background:var(--bad);color:#fff">{brand} keeps <b>${prof}</b></span>'
-            '<span class="dim" style="font-size:clamp(12px,1.5vw,20px)">&mdash; and the shop that sold it keeps about <b>$6</b></span>'
-            '</div></div>')
-
-def viz_shoe_pair():
-    """Nike vs adidas, side by side. The margin is the point."""
-    def col(name, prod, mkt, other, tax, prof, pct):
-        return ('<div class="tile"><h4>'+name+' <span class="dim" style="font-weight:400">&middot; '+pct+' net margin</span></h4>'
-                '<table style="margin:.3em 0"><tr><td class="dim">make it</td><td class="n">$'+str(prod)+'</td></tr>'
-                '<tr><td class="dim">ship, insure, customs</td><td class="n">$5</td></tr>'
-                '<tr><td class="dim">marketing</td><td class="n">$'+str(mkt)+'</td></tr>'
-                '<tr><td class="dim">staff &amp; everything else</td><td class="n">$'+str(other)+'</td></tr>'
-                '<tr><td class="dim">tax</td><td class="n">$'+str(tax)+'</td></tr>'
-                '<tr><td class="dim">the shop</td><td class="n">$50</td></tr>'
-                '<tr class="tot"><td>they keep</td><td class="n acc">$'+str(prof)+'</td></tr></table></div>')
-    return ('<div class="viz grid2">'
-            +col('Nike',22,5,11,2,5,'5.3%')
-            +col('adidas',21,8,13,1,2,'2.5%')
-            +'</div>')
-
-def viz_layers():
-    segs=[(30,'$30','factory','gold'),(30,'+$30','brand','amber'),(15,'+$15','distributor','bronze'),(25,'+$25','retail shop','deep')]
-    bar=''.join(f'<div style="flex:{w};background:{GR[g]}"><div class="v">{v}</div><div class="k">{k}</div></div>'
-                for w,v,k,g in segs)
-    return ('<div class="viz"><div class="cap">a $30 shirt on its way to you</div>'
-            f'<div class="stack">{bar}</div>'
-            '<div class="scale"><span>cost to make</span><span>$100 to you</span></div></div>')
-
-def viz_eaten():
-    costs=[(15,'ads','red'),(30,'the shirt','steel'),(9,'discount','amber'),(6,'shipping','slate'),(1.78,'fee','slate')]
-    tot=sum(c[0] for c in costs)
-    inner=''.join(f'<div style="flex:{w};background:{GR[g]}">{n if w>5 else "&nbsp;"}</div>' for w,n,g in costs)
-    return ('<div class="viz"><div class="cap">what she pays</div>'
-            '<div class="rail"><div class="fill" style="width:100%;background:'+GR['green']+'">$60.00</div></div>'
-            '<div class="cap" style="margin-top:1.2em">what it costs her shop</div>'
-            f'<div style="position:relative"><div class="over" style="width:{tot/60*100:.1f}%">{inner}</div>'
-            f'<div class="mark" style="left:{60/tot*100:.1f}%"></div></div>'
-            '<div style="margin-top:1.1em;font-size:clamp(15px,2.1vw,29px);font-weight:800;color:var(--bad)">'
-            'the costs run past the end of the money &nbsp;&rarr;&nbsp; &minus;$1.78</div></div>')
-
-def viz_bars(rows, unit='$'):
-    """rows = [(label, value, text, color)] — value drives width."""
-    mx=max(abs(v) for _,v,_,_ in rows) or 1
+# ── small builders ──
+def stack(segs):
+    """segs=[(weight,'$21','make it',dark?)]"""
     out=''
-    for lbl,v,txt,col in rows:
-        w=max(abs(v)/mx*100,7)
-        out+=(f'<div class="row"><div class="lbl">{lbl}</div>'
-              f'<div class="rail"><div class="fill" style="width:{w:.1f}%;background:{GR[col]}">{txt}</div></div></div>')
-    return f'<div class="viz">{out}</div>'
+    for w,v,k,dark in segs:
+        bg='var(--ink)' if dark==1 else ('var(--lemon)' if dark==2 else 'var(--paper)')
+        fg='var(--paper)' if dark==1 else 'var(--ink)'
+        vc='v' if w>=7 else 'v sm'
+        out+=(f'<div style="flex:{w} 1 auto;background:{bg};color:{fg}">'
+              f'<div class="{vc}">{v}</div>'+(f'<div class="k">{k}</div>' if w>=7 else '')+'</div>')
+    return f'<div class="stack">{out}</div>'
 
-def viz_funnel():
-    stops=[('the ad',100),('lands',78),('popup',70),('product',52),('offer',44),('cart',34),('leaves',20),('checkout',15),('paid',11)]
-    out=''
-    for i,(t,h) in enumerate(stops):
-        bg = GR['gold'] if i==0 else (GR['red'] if i==6 else (GR['green'] if i==8 else None))
-        st=f'height:{h}%;'+(f'background:{bg}' if bg else '')
-        out+=f'<div style="{st}"><span>{t}</span></div>'
-    return ('<div class="viz"><div class="cap">everyone who saw the ad &nbsp;&rarr;&nbsp; who actually paid</div>'
-            f'<div class="fun">{out}</div>'
-            '<div style="margin-top:2.6em;color:var(--bad);font-weight:800;font-size:clamp(13px,1.6vw,21px)">'
-            '~70% of carts end at that red step. That is normal, not failure.</div></div>')
+def img(src, cls='photo'):
+    return f'<img src="{src}" alt="">' if src else '<div class="bs mut">image missing</div>'
 
-def viz_shop_online():
-    return ('<div class="viz grid2">'
-            '<div class="tile"><h4 class="dim">A SHOP</h4>'
-            '<p style="font-size:clamp(28px,4vw,56px);line-height:1;margin:.3em 0">&#128100;&nbsp;&rarr;&nbsp;&#10067;</p>'
-            '<p class="dim">She walks in. She browses. She leaves.</p>'
-            '<p style="margin-top:.5em"><span class="pill" style="background:var(--bad);color:#fff">gone &mdash; no name, no record</span></p></div>'
-            '<div class="tile hot"><h4 class="acc">ONLINE</h4>'
-            '<p style="font-size:clamp(28px,4vw,56px);line-height:1;margin:.3em 0">&#128100;&nbsp;&rarr;&nbsp;&#128231;</p>'
-            '<p class="dim">Came from that ad. Viewed it three times. Left at shipping.</p>'
-            '<p style="margin-top:.5em"><span class="pill" style="background:var(--acc);color:#0d1117">on a list &mdash; you can talk to her tomorrow</span></p></div>'
-            '</div>')
-
-def viz_timeline():
-    pts=[(0,'order','',0),(9,'ships','',0),(20,'arrives','',0),(33,'how to use it','week 1',0),
-         (50,'review','week 2',0),(75,'&#8220;running low?&#8221;','week 6',1),(96,'REORDERS','week 8',2)]
-    out=''
-    for x,lab,sub,big in pts:
-        col='var(--acc)' if big==1 else ('var(--good)' if big==2 else 'var(--dim)')
-        out+=f'<i class="{"big" if big else ""}" style="left:{x}%;background:{col}"></i>'
-        out+=f'<b style="left:{x}%;top:{-8 if big else 4}px;color:{col};font-size:{"1.15em" if big else "1em"}">{lab}</b>'
-        if sub: out+=f'<s style="left:{x}%;bottom:2px">{sub}</s>'
-    return ('<div class="viz"><div class="cap">the eight weeks after she pays</div>'
-            f'<div class="tl">{out}</div>'
-            '<div style="margin-top:.4em;color:var(--acc);font-weight:800;font-size:clamp(13px,1.7vw,22px);text-align:right">'
-            'week 6 is worth more than the ad that found her</div></div>')
-
-def viz_dots():
-    a=''.join('<i style="background:var(--acc)"></i>' for _ in range(100))
-    b=''.join(f'<i style="background:{"var(--acc)" if i%20==0 else "#252b33"}"></i>' for i in range(600))
-    css='<style>.dots i{display:block;width:100%;aspect-ratio:1;border-radius:1px}</style>'
-    return (css+'<div class="viz grid2">'
-            '<div class="tile"><h4 class="dim">SHOP A &mdash; 100 customers, <b class="acc">100%</b> loyal</h4>'
-            f'<div class="dots" style="grid-template-columns:repeat(20,1fr);max-width:60%;margin:.8em 0">{a}</div>'
-            '<p style="color:var(--bad);font-weight:800">&asymp;100 extra orders &mdash; still dead</p></div>'
-            '<div class="tile hot"><h4 class="dim">SHOP B &mdash; 20,000 customers, <b class="acc">5%</b> loyal</h4>'
-            f'<div class="dots" style="grid-template-columns:repeat(40,1fr);margin:.8em 0">{b}</div>'
-            '<p style="color:var(--good);font-weight:800">&asymp;3,000&ndash;4,000 extra orders &mdash; real money</p></div>'
-            '</div>')
-
-def viz_grow_keep():
-    return ('<div class="viz grid2">'
-            '<div class="tile"><h4 style="color:var(--good)">REFERRAL &nbsp;&rarr;&nbsp; grows it</h4>'
-            '<p style="font-size:clamp(30px,4.4vw,60px);line-height:1;margin:.25em 0">&#8594;&#11044;&#8592;</p>'
-            '<p class="dim">New people arrive with trust already loaded. You pay only when it works.</p></div>'
-            '<div class="tile hot"><h4 class="acc">LOYALTY &nbsp;&rarr;&nbsp; monetises it</h4>'
-            '<p style="font-size:clamp(30px,4.4vw,60px);line-height:1;margin:.25em 0">&#8635;&#11044;&#8594;$</p>'
-            '<p class="dim">The same people, chosen again. Nothing new arrives.</p></div>'
-            '</div>')
-
-def viz_once_again():
-    once='<i style="background:var(--acc);left:2%"></i>'
-    again=''.join(f'<i style="background:{"var(--acc)" if i==0 else "var(--good)"};left:{2+i*15}%"></i>' for i in range(7))
-    return ('<div class="viz"><div class="cap">bought once &mdash; mattress, cookware, luggage</div>'
-            f'<div class="tl" style="height:52px">{once}<s style="left:12%;bottom:0">then nothing for years</s></div>'
-            '<div class="cap" style="margin-top:.8em">bought again &mdash; soap, shampoo, razors, skincare</div>'
-            f'<div class="tl" style="height:52px">{again}<s style="left:80%;bottom:0">this is where we live</s></div></div>')
-
-def viz_confession():
-    rows=[('Klaviyo','I cannot reach my visitors again'),('Rebuy','my orders are too thin'),
-          ('Recharge','customers buy once and vanish'),('Gorgias','I am drowning in <i>where is my order</i>'),
-          ('a loyalty app','I have a base and nothing brings them back')]
-    out=''.join('<div class="row" style="grid-template-columns:clamp(110px,15vw,210px) 1fr">'
-                f'<div><span class="pill" style="background:var(--acc);color:#0d1117">{a}</span></div>'
-                f'<div style="font-size:clamp(14px,1.8vw,25px)">&ldquo;{f}&rdquo;</div></div>' for a,f in rows)
-    return ('<div class="viz"><div class="cap">what they bought &nbsp;&rarr;&nbsp; what they were afraid of</div>'+out+'</div>')
-
-def viz_points_credit():
-    def t(title,sub,items,cls,col):
-        li=''.join(f'<li>{i}</li>' for i in items)
-        return (f'<div class="tile {cls}"><h4 style="color:{col}">{title}</h4>'
-                f'<p style="font-weight:700;margin-bottom:.3em">{sub}</p><ul>{li}</ul></div>')
-    return ('<div class="viz grid2">'
-            +t('POINTS','the brand&rsquo;s currency',['abstract &mdash; needs explaining','feels like belonging, progress',
-               'you name it, you theme it','some are never redeemed'],'hot','var(--acc)')
-            +t('STORE CREDIT','money with your logo on it',['understood instantly','feels like a transaction',
-               'looks like money, not like you','spent fast &mdash; you hold their cash'],'','var(--good)')
-            +'</div>')
-
-def viz_boxes():
-    bx=[('GET PEOPLE IN','ads, email, they remember you',0),('ON THE SITE','home, product, cart, popup',0),
-        ('PAY','checkout, discount, shipping',0),('AFTER THE ORDER','email, where is my order, refund',0),
-        ('COME BACK','refill, drop, membership',1),('MONEY','order 1 cost them. order 2 is the win',1)]
-    out=''.join(f'<div class="tile {"hot" if h else ""}"><h4 style="color:{"var(--acc)" if h else "var(--fg)"}">{t}</h4>'
-                f'<p class="dim">{s}</p></div>' for t,s,h in bx)
-    return f'<div class="viz" style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.4vw,20px)">{out}</div>'
-
-def viz_stage():
-    rows=[('no real base yet','expand the base &mdash; <b>REFERRAL</b>','var(--good)'),
-          ('a base, but they buy once','a reason to return &mdash; <b>POINTS</b>','var(--acc)'),
-          ('a base, discounting everyone','stop the blanket discount &mdash; <b>TIERS</b>','var(--acc)')]
-    out=''.join('<div class="row" style="grid-template-columns:1fr auto 1fr;gap:1.2em">'
-                f'<div class="tile" style="padding:.7em 1em;font-size:clamp(13px,1.6vw,22px)">{l}</div>'
-                f'<div style="color:{c};font-size:clamp(16px,2vw,28px)">&rarr;</div>'
-                f'<div style="color:{c};font-size:clamp(13px,1.7vw,23px);font-weight:700">{r}</div></div>' for l,r,c in rows)
-    return f'<div class="viz">{out}</div>'
-
-def viz_dtc():
-    boxes=[('factory',1),('brand',1),('distributor',0),('shop',0),('you',1)]
-    out=''
-    for i,(t,on) in enumerate(boxes):
-        if on: st=f'background:{GR["gold"]};color:#0d1117'
-        else:  st='background:var(--card);color:var(--dim);text-decoration:line-through;opacity:.55;border:1px solid var(--line)'
-        out+=f'<div style="{st};padding:.75em 1em;border-radius:10px;font-weight:800;font-size:clamp(13px,1.7vw,24px)">{t}</div>'
-        if i<4: out+='<div style="color:var(--dim);font-size:clamp(14px,1.8vw,26px)">&rarr;</div>'
-    return ('<div class="viz"><div style="display:flex;align-items:center;gap:.6em;flex-wrap:wrap">'+out+'</div>'
-            '<p style="margin-top:1.1em;color:var(--bad);font-weight:800;font-size:clamp(14px,1.9vw,26px)">'
-            'they deleted the shop &mdash; and bought an ad instead, for every single customer</p></div>')
-
-def WHYNOT(q, yes_t, yes_b, no_t, no_b, note, kind='slide'):
-    """question -> real case both ways. why it works, why it does not."""
-    return {'k':kind,'h':f'<h2>{q}</h2>'
-        '<div class="viz grid2">'
-        f'<div class="tile hot"><h4 class="acc">WHY &mdash; {yes_t}</h4><p>{yes_b}</p></div>'
-        f'<div class="tile" style="border-color:var(--bad)"><h4 style="color:var(--bad)">WHY NOT &mdash; {no_t}</h4><p>{no_b}</p></div>'
-        '</div>','n':note}
-
-def BRAND(n, q, note):
-    """The recurring beat: stop, go to tonight's real brand, answer one question."""
-    return {'k':'look','h':f'<div class="cap">tonight&rsquo;s brand &nbsp;·&nbsp; breakdown {n}</div>'
-            f'<h2 style="margin-top:.2em">On the screen. Together.</h2>'
-            f'<p class="punch" style="margin-top:.8em">{q}</p>'
-            f'<p class="dim" style="margin-top:1.2em">Fill it on the sheet as we go. This is the same sheet you use alone in 40 minutes.</p>','n':note}
-
-# ═══════════════ SESSION 1 — THE BASICS ═══════════════
+# ═════════════════ SESSION 1 — THE BASICS ═════════════════
 S1=[
-{'h':'<h1>How a shop<br>makes money</h1><p class="dim" style="margin-top:1em">Session 1 · the basics · no website, no app, no Joy</p>'
- ,'n':'Goal: a shop is a business, not a website. Tonight is arithmetic on real things. We break down one real brand together as we go, and you break down another one at the end.'},
+slide(
+ cell(1,10,1,7,'<div class="l mut">Session One</div>'
+   '<div class="d mt">How a shop<br>makes<br><em>money</em></div>','ink')
+ +cell(10,13,1,7,'<div class="l">Joy<br>CS &rarr; AM</div>'
+   '<div class="ch mt2">The<br>basics</div>','lemon')
+ +cell(1,13,7,9,'<div class="st">A shop is a business, not a website.</div>'
+   '<div class="b mt mut">Two hours. No app. No Joy. One real brand, broken down together.</div>'),
+ 'Goal: a shop is a business, not a website. Tonight is arithmetic on real things. We break down one real brand together as we go, and you break down another at the end.'),
 
-{'k':'ask','h':'<h2>You can buy this shirt for <span class="acc">$30</span>.</h2><p class="punch">What do you sell it for?</p>'
- '<div class="viz grid2" style="margin-top:1.4em">'
- '<div class="tile"><h4 class="dim">Write every answer up</h4>'
- '<p class="dim">$45? $60? $90? Nobody is wrong yet &mdash; they are all guesses about the same thing: '
- '<b>how much does it cost to run a business?</b></p></div>'
- '<div class="tile"><h4 class="dim">Then ask the second one</h4>'
- '<p class="dim">&ldquo;How much of that do you think you <b>keep</b>?&rdquo; '
- 'Almost everyone says half. By the end of tonight you will know why that is wildly wrong.</p></div></div>'
- ,'n':'Write every answer up. Someone will say sixty. Keep them all on the board — you come back to them at the end.'},
+slide(
+ cell(1,8,1,6,'<div class="l mut">Question one</div>'
+   '<div class="t mt">You can buy<br>this shirt for<br><em>$30</em>.</div>'
+   '<div class="st mt2">What do you sell it for?</div>')
+ +cell(8,13,1,4,'<div class="c3">Write every answer up</div>'
+   '<div class="bs mt">$45? $60? $90? Nobody is wrong yet. They are all guesses about the same thing: '
+   '<b>how much does it cost to run a business?</b></div>')
+ +cell(8,13,4,6,'<div class="c3">Then ask the second one</div>'
+   '<div class="bs mt">&ldquo;How much of that do you <b>keep</b>?&rdquo; Almost everyone says half.</div>','lemon')
+ +cell(1,13,6,9,'<div class="ch">By the end of tonight you will know why <em>half</em> is wildly wrong.</div>','ink'),
+ 'Shout it out. Write every answer on the board and judge none of them. Someone will say sixty. Keep them up there — you come back to them at the end.',
+ kicker='Ask the room', num='02'),
 
-{'h':'<h2>Start with something you have held</h2>'+viz_shoe('adidas')+
- '<p class="dim" style="margin-top:.3em">Nguồn: Brands Vietnam &middot; Trí Thức Trẻ &mdash; từ báo cáo tài chính Nike &amp; adidas 2015</p>'
- ,'n':'Ask first: a hundred dollar shoe — how much do you think adidas makes? Let them guess. They will say forty, fifty. Then show it. Twenty-one dollars to make. Fifty goes to the shop that sells it. And after shipping, marketing, staff and tax, adidas keeps TWO DOLLARS. Let that sit. Nobody expects it.'},
+slide(
+ cell(1,8,1,6,'<div class="l mut">Start with something you have held</div>'
+   '<div class="t mt">One<br>$100<br>shoe</div>'
+   '<div class="b mt2">Where does the hundred dollars <b>actually go</b>?</div>'
+   '<div class="bs mt mut">Nguồn: Brands Vietnam · Trí Thức Trẻ<br>Từ báo cáo tài chính Nike &amp; adidas 2015</div>')
+ +cell(8,13,1,6,img(SNEAKER),'contain')
+ +cell(1,13,6,9,'<div class="ls mut mb">adidas &middot; one pair &middot; US retail</div>'
+   +stack([(21,'$21','make it',0),(5,'$5','ship',0),(8,'$8','marketing',0),
+           (13,'$13','staff &amp; the rest',0),(1,'$1','tax',0),(2,'$2','profit',2),
+           (50,'$50','the shop that sells it',1)])
+   +'<div class="b mt"><b>adidas keeps $2.</b> The shop that sold it keeps about <b>$6</b>.</div>'),
+ 'Ask first: a hundred dollar shoe — how much do you think adidas makes? Let them guess. They will say forty, fifty. Then show it. Twenty-one dollars to make. Fifty goes to the shop. And after shipping, marketing, staff and tax, adidas keeps TWO DOLLARS. Nobody expects it.',
+ kicker='Real numbers', num='03'),
 
-{'h':'<h2>Both of them. Same shoe, same $100.</h2>'+viz_shoe_pair()+
- '<p class="punch" style="margin-top:.5em">Nike keeps <em>$5</em>. adidas keeps <em>$2</em>.<br>'
- '<span class="dim" style="font-size:.62em">And the shop that sold it keeps about $6.</span></p>'
- ,'n':'The difference is almost entirely marketing — adidas spends eight where Nike spends five, and it comes straight out of the profit. This is a real business decision you can see in the numbers. Then the big one: of a hundred dollars, about eight is profit for anybody. Ninety-two is the machine.'},
+slide(
+ cell(1,7,1,9,'<div class="l mut">Nike</div><div class="n-sm mt">$5</div>'
+   '<div class="ls mut">kept &middot; 5.3% net margin</div><div class="rule"></div>'
+   '<table><tr><td>make it</td><td class="r">$22</td></tr>'
+   '<tr><td>ship, insure, customs</td><td class="r">$5</td></tr>'
+   '<tr><td>marketing</td><td class="r">$5</td></tr>'
+   '<tr><td>staff &amp; everything else</td><td class="r">$11</td></tr>'
+   '<tr><td>tax</td><td class="r">$2</td></tr>'
+   '<tr><td>the shop</td><td class="r">$50</td></tr></table>')
+ +cell(7,13,1,9,'<div class="l">adidas</div><div class="n-sm mt">$2</div>'
+   '<div class="ls">kept &middot; 2.5% net margin</div><div class="rule"></div>'
+   '<table><tr><td>make it</td><td class="r">$21</td></tr>'
+   '<tr><td>ship, insure, customs</td><td class="r">$5</td></tr>'
+   '<tr><td><b>marketing</b></td><td class="r"><b>$8</b></td></tr>'
+   '<tr><td><b>staff &amp; everything else</b></td><td class="r"><b>$13</b></td></tr>'
+   '<tr><td>tax</td><td class="r">$1</td></tr>'
+   '<tr><td>the shop</td><td class="r">$50</td></tr></table>','ink'),
+ 'The difference is almost entirely marketing — adidas spends eight where Nike spends five, and it comes straight out of the profit. This is a real business decision you can read in the numbers.',
+ kicker='Same shoe, same $100', num='04'),
 
-{'k':'ask','h':'<p class="punch">$100 in. <em>$8</em> of profit out, split between two companies.</p>'
- '<p style="margin-top:1.4em">So where did the other <b class="acc">$92</b> go?</p>'
- ,'n':'Making it, moving it, marketing it, and selling it. Nobody in this chain is getting rich. That is why merchants care so much about margin, and why they flinch at discounts. It is not greed — it is that there is almost nothing there to give away.'},
+slide(
+ cell(1,13,1,5,'<div class="d">$100 in.<br><em>$8</em> of profit out.</div>'
+   '<div class="st mt mut">Split between two companies.</div>')
+ +cell(1,8,5,9,'<div class="t">So where did the other <em>$92</em> go?</div>','lemon')
+ +cell(8,13,5,9,'<div class="bs">Making it. Moving it. Marketing it. Selling it.</div>'
+   '<div class="b mt2">Nobody in this chain is getting rich. That is why merchants care so much about margin, '
+   'and why they flinch at a discount you think is small.</div>','ink'),
+ 'It is not greed. There is almost nothing there to give away. Let them sit with it before you move on.',
+ kicker='Ask the room', num='05'),
 
-{'h':'<h2>So price is <span class="acc">layers</span>, not cost</h2>'+viz_layers()+
- '<p style="margin-top:.4em">Every layer is somebody who <b class="acc">has to eat</b> — rent, staff, a shelf, a warehouse.</p>'
- ,'n':'The shop is not greedy. The shop has rent. Point at the gap between thirty and a hundred: none of that is shirt.'},
+slide(
+ cell(1,13,1,3,'<div class="l mut">Two laws to remember</div>'
+   '<div class="st mt">The further a product travels from the factory,<br>the <em>more mouths</em> it has to feed.</div>')
+ +cell(1,13,3,5,'<div class="st">A discount does not eat the profit.<br>It eats <em>the layer paying for everything else.</em></div>')
+ +cell(1,13,5,9,'<div class="ch lem">Do the arithmetic on that second one</div>'
+   '<div class="b mt">adidas keeps <b>$2</b> on a $100 shoe.</div>'
+   '<div class="b">A <b>10% discount</b> is <b>$10</b>.</div>'
+   '<div class="ch mt2">That does not shrink the profit. It <em>erases it five times over.</em></div>'
+   '<div class="bs mt mut">Every time a merchant flinches at a discount, this is the number in their head.</div>','ink'),
+ 'This is the single most useful thing in session one. It explains almost every discount conversation you will ever have with a merchant.',
+ num='06'),
 
-{'h':'<h2 class="dim">Two laws to remember</h2>'
- '<p class="punch">The further a product travels from the factory, the <em>more mouths</em> it has to feed.</p>'
- '<p class="punch" style="margin-top:1em">A discount does not eat the profit. It eats <em>the layer that was paying for everything else.</em></p>'
- '<div class="tile" style="margin-top:1.2em;border-color:var(--bad)">'
- '<h4 style="color:var(--bad)">Do the arithmetic on that second one</h4>'
- '<p>adidas keeps <b>$2</b> on a $100 shoe. A <b>10% discount</b> is $10. '
- 'That does not shrink the profit &mdash; it <b>erases it five times over</b>. '
- 'Every time a merchant flinches at a discount, this is the number in their head.</p></div>'
- ,'n':'Remember the second one. Every time a merchant flinches at a discount, this is why. If adidas keeps two dollars, a ten percent discount does not cut their profit — it erases it four times over.'},
+slide(
+ cell(1,13,1,3,'<div class="l mut">Which is why DTC exists</div>'
+   '<div class="t mt">Delete the layers.</div>')
+ +cell(1,3,3,6,'<div class="c3">factory</div>','lemon')
+ +cell(3,5,3,6,'<div class="c3">brand</div>','lemon')
+ +cell(5,7,3,6,'<div class="c3 mut" style="text-decoration:line-through">distributor</div>')
+ +cell(7,9,3,6,'<div class="c3 mut" style="text-decoration:line-through">shop</div>')
+ +cell(9,13,3,6,'<div class="c3">you</div>','lemon')
+ +cell(1,13,6,9,'<div class="st">They deleted the shop &mdash; and bought <em>an ad</em> instead.</div>'
+   '<div class="b mt2 mut">A shop was a fixed cost. An ad is a cost you pay again for <b>every single customer.</b> '
+   'That is the whole game, and it is why the second order matters so much.</div>','ink'),
+ 'Sell straight to the person, keep the layers. That is why a DTC brand can charge less and still keep more. But nothing is free.',
+ num='07'),
 
-{'h':'<h2>Which is why DTC exists</h2>'+viz_dtc()
- ,'n':'Sell straight to the person, keep the layers. That is why a DTC brand can charge less and still keep more. But nothing is free — and unlike a shop, you pay the ad again for every single customer. The shop was a fixed cost. The ad is a per-customer cost. That is the whole game.'},
+slide(
+ cell(1,7,1,6,'<div class="l mut">Watch together &middot; 90 seconds</div>'
+   '<div class="t mt">Dollar<br>Shave<br>Club</div>'
+   '<div class="b mt2">March 2012. The video that built a billion-dollar company.</div>')
+ +cell(7,13,1,6,img(DSC),'photo')
+ +cell(1,5,6,9,'<div class="n-sm">$4,500</div><div class="ls mut">shot in one day</div>')
+ +cell(5,9,6,9,'<div class="n-sm">12,000</div><div class="ls mut">orders in 48 hours &middot; servers fell over</div>','lemon')
+ +cell(9,13,6,9,'<div class="n-sm">$1B</div><div class="ls">sold to Unilever, 2016</div>','ink'),
+ 'Watch it, then ask: what did they actually delete? The supermarket shelf. And what replaced it — subscription replaced remembering to buy, referral replaced the shelf. Their innovation was the price structure, not the razor. Then show the store as it is today: still a subscription, still a starter set at $4.99.',
+ kicker='youtube.com/watch?v=RBHMf7BNd8o', num='08'),
 
-{'k':'watch','h':'<h2>The clearest example ever filmed</h2>'
- '<p><b>Dollar Shave Club</b>, March 2012. 90 seconds.</p>'
- '<ul><li>Shot in one day for <b class="acc">$4,500</b></li>'
- '<li><b class="acc">12,000 orders</b> in 48 hours — the servers fell over</li>'
- '<li>~25M views · sold to Unilever for <b class="acc">~$1B</b></li></ul>'
- '<div class="res">youtube.com/watch?v=RBHMf7BNd8o</div>'
- ,'n':'Watch it, then ask: what did they delete? The supermarket shelf. And what replaced it — subscription replaced remembering to buy, referral replaced the shelf. Their innovation was the price structure, not the razor.'},
-
-BRAND(1,'What does tonight&rsquo;s brand sell &mdash; and what do you think it costs them to make?',
- 'Open the real site. Find the hero product and its price. Guess the cost to make it out loud, as a room. You will be roughly right, and being roughly right is the whole skill.'),
-
-{'k':'board','h':'<h2>Now back to your shirt</h2><p class="punch">$30 &rarr; you said <em>$60</em>.</p>'
- '<p style="margin-top:1em">Let us find out what actually stays in your pocket.</p>'
- ,'n':'Whiteboard from here. Build it line by line with the room. Do NOT show them the picture.'},
-
-{'h':'<h2>Order one</h2>'+viz_eaten()
- ,'n':'You sold a shirt and you are down one dollar seventy-eight. The costs literally overflow past the money she paid — that is the point of the picture.'},
-
-{'h':'<h2>And nothing else is paid yet</h2>'
- '<p class="mono dim" style="font-size:clamp(16px,2.2vw,30px)">Shopify plan &middot; apps &middot; salary &middot; rent &middot; tax</p>'
- '<p class="punch" style="margin-top:1em">The honest number is closer to <em class="neg">&minus;$8</em>.</p>'
- '<p class="dim" style="margin-top:1em">The app stack alone is often ~10% of revenue at this size.</p>'
- ,'n':'Stop here. Let it sit. Do not rescue them.'},
-
-{'k':'ask','h':'<p class="punch">So why would anybody <em>run this business?</em></p>'
- '<div class="viz grid2" style="margin-top:1.6em">'
- '<div class="tile"><h4 class="dim">Answers you will hear</h4>'
- '<p class="dim">&ldquo;Sell more of them.&rdquo; &mdash; volume does not help; every unit loses the same.<br>'
- '&ldquo;Raise the price.&rdquo; &mdash; then fewer people buy, and the ad costs more per sale.<br>'
- '&ldquo;Spend less on ads.&rdquo; &mdash; then nobody arrives at all.</p></div>'
- '<div class="tile hot"><h4 class="acc">The only answer that works</h4>'
- '<p>Sell to <b>the same person again</b>, when finding her costs nothing.</p></div></div>'
- ,'n':'Say nothing at first. Wait. They will offer volume, price and cheaper ads — let each one die on its own before you reveal the last tile.'},
-
-{'h':'<h2>Because of the second one</h2>'+
- viz_bars([('ORDER 1',-2,'&minus;$2 &nbsp; paid for the ad, nothing else','red'),
-           ('ORDER 2',22,'+$22 &nbsp; no ad. no first-order discount.','green')])+
- '<p class="punch" style="margin-top:.5em">The business is not the shirt.<br>It is the <em>second shirt.</em></p>'
- ,'n':'Same shirt, same price. The only difference is nobody had to pay to find her. Write this down — everything for the next four weeks comes back to it.'},
-
-BRAND(2,'Would anybody buy tonight&rsquo;s product <em>twice</em>? How soon?',
- 'Look at the product again. Does it run out? Wear out? Is there a next size, next drop, next flavour? If the honest answer is no, say so — that is a real finding, not a failure.'),
-
-{'h':'<h2>So how much are you <em class="acc">allowed</em> to spend?</h2>'+
- viz_bars([('1 order',13.22,'$13.22 &nbsp; your ceiling if she never returns','slate'),
-           ('3 orders',57,'$57 &nbsp; now you can spend $30&ndash;40 and still win','gold')])+
- '<p style="margin-top:.5em">How long she stays decides <b class="acc">what you are allowed to pay</b> to get her.</p>'
- ,'n':'Same product, same ad, same market — the brand that gets a second order can outspend the brand that does not. Retention is not a nice-to-have. It is how you afford to compete at all.'},
-
-{'h':'<h2>Not every product is the same business</h2>'+viz_once_again()
- ,'n':'One question — bought once or bought again — predicts most of what a merchant does, including whether they need us at all. Session four is built on this.'},
-
-{'h':'<h2>And every shop is these six boxes</h2>'+viz_boxes()+
- '<p style="margin-top:.5em">Every merchant message you will ever read is about <b class="acc">one box</b>.</p>'
- ,'n':'Your map for next week. We live in COME BACK — but you cannot help someone there if you do not know the other five exist.'},
-
-{'h':'<h2>Your two fears, as arithmetic</h2>'
- '<div class="grid2"><div class="tile"><h4>1 &middot; They vanish</h4>'
- '<p class="dim">I keep buying new people who never come back &mdash; only ever booking the first table.</p></div>'
- '<div class="tile"><h4>2 &middot; I discount the wrong people</h4>'
- '<p class="dim">The $9 handed to someone who was already buying. And adidas only keeps $2.</p></div></div>'
- ,'n':'These are not feelings. They are the two pictures you just built. When a merchant sounds scared, it is one of these two.'},
-
-{'k':'drill','h':'<h2>Now you &mdash; your own brand</h2>'
- '<ul><li>Pairs. A brand you have <b>not</b> seen tonight</li>'
- '<li>Teardown sheet <b>&sect;0&ndash;1</b> &mdash; same questions we just did together</li></ul>'
- '<p class="punch" style="margin-top:1em">At that margin, <em>how many orders</em> before they are ahead?</p>'
- ,'n':'Homework: sections 0-1 on two more brands. Classify each bought-once or bought-again. And: what does one order cost YOUR store?'},
+slide(
+ cell(1,13,1,4,'<div class="l mut">Tonight&rsquo;s brand &middot; breakdown 1</div>'
+   '<div class="t mt">On the screen.<br>Together.</div>')
+ +cell(1,13,4,7,'<div class="st">What does it sell &mdash; and what do you think it <em>costs them to make?</em></div>','lemon')
+ +cell(1,13,7,9,'<div class="b">Fill it on the sheet as we go. This is the same sheet you use alone in forty minutes.</div>','ink'),
+ 'Open the real site. Find the hero product and its price. Guess the cost to make it out loud, as a room. You will be roughly right — and being roughly right is the whole skill.',
+ kicker='Open it live', num='09'),
 ]
 
-S1.insert(5, WHYNOT('So should a shop ever discount?',
- 'yes &mdash; to win a stranger','She has never heard of you. $9 buys a first order you would not otherwise get, '
- 'and her email, which is worth more than the $9.',
- 'no &mdash; to someone already buying','That same $9 goes to people who were coming anyway. '
- 'On a $100 shoe adidas keeps $2 &mdash; a 10% discount does not shrink that profit, it <b>erases it four times over</b>.',
- 'This is fear number two, and it is why merchants agonise over discounts that look small to us. Ask the room which one the popup on most sites is doing. Answer: both, at the same time, and nobody measures the split.'))
+S1 += [
+slide(
+ cell(1,6,1,9,'<div class="l mut">Whiteboard</div>'
+   '<div class="t mt">Back to<br>your<br>shirt.</div>'
+   '<div class="st mt2">$30 &rarr; you said <em>$60</em>.</div>'
+   '<div class="b mt2 mut">Build it live, one line at a time. Do not show them the total.</div>')
+ +cell(6,13,1,9,'<div class="ls mut mb">Order one</div>'
+   '<table><tr><td>Sticker price</td><td class="r">$60.00</td></tr>'
+   '<tr><td>15% off &mdash; a stranger needs a reason</td><td class="r">&minus;$9.00</td></tr>'
+   '<tr><td class="mut">collected</td><td class="r mut">$51.00</td></tr>'
+   '<tr><td>The shirt</td><td class="r">&minus;$30.00</td></tr>'
+   '<tr><td>Shipping</td><td class="r">&minus;$6.00</td></tr>'
+   '<tr><td>Processing</td><td class="r">&minus;$1.78</td></tr>'
+   '<tr><td>Ads, to make this person show up</td><td class="r">&minus;$15.00</td></tr>'
+   '<tr class="tot"><td>Kept</td><td class="r">&minus;$1.78</td></tr></table>','ink'),
+ 'You sold a shirt and you are down one dollar seventy-eight. Do not rush this — the room has to feel the sixty dollars disappear.',
+ kicker='Build it live', num='10'),
 
-# ═══════════════ SESSION 2 — BREAK DOWN A BRAND ═══════════════
+slide(
+ cell(1,13,1,4,'<div class="l mut">And nothing else is paid yet</div>'
+   '<div class="t mt">Shopify plan &middot; apps &middot; salary &middot; rent &middot; tax</div>')
+ +cell(1,7,4,9,'<div class="n-lg">&minus;$8</div>'
+   '<div class="st mt">the honest number<br>on a $60 sale</div>','lemon')
+ +cell(7,13,4,9,'<div class="b">The app stack alone is often <b>~10% of revenue</b> at this size.</div>'
+   '<div class="ch mt2">So the shop did not make a thin profit.</div>'
+   '<div class="ch mt lem">It lost money.</div>','ink'),
+ 'Stop here. Let it sit. Do not rescue them.',
+ num='11'),
+
+slide(
+ cell(1,13,1,4,'<div class="d">So why would anybody<br><em>run this business?</em></div>')
+ +cell(1,9,4,9,'<div class="c3 mut">Answers you will hear</div><div class="rule"></div>'
+   '<div class="b mb">&ldquo;Sell more of them.&rdquo; <span class="mut">&mdash; volume does not help; every unit loses the same.</span></div>'
+   '<div class="b mb">&ldquo;Raise the price.&rdquo; <span class="mut">&mdash; fewer people buy, and the ad costs more per sale.</span></div>'
+   '<div class="b">&ldquo;Spend less on ads.&rdquo; <span class="mut">&mdash; then nobody arrives at all.</span></div>')
+ +cell(9,13,4,9,'<div class="c3">The only answer that works</div>'
+   '<div class="ch mt2">Sell to the <b>same person again</b>, when finding her costs <b>nothing</b>.</div>','lemon'),
+ 'Say nothing at first. Wait. They will offer volume, price and cheaper ads — let each one die on its own before you reveal the last panel.',
+ kicker='Ask the room', num='12'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">Order 2 &middot; same customer, eight weeks later</div>'
+   '<div class="t mt">No ad. No first-order discount.</div>')
+ +cell(1,7,3,6,'<div class="ls mut">Order 1</div>'
+   '<div class="bar mt" style="width:22%;background:var(--ink);color:var(--paper)">&minus;$2</div>'
+   '<div class="bs mt mut">paid for the ad. nothing else.</div>')
+ +cell(7,13,3,6,'<div class="ls mut">Order 2</div>'
+   '<div class="bar mt" style="background:var(--lemon)">+$22</div>'
+   '<div class="bs mt mut">she came back on her own.</div>')
+ +cell(1,13,6,9,'<div class="d">The business is not the shirt.<br>It is the <em>second shirt.</em></div>','ink'),
+ 'Same shirt, same price. Twenty-two dollars instead of minus two. The only difference is nobody had to pay to find her. Tell them to write this down — everything for the next four weeks comes back to it.',
+ num='13'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">So how much are you allowed to spend?</div>'
+   '<div class="t mt">How long she stays decides<br>what you may <em>pay to get her.</em></div>')
+ +cell(1,13,3,5,'<div class="ls mut mb">If she buys once</div>'
+   '<div class="bar" style="width:23%;background:var(--paper)">$13.22</div>')
+ +cell(1,13,5,7,'<div class="ls mut mb">If she buys three times</div>'
+   '<div class="bar" style="background:var(--lemon)">$57 &mdash; now you can spend $30&ndash;40 and still win</div>')
+ +cell(1,13,7,9,'<div class="b">Same product. Same ad. Same market. The brand that gets a second order '
+   '<b>can outspend the brand that does not</b> &mdash; and eventually starves it out of the auction.</div>','ink'),
+ 'This is why retention is not a nice-to-have. It is how you afford to compete at all. It also explains why merchants chase AOV so hard — a fatter order raises the same ceiling.',
+ num='14'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">Not every product is the same business</div>')
+ +cell(1,7,2,6,'<div class="l mut">Bought once</div>'
+   '<div class="ch mt">mattress &middot; cookware &middot; luggage</div>'
+   '<div class="rule"></div>'
+   '<div class="b">One shot. So <b>squeeze order 1</b> &mdash; bundles, upsells, warranty, a free gift.</div>'
+   '<div class="b mt">Growth comes from <b>new people</b>: referral, new products.</div>')
+ +cell(7,13,2,6,'<div class="l">Bought again</div>'
+   '<div class="ch mt">soap &middot; shampoo &middot; razors &middot; skincare</div>'
+   '<div class="rule"></div>'
+   '<div class="b">Many shots. Order 1 only has to <b>cover itself</b>.</div>'
+   '<div class="b mt">The money is in orders 2, 3 and 4.</div>','lemon')
+ +cell(1,13,6,9,'<div class="st">One question &mdash; <em>bought once, or bought again?</em> &mdash; '
+   'predicts most of what a merchant does.</div>'
+   '<div class="b mt mut">Including whether they need us at all. Session four is built on this.</div>','ink'),
+ 'Ask the room which one tonight brand is. Hold onto this — it comes back as the whole of session four.',
+ num='15'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">And every shop is these six boxes</div>')
+ +cell(1,5,2,5,'<div class="c3">Get people in</div><div class="bs mt mut">ads, email, they remember you</div>')
+ +cell(5,9,2,5,'<div class="c3">On the site</div><div class="bs mt mut">home, product, cart, popup</div>')
+ +cell(9,13,2,5,'<div class="c3">Pay</div><div class="bs mt mut">checkout, discount, shipping</div>')
+ +cell(1,5,5,8,'<div class="c3">After the order</div><div class="bs mt mut">email, where is my order, refund</div>')
+ +cell(5,9,5,8,'<div class="c3">Come back</div><div class="bs mt">refill, drop, membership</div>','lemon')
+ +cell(9,13,5,8,'<div class="c3">Money</div><div class="bs mt">order 1 cost them. order 2 is the win</div>','lemon')
+ +cell(1,13,8,9,'<div class="b">Every merchant message you will ever read is about <b>one box.</b></div>','ink'),
+ 'Your map for next week. We live in COME BACK — but you cannot help someone there if you do not know the other five exist.',
+ num='16'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">Your two fears, as <em>arithmetic</em></div>')
+ +cell(1,7,2,7,'<div class="n-sm">01</div><div class="ch mt">They vanish</div>'
+   '<div class="rule"></div>'
+   '<div class="b">I keep buying new people who never come back &mdash; only ever booking the first table.</div>')
+ +cell(7,13,2,7,'<div class="n-sm">02</div><div class="ch mt">I discount the wrong people</div>'
+   '<div class="rule"></div>'
+   '<div class="b">The $9 handed to someone already buying. And adidas only keeps $2.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">These are not feelings. They are the two pictures you just built.</div>','lemon'),
+ 'When a merchant sounds scared, it is one of these two. Every single time.',
+ num='17'),
+
+slide(
+ cell(1,8,1,9,'<div class="l mut">Now you &middot; 50 minutes</div>'
+   '<div class="t mt">A brand you have <em>not</em> seen tonight.</div>'
+   '<div class="rule"></div>'
+   '<ul><li class="b">Pairs. Teardown sheet <b>&sect;0&ndash;1</b></li>'
+   '<li class="b">Same questions we just did together</li>'
+   '<li class="b">Every pair reports back</li></ul>')
+ +cell(8,13,1,5,'<div class="ch">At that margin, how many orders before they are <em>ahead?</em></div>','lemon')
+ +cell(8,13,5,9,'<div class="c3 lem">Homework</div>'
+   '<div class="bs mt">&sect;0&ndash;1 on two more brands. Classify each bought-once or bought-again.</div>'
+   '<div class="bs mt">And: what does one order cost <b>your</b> store?</div>','ink'),
+ 'The reporting-out is where the learning lands. Every pair, no exceptions, even if they are wrong.',
+ kicker='They do it', num='18'),
+]
+
+
+
+def TITLE(n, kicker, big, sub, tag):
+    return slide(
+     cell(1,10,1,7,f'<div class="l mut">{kicker}</div><div class="d mt">{big}</div>','ink')
+     +cell(10,13,1,7,'<div class="l">Joy<br>CS &rarr; AM</div>'+f'<div class="ch mt2">{tag}</div>','lemon')
+     +cell(1,13,7,9,f'<div class="st">{sub[0]}</div><div class="b mt mut">{sub[1]}</div>'), n)
+
+def WN(q, yt, yb, nt, nb, note, num=None, kicker=None):
+    return slide(
+     cell(1,13,1,3,f'<div class="t">{q}</div>')
+     +cell(1,7,3,9,f'<div class="l">Why</div><div class="ch mt">{yt}</div><div class="rule"></div>'
+                   f'<div class="b">{yb}</div>','lemon')
+     +cell(7,13,3,9,f'<div class="l lem">Why not</div><div class="ch mt">{nt}</div><div class="rule"></div>'
+                    f'<div class="b">{nb}</div>','ink'), note, kicker=kicker, num=num)
+
+def BRANDBEAT(n, q, note, num):
+    return slide(
+     cell(1,13,1,4,f'<div class="l mut">Tonight&rsquo;s brand &middot; breakdown {n}</div>'
+                    '<div class="t mt">On the screen.<br>Together.</div>')
+     +cell(1,13,4,7,f'<div class="st">{q}</div>','lemon')
+     +cell(1,13,7,9,'<div class="b">Fill it on the sheet as we go. This is the same sheet you use alone in forty minutes.</div>','ink'),
+     note, kicker='Open it live', num=num)
+
+# ═════════════════ SESSION 2 — BREAK DOWN A BRAND ═════════════════
 S2=[
-{'h':'<h1>Break down<br>a brand</h1><p class="dim" style="margin-top:1em">Session 2 · the method · phones out</p>'
- ,'n':'Goal: open a brand you have never seen and say what it is doing and where it loses people. Tonight we do one together, slowly, then you do one alone.'},
+TITLE('Goal: open a brand you have never seen and say what it is doing, and where it loses people. Tonight we do one together, slowly, then you do one alone.',
+ 'Session Two','Break<br>down<br><em>a brand</em>',
+ ('The method. Phones out.','One sheet, any brand, no login. First time 45 minutes. By next month, fifteen.'),'The<br>method'),
 
-{'h':'<h2>One sheet. Any brand. No login.</h2>'
- '<p class="punch"><em>Outside-in:</em> if you cannot see it on the public site, it is not on the sheet.</p>'
- '<p style="margin-top:1.2em">No ad account. No merchant interview. No Joy admin.</p>'
- '<p class="dim" style="margin-top:.6em">First time ~45 min. By next month, 15.</p>'
- ,'n':'This is the skill the whole course exists to give you. Everything else is context for this.'},
+slide(
+ cell(1,8,1,5,'<div class="l mut">The rule</div>'
+   '<div class="t mt">Outside-in.</div>'
+   '<div class="b mt2">If you cannot see it on the <b>public site</b>, it is not on the sheet.</div>')
+ +cell(8,13,1,5,'<div class="c3">Not needed</div><div class="rule"></div>'
+   '<ul><li class="bs">an ad account</li><li class="bs">a merchant interview</li>'
+   '<li class="bs">the Joy admin</li><li class="bs">their permission</li></ul>')
+ +cell(1,13,5,9,'<div class="st">Everything you need is already <em>public.</em></div>'
+   '<div class="b mt2 mut">That is not a limitation. It is the reason you can judge a merchant '
+   'before the first call &mdash; and why an AM walks in already knowing something.</div>','ink'),
+ 'This is the skill the whole course exists to give you. Everything else is context for it.', num='02'),
 
-{'h':'<h2>Why you can do this at all</h2>'+viz_shop_online()+
- '<p class="punch" style="margin-top:.6em">In a shop, someone who leaves is <em>gone.</em><br>Online, someone who leaves is <em>a list.</em></p>'
- ,'n':'That is why the popup exists, why retargeting exists, why abandoned-cart email is the most profitable email in ecom. And it is why loyalty works at all — loyalty is identity applied over time. In a shop you need a plastic card for that. Online it is just an account.'},
+slide(
+ cell(1,7,1,6,'<div class="l mut">A shop</div>'
+   '<div class="n-sm mt">Gone.</div><div class="rule"></div>'
+   '<div class="b">She walks in. She browses. She leaves.</div>'
+   '<div class="b mt">No name. No record. You will never know she was there.</div>')
+ +cell(7,13,1,6,'<div class="l">Online</div>'
+   '<div class="n-sm mt">A list.</div><div class="rule"></div>'
+   '<div class="b">Came from that ad. Viewed it three times. Left at shipping.</div>'
+   '<div class="b mt">And you can talk to her <b>tomorrow</b>.</div>','lemon')
+ +cell(1,13,6,9,'<div class="st">That one difference is why the popup exists, why retargeting exists, '
+   'and why <em>loyalty works at all.</em></div>'
+   '<div class="b mt mut">A loyalty program is identity applied over time. In a shop you need a plastic card. '
+   'Online it is just an account.</div>','ink'),
+ 'This is the difference between a shop and a website, and nearly every app in ecom exists because of it.', num='03'),
 
-{'h':'<h2>The path you are looking for</h2>'+viz_funnel()
- ,'n':'Nine steps from stranger to paid. Walking a brand means finding where people fall out. Not fixing it — finding it.'},
+slide(
+ cell(1,13,1,2,'<div class="l mut">The path you are looking for</div>'
+   '<div class="t mt">Stranger &rarr; paid</div>')
+ +cell(1,13,2,6,'<div style="display:flex;align-items:flex-end;height:100%;gap:10px">'
+   +''.join(f'<div style="flex:1;height:{h}%;background:{c};border:3px solid var(--ink);position:relative">'
+            f'<div class="lx" style="position:absolute;bottom:-30px;left:0;right:0;text-align:center;color:var(--muted)">{t}</div></div>'
+            for t,h,c in [('the ad',100,'var(--lemon)'),('lands',78,'var(--paper)'),('popup',70,'var(--paper)'),
+                          ('product',54,'var(--paper)'),('offer',46,'var(--paper)'),('cart',36,'var(--paper)'),
+                          ('leaves',22,'var(--ink)'),('checkout',16,'var(--paper)'),('paid',12,'var(--lemon)')])
+   +'</div>','plain')
+ +cell(1,13,6,9,'<div class="st">Your job is to find <em>where people fall out.</em></div>'
+   '<div class="b mt2 mut">Not to fix it. To find it. ~70% of carts end at that black step &mdash; '
+   'that is normal, not failure.</div>','ink'),
+ 'Nine steps from stranger to paid. Walking a brand means finding the leak, not repairing it.', num='04'),
 
-BRAND(1,'Where does tonight&rsquo;s brand get its people from?',
- 'Ad Library first — are they running ads, and what do the ads promise? Then check: Instagram linked? A blog? A quiz? A popup? Name the main door out loud before moving on.'),
+BRANDBEAT(1,'Where does tonight&rsquo;s brand get its <em>people</em> from?',
+ 'Ad Library first — are they running ads, and what do the ads promise? Then: Instagram linked? A blog? A quiz? A popup? Name the main door out loud before moving on.','05'),
 
-{'k':'look','h':'<h2>Click the ad. Land on the page.</h2>'
- '<div class="res">facebook.com/ads/library</div>'
- '<p class="punch" style="margin-top:1.2em">Does the page <em>repeat the promise</em> the ad just made?</p>'
- '<p class="dim" style="margin-top:1em">Same photo? Same claim? Same price? Same offer?</p>'
- ,'n':'The most common way to waste thirty dollars in this business: the ad promises one thing and the page says another. She assumes she misread it, and leaves. Do this live with tonight brand.'},
+slide(
+ cell(1,8,1,5,'<div class="l mut">Click the ad. Land on the page.</div>'
+   '<div class="t mt">Does the page <em>repeat the promise?</em></div>'
+   '<div class="b mt2">Same photo? Same claim? Same price? Same offer?</div>')
+ +cell(8,13,1,5,'<div class="tag">facebook.com/ads/library</div>'
+   '<div class="b mt2">An ad is not a picture of a product. It is <b>an argument aimed at one person</b>: '
+   'name her problem, prove it, make it urgent.</div>')
+ +cell(1,13,5,9,'<div class="st">The most common way to waste $30 in this business:</div>'
+   '<div class="ch mt2 lem">the ad promises one thing and the page says another.</div>'
+   '<div class="b mt2 mut">She assumes she misread it, and leaves. Nobody ever tells the merchant.</div>','ink'),
+ 'Do this live with tonight brand. Find a real ad, click through, and judge the match as a room.',
+ kicker='Open it live', num='06'),
 
-WHYNOT('Should a shop run a popup?',
- 'yes &mdash; it buys her identity','Not the sale &mdash; the <b>email</b>. Without it you cannot recover a cart, '
- 'send a refill reminder, or retarget. Everything after this depends on it.',
- 'no &mdash; not like that','Fires instantly, on mobile, before she has seen anything &mdash; she bounces. '
- 'And the 10% goes to people who would have paid full price. <b>Fear #2 in the first thirty seconds.</b>',
- 'A popup is not good or bad. Timing and offer decide which of the two columns it lands in. Trigger tonight brand popup live and let the room judge which one it is.', 'look'),
+WN('Should a shop run a popup?',
+ 'Yes &mdash; it buys her identity',
+ 'Not the sale &mdash; the <b>email</b>. Without it you cannot recover a cart, send a refill reminder, or retarget. '
+ 'Everything after this step depends on it.',
+ 'No &mdash; not like that',
+ 'Fires instantly, on mobile, before she has seen anything &mdash; she bounces. And the 10% goes to people '
+ 'who would have paid full price. <b>Fear #2 in the first thirty seconds.</b>',
+ 'A popup is not good or bad. Timing and offer decide which column it lands in. Trigger tonight brand popup live and let the room judge which one it is.',
+ num='07', kicker='Open it live'),
 
-{'h':'<h2>The product page answers three silent questions</h2>'
- '<p class="punch">Will this work for me?<br>Can I trust you?<br>What if I hate it?</p>'
- '<p style="margin-top:1.2em">Reviews answer all three &mdash; cheaper than any copy you could write.</p>'
- '<p class="dim" style="margin-top:.8em">A hidden returns policy kills the sale. A stranger will not risk $42 on a shop that will not say what happens if it fails.</p>'
- ,'n':'On tonight brand: are there reviews? With faces? Is the returns policy findable in one click?'},
+slide(
+ cell(1,7,1,6,'<div class="l mut">The product page answers three silent questions</div>'
+   '<div class="st mt">Will this<br>work for me?</div>'
+   '<div class="st mt">Can I<br>trust you?</div>'
+   '<div class="st mt">What if<br>I hate it?</div>')
+ +cell(7,13,1,4,'<div class="ch">Reviews answer all three</div>'
+   '<div class="b mt">Cheaper than any copy you could write. With faces, better still.</div>','lemon')
+ +cell(7,13,4,6,'<div class="c3">And a hidden returns policy kills the sale</div>'
+   '<div class="bs mt mut">A stranger will not risk $42 on a shop that will not say what happens if it fails.</div>')
+ +cell(1,13,6,9,'<div class="b">On tonight&rsquo;s brand: are there reviews? With faces? '
+   'Is the returns policy findable in <b>one click</b>?</div>','ink'),
+ 'These three questions are what a product page is FOR. Everything on it either answers one of them or is decoration.', num='08'),
 
-WHYNOT('Subscribe &amp; save, or a bundle?',
- 'subscription &mdash; buys <b>LTV</b>','The next order is already agreed. Predictable revenue, and she stops shopping around. '
- 'Costs ~15% margin, forever.',
- 'bundle &mdash; buys <b>AOV</b>','A fatter order today. Right when there may never be a second order. '
+WN('Subscribe &amp; save, or a bundle?',
+ 'Subscription buys LTV',
+ 'The next order is already agreed. Predictable revenue, and she stops shopping around. '
+ 'Costs about <b>15% margin, forever</b>.',
+ 'Bundle buys AOV',
+ 'A fatter order <b>today</b> &mdash; right when there may never be a second one. '
  'Less margin per unit, but the cash is now.',
- 'Different problems, opposite answers. A shop with a repeat problem needs the first. A shop with thin orders needs the second. Do not let anyone say them in the same breath. And note the trap: a sub discount so deep the shop loses money on its most loyal customers — fear two again.'),
+ 'Different problems, opposite answers. A shop with a repeat problem needs the first. A shop with thin orders needs the second. Do not let anyone say them in the same breath. And note the trap — a sub discount so deep the shop loses money on its most loyal customers. Fear two again.',
+ num='09'),
 
-{'k':'look','h':'<h2>The cart, and the strongest lever in ecom</h2>'
- '<p class="punch">"You are <em>$12 away</em> from free shipping."</p>'
- '<p style="margin-top:1.2em">She would rather add $12 of product than pay $7 of shipping for nothing.</p>'
- '<p class="dim" style="margin-top:1em">Set it too high and it stops being a nudge and becomes a wall.</p>'
- ,'n':'Add to cart live so they watch the bar move. Free shipping thresholds move AOV more than almost anything else — but the threshold has to sit above the point where the maths works, or the merchant is just paying postage.'},
+slide(
+ cell(1,8,1,5,'<div class="l mut">The cart</div>'
+   '<div class="t mt">&ldquo;You are <em>$12 away</em> from free shipping.&rdquo;</div>')
+ +cell(8,13,1,5,'<div class="b">She would rather add <b>$12 of product</b> than pay <b>$7 of shipping</b> for nothing.</div>'
+   '<div class="b mt2">The strongest lever in ecom, and it costs the merchant nothing to try.</div>','lemon')
+ +cell(1,13,5,9,'<div class="ch">But set it too high&hellip;</div>'
+   '<div class="b mt">&hellip;and it stops being a nudge and becomes <b>a wall</b>. '
+   'The threshold has to sit above the point where the maths works, or the merchant is just paying postage.</div>','ink'),
+ 'Add to cart live so they watch the bar move.', kicker='Open it live', num='10'),
 
-{'h':'<h2>Checkout &mdash; where intent goes to die</h2>'
- '<div class="viz grid2"><div class="tile" style="border-color:var(--bad)"><h4 style="color:var(--bad)">39%</h4>'
- '<p>abandon over <b>extra costs</b> &mdash; shipping, tax, fees. The number one reason.</p></div>'
- '<div class="tile"><h4 class="dim">~70%</h4><p>of all carts are abandoned. That is <b>normal</b>, not failure.</p></div></div>'
- '<ul style="margin-top:.4em"><li>The discount code box is a <b>leak</b> &mdash; they leave to hunt a code</li>'
- '<li>Express wallets: five fields &rarr; one thumbprint</li>'
- '<li>Guest checkout &mdash; do not force an account on a stranger</li></ul>'
- '<div class="res">baymard.com/lists/cart-abandonment-rate</div>'
- ,'n':'A seven dollar fee on a forty-two dollar order reads as a seventeen percent price rise. It is the surprise, not the price.'},
+slide(
+ cell(1,13,1,2,'<div class="t">Checkout &mdash; where intent goes to <em>die</em></div>')
+ +cell(1,5,2,6,'<div class="n">39%</div><div class="ls mt">abandon over extra costs</div>'
+   '<div class="bs mt mut">shipping, tax, fees. The number one reason.</div>','lemon')
+ +cell(5,9,2,6,'<div class="n">70%</div><div class="ls mt">of all carts abandoned</div>'
+   '<div class="bs mt mut">that is normal, not failure</div>','ink')
+ +cell(9,13,2,6,'<div class="c3">Baymard Institute</div>'
+   '<div class="bs mt mut">baymard.com/lists/cart-abandonment-rate</div>'
+   '<div class="bs mt">Real research. Cite it &mdash; merchants respect it.</div>')
+ +cell(1,13,6,9,'<ul><li class="b">The <b>discount code box</b> is a leak &mdash; they leave to hunt a code</li>'
+   '<li class="b">Express wallets: five fields become <b>one thumbprint</b></li>'
+   '<li class="b">Guest checkout &mdash; do not force an account on a stranger</li></ul>'),
+ 'A seven dollar fee on a forty-two dollar order reads as a seventeen percent price rise. It is the surprise, not the price.', num='11'),
 
-{'h':'<p class="punch">"Conversion is down" is <em>not a problem.</em></p>'
- '<p style="margin-top:1em">It is a symptom of a leak at one specific step.</p>'
- '<p class="punch" style="margin-top:1.2em">An AM finds the step.<br><span class="dim">CS forwards the sentence.</span></p>'
- ,'n':'That sentence is the difference between the two jobs. That is all it is.'},
+slide(
+ cell(1,13,1,4,'<div class="d">&ldquo;Conversion is down&rdquo;<br>is <em>not a problem.</em></div>')
+ +cell(1,13,4,6,'<div class="st">It is a symptom of a leak at <b>one specific step.</b></div>')
+ +cell(1,7,6,9,'<div class="ch">An AM finds the step.</div>','lemon')
+ +cell(7,13,6,9,'<div class="ch mut">CS forwards the sentence.</div>','ink'),
+ 'That sentence is the difference between the two jobs. That is all it is.', num='12'),
 
-{'k':'look','h':'<h2>Now read what they installed</h2>'
- '<p class="mono dim">right-click &rarr; View Page Source &rarr; Ctrl-F</p>'
- '<div class="res mono">klaviyo &middot; attentive &middot; recharge &middot; appstle &middot; skio &middot; smile<br>'
- 'yotpo &middot; loyaltylion &middot; rivo &middot; growave &middot; okendo &middot; judge.me<br>gorgias &middot; rebuy &middot; subscribe</div>'
- '<p style="margin-top:1em">Then the footer &middot; <span class="mono">/account</span> &middot; <span class="mono acc">/pages/rewards</span></p>'
- ,'n':'Do it live on tonight brand. Sixty seconds and you know more than a discovery call would tell you.'},
+slide(
+ cell(1,7,1,6,'<div class="l mut">Now read what they installed</div>'
+   '<div class="t mt">View<br>source.</div>'
+   '<div class="b mt2">Right-click &rarr; View Page Source &rarr; Ctrl-F</div>'
+   '<div class="bs mt mut">Then the footer &middot; /account &middot; /pages/rewards</div>')
+ +cell(7,13,1,6,'<div class="ls mut mb">search for</div>'
+   '<div class="bs" style="font-family:\'JetBrains Mono\',monospace;line-height:2">'
+   'klaviyo &middot; attentive &middot; recharge<br>appstle &middot; skio &middot; smile &middot; yotpo<br>'
+   'loyaltylion &middot; rivo &middot; growave<br>okendo &middot; judge.me &middot; gorgias<br>rebuy &middot; subscribe</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Sixty seconds, and you know more than <em>a discovery call</em> would tell you.</div>','lemon'),
+ 'Do it live on tonight brand. It is genuinely fun to watch.', kicker='Open it live', num='13'),
 
-{'h':'<h2>The stack is a confession</h2>'+viz_confession()
- ,'n':'Nobody installs a bundle app for fun. They installed it at 11pm after looking at a number that scared them. The stack tells you what the owner is afraid of before they say a word.'},
+slide(
+ cell(1,13,1,2,'<div class="t">The stack is a <em>confession</em></div>')
+ +cell(1,13,2,7,'<table>'
+   '<tr><th>They installed</th><th>So they believe their problem is</th></tr>'
+   '<tr><td><b>Klaviyo / Attentive</b></td><td>&ldquo;I cannot reach my visitors again&rdquo;</td></tr>'
+   '<tr><td><b>a popup tool</b></td><td>&ldquo;too many people leave anonymous&rdquo;</td></tr>'
+   '<tr><td><b>Okendo / Judge.me</b></td><td>&ldquo;strangers do not trust me yet&rdquo;</td></tr>'
+   '<tr><td><b>Rebuy / bundle</b></td><td>&ldquo;my orders are too thin&rdquo; &mdash; AOV</td></tr>'
+   '<tr><td><b>Recharge / Skio</b></td><td>&ldquo;customers buy once and vanish&rdquo; &mdash; LTV</td></tr>'
+   '<tr><td><b>a loyalty app</b></td><td>&ldquo;I have a base and nothing brings them back&rdquo;</td></tr>'
+   '<tr><td class="mut">nothing at all</td><td class="mut">very early &mdash; or nobody is minding the shop</td></tr>'
+   '</table>','flat')
+ +cell(1,13,7,9,'<div class="st">Nobody installs a bundle app for fun.</div>'
+   '<div class="b mt mut">They installed it at 11pm after looking at a number that scared them. '
+   'The stack tells you what the owner is afraid of <b>before they say a word</b>.</div>','ink'),
+ 'This is the AM read, and it is the single most useful thing in the whole course.', num='14'),
 
-BRAND(2,'What is tonight&rsquo;s owner <em>paying to fix</em> &mdash; and is it their real leak?',
- 'This is the whole session landing. Read their stack, name the fear, then ask whether that fear matches where you actually watched people fall out on the path. Often it does not — and that gap is the job.'),
+BRANDBEAT(2,'What is tonight&rsquo;s owner <em>paying to fix</em> &mdash; and is it their real leak?',
+ 'This is the session landing. Read their stack, name the fear, then ask whether that fear matches where you actually watched people fall out on the path. Often it does not — and that gap is the job.','15'),
 
-{'k':'drill','h':'<h2>Now you &mdash; a brand you have not seen</h2>'
- '<ul><li>Pairs, <b>phones out</b>, real money in the cart</li>'
- '<li>Walk it as a customer. Fill <b>&sect;0&ndash;6</b> &mdash; same questions we just did together</li>'
- '<li>Every step: what you saw &middot; what they wanted &middot; <b>what would make you quit</b></li></ul>'
- '<p class="punch" style="margin-top:1em">The main door, the place you would quit, and <em>what this owner is paying to fix.</em></p>'
- ,'n':'Homework: a full teardown on two more brands. Walk your own store and mark where you would quit. Three tickets — which step is each really about?'},
+slide(
+ cell(1,8,1,9,'<div class="l mut">Now you &middot; 50 minutes</div>'
+   '<div class="t mt">A brand you have <em>not</em> seen.</div><div class="rule"></div>'
+   '<ul><li class="b">Pairs, <b>phones out</b>, real money in the cart</li>'
+   '<li class="b">Walk it as a customer. Fill <b>&sect;0&ndash;6</b></li>'
+   '<li class="b">Every step: what you saw &middot; what they wanted &middot; <b>what would make you quit</b></li></ul>')
+ +cell(8,13,1,5,'<div class="ch">The main door, the place you would quit, and <em>what this owner is paying to fix.</em></div>','lemon')
+ +cell(8,13,5,9,'<div class="c3 lem">Homework</div>'
+   '<div class="bs mt">A full teardown on two more brands.</div>'
+   '<div class="bs mt">Walk your own store. Mark where you would quit.</div>'
+   '<div class="bs mt">Three tickets &mdash; which step is each really about?</div>','ink'),
+ 'Stop before paying. Nobody buys anything on the projector.', kicker='They do it', num='16'),
 ]
 
-# ═══════════════ SESSION 3 — WHY PEOPLE COME BACK ═══════════════
+# ═════════════════ SESSION 2 — WHY PEOPLE COME BACK ═════════════════
 S3=[
-{'h':'<h1>Why people<br>come back</h1><p class="dim" style="margin-top:1em">Session 3 · retention and loyalty · our own subject</p>'
- ,'n':'Goal: why a person buys a second time, and what actually makes them. Tonight we break down TWO brands — one with a strong reason to return, one with none.'},
+TITLE('Goal: why a person buys a second time, and what actually makes them. Tonight we break down TWO brands — one with a strong reason to return, one with none.',
+ 'Session Two','Why people<br>come<br><em>back</em>',
+ ('Retention and loyalty. Our own subject.','Last session ended when she paid. Everything tonight is after the money changed hands.'),'Our<br>subject'),
 
-{'h':'<h2 class="dim">Last week ended the moment she paid.</h2>'
- '<p class="punch">Every business thinks that is the finish line.</p>'
- '<p class="punch" style="margin-top:.6em">It is <em>the start.</em></p>'
- ,'n':'Everything tonight is after the money changed hands.'},
+slide(
+ cell(1,13,1,3,'<div class="l mut">The wait</div>'
+   '<div class="t mt" style="font-family:\'JetBrains Mono\',monospace;text-transform:none">paid &mdash;&mdash;&mdash;&mdash; ? &mdash;&mdash;&mdash;&mdash; arrived</div>')
+ +cell(1,7,3,7,'<div class="ch">Nothing happens here.</div><div class="rule"></div>'
+   '<div class="b">That is the problem. This gap is where every <b>&ldquo;where is my order&rdquo;</b> ticket is born '
+   '&mdash; usually the biggest ticket category in ecom.</div>')
+ +cell(7,13,3,7,'<div class="ch">You already live in this one.</div><div class="rule"></div>'
+   '<div class="b">A late parcel someone <b>warned you about</b> is fine.</div>'
+   '<div class="b mt">A late parcel nobody mentioned is a refund and a one-star review.</div>','lemon')
+ +cell(1,13,7,9,'<div class="b">How many WISMO tickets did you close last week? That number is a <b>shipping</b> problem, not a support problem.</div>','ink'),
+ 'Ask the room for the actual number. It will be large, and it will be the first time they have thought of it as somebody else fault.', num='02'),
 
-{'h':'<h2>The wait</h2>'
- '<p class="mono dim" style="font-size:clamp(16px,2.4vw,32px)">paid &mdash;&mdash;&mdash;&mdash;&mdash; ? &mdash;&mdash;&mdash;&mdash;&mdash; arrived</p>'
- '<p style="margin-top:1.2em">Nothing happens here. That <b>is</b> the problem.</p>'
- '<p style="margin-top:.8em">This gap is where every <b class="acc">"where is my order"</b> ticket is born &mdash; '
- 'usually the biggest ticket category in ecom.</p>'
- ,'n':'You already live in this one. A late parcel someone warned you about is fine. A late parcel nobody mentioned is a refund and a one-star review. Ask the room how many WISMO tickets they closed last week.'},
+slide(
+ cell(1,13,1,2,'<div class="t">The eight weeks <em>after</em> she pays</div>')
+ +cell(1,13,2,6,'<table>'
+   '<tr><th>When</th><th>Email</th><th>Job</th></tr>'
+   '<tr><td class="mut">immediately</td><td>confirmation</td><td>reassurance</td></tr>'
+   '<tr><td class="mut">ships</td><td>tracking</td><td>kill the WISMO ticket</td></tr>'
+   '<tr><td class="mut">delivered</td><td>how to use it</td><td><b>make sure she uses it</b></td></tr>'
+   '<tr><td class="mut">~week 2</td><td>review request</td><td>proof for the next stranger</td></tr>'
+   '<tr class="tot"><td>~week 6</td><td>&ldquo;running low?&rdquo;</td><td>the money email</td></tr></table>','flat')
+ +cell(1,7,6,9,'<div class="c3">Notice the review timing</div>'
+   '<div class="bs mt">It is asked when she has <b>used</b> it &mdash; not when it arrived. '
+   'A day-one review is a review of the packaging.</div>')
+ +cell(7,13,6,9,'<div class="ch">Week 6 is worth more than <em>the ad</em> that found her.</div>','lemon'),
+ 'You arrive before she runs out and before she thinks about alternatives. One automated email, sent to someone who already likes them, beats thirty dollars of advertising.', num='03'),
 
-{'h':'<h2>The eight weeks after she pays</h2>'+viz_timeline()+
- '<p class="dim" style="margin-top:.4em">The review is asked when she has <b>used</b> it &mdash; not when it arrived. A day-one review is a review of the packaging.</p>'
- ,'n':'Week six: you arrive before she runs out and before she thinks about alternatives. One automated email, sent to somebody who already likes them, beats thirty dollars of advertising.'},
+BRANDBEAT(1,'What does tonight&rsquo;s brand send you <em>after</em> you buy?',
+ 'Use their own inbox — they placed real orders in the build track. Put a real confirmation, shipping note and review request on screen. Then ask: did anyone get a "running low" email? Almost nobody will have. That absence is the finding.','04'),
 
-BRAND(1,'What does tonight&rsquo;s brand send you <em>after</em> you buy?',
- 'Use their own inbox — they placed real orders in the build track. Put a real confirmation, shipping note and review request on the screen. Then ask: did anyone get a "running low" email? Almost nobody will have. That absence is the finding.'),
+slide(
+ cell(1,13,1,4,'<div class="d">Why would a human buy<br><em>this</em> twice?</div>')
+ +cell(1,13,4,6,'<div class="st">Ask it about <b>both</b> brands on the table tonight.</div>')
+ +cell(1,13,6,9,'<div class="b">Let the room struggle on the weak one. <b>Do not rescue them.</b> '
+   'The struggle is the lesson, and it is the whole setup for the last session.</div>','ink'),
+ 'This is the question the entire course has been walking toward.', kicker='Ask the room', num='05'),
 
-{'k':'ask','h':'<p class="punch">Why would a human buy <em>this</em> twice?</p>'
- '<p class="dim" style="margin-top:1.4em">Ask it about both brands on the table tonight.</p>'
- ,'n':'Let the room struggle on the weak one. Do not rescue them. The struggle is the lesson.'},
+WN('Does a loyalty program help this shop?',
+ 'Lumi &mdash; a refill brand',
+ '$42 moisturizer, runs out every 8 weeks. She has to rebuy <b>something</b> &mdash; points decide it is Lumi, '
+ 'and decide it is <b>now</b> rather than in three weeks.',
+ 'HexClad &mdash; premium cookware',
+ 'A pan is a five-year decision. Give her 400 points and they <b>expire before they are worth anything</b>. '
+ 'You added a widget, a cost and a promise &mdash; and produced no second order.',
+ 'Some very good brands should not run a points program. If you cannot say that out loud you are selling, not advising. HexClad answer is referral and range — sell them a lid, a knife, another size, or get them to bring someone new.',
+ num='06'),
 
-WHYNOT('Does a loyalty program help this shop?',
- 'Lumi &mdash; a refill brand','$42 moisturizer, runs out every 8 weeks. She has to rebuy <b>something</b> &mdash; '
- 'points decide it is Lumi, and decide it is <b>now</b> rather than in three weeks.',
- 'HexClad &mdash; premium cookware','A pan is a five-year decision. Give her 400 points and they <b>expire before they are worth anything</b>. '
- 'You added a widget, a cost and a promise, and produced no second order.',
- 'Some very good brands should not run a points program. If you cannot say that out loud you are selling, not advising. HexClad answer is referral and range — sell them a lid, a knife, another size, or get them to bring someone new.'),
+slide(
+ cell(1,13,1,3,'<div class="l mut">Lumi, all the way through</div>'
+   '<div class="t mt">One order with no ad attached<br>is worth <em>eight</em> of the first.</div>')
+ +cell(1,7,3,6,'<div class="ls mut">Order 1 &middot; she spent $61.20</div>'
+   '<div class="bar mt" style="width:26%;background:var(--paper)">+$2.13</div>')
+ +cell(7,13,3,6,'<div class="ls mut">Order 2 &middot; she spent $42.00</div>'
+   '<div class="bar mt" style="background:var(--lemon)">+$17.28</div>')
+ +cell(1,13,6,9,'<table>'
+   '<tr><td>Ad to reach Mai</td><td class="r">&minus;$30.00</td>'
+   '<td>Free shipping, Lumi pays it</td><td class="r">&minus;$7.00</td></tr>'
+   '<tr><td>Cart: moisturizer + travel size</td><td class="r">+$68.00</td>'
+   '<td>Processing</td><td class="r">&minus;$2.07</td></tr>'
+   '<tr class="tot"><td>Popup 10%</td><td class="r">&minus;$6.80</td>'
+   '<td>Products &rarr; keeps</td><td class="r">+$2.13</td></tr></table>','ink'),
+ 'Mai spent sixty-one twenty and the shop kept two thirteen. Same shop, same product, same customer — the only difference on order two is nobody had to pay to find her.', num='07'),
 
-{'h':'<h2>Sometimes there is genuinely no reason</h2>'+viz_once_again()+
- '<p style="margin-top:.4em">That is not a failure of the shop. It is a <b class="acc">fact about the product</b> &mdash; and it decides everything they need.</p>'
- ,'n':'This is the uncomfortable one, and it is the whole setup for next week.'},
+slide(
+ cell(1,13,1,4,'<div class="l mut">So what did the points actually do?</div>'
+   '<div class="t mt">They did not make Mai <em>like</em> Lumi.</div>')
+ +cell(1,13,4,6,'<div class="b">They gave her a reason to choose Lumi <b>instead of the alternative</b>, in that moment '
+   '&mdash; and a nudge to do it <b>now</b> rather than in three weeks.</div>')
+ +cell(1,13,6,9,'<div class="d">Loyalty does not buy affection.<br>It buys <em>timing and preference.</em></div>','lemon'),
+ 'If they remember one sentence about our product for the rest of their career, make it that one.', num='08'),
 
-{'h':'<h2>Lumi, all the way through</h2>'+
- viz_bars([('ORDER 1',2.13,'+$2.13 &nbsp; she spent $61.20','slate'),
-           ('ORDER 2',17.28,'+$17.28 &nbsp; she spent $42, no ad attached','green')])+
- '<p class="punch" style="margin-top:.5em">One order with no ad attached is worth <em>eight</em> of the first one.</p>'
- ,'n':'Same shop, same product, same customer. The first order paid for the ad and almost nothing else.'},
+slide(
+ cell(1,13,1,2,'<div class="t">Three things, <em>not one thing</em></div>')
+ +cell(1,5,2,6,'<div class="c3">Subscription</div><div class="rule"></div>'
+   '<div class="b">the next box is already agreed</div>')
+ +cell(5,9,2,6,'<div class="c3">Loyalty</div><div class="rule"></div>'
+   '<div class="b">a reason to choose <b>you</b> next time</div>','lemon')
+ +cell(9,13,2,6,'<div class="c3">Discount</div><div class="rule"></div>'
+   '<div class="b">this order is cheaper</div>')
+ +cell(1,13,6,9,'<div class="st">A standing order does not mean she <em>chose</em> you.</div>'
+   '<div class="b mt2 mut">It means she has not cancelled yet. Those are different things &mdash; '
+   'and the gap between them is exactly what we sell.</div>','ink'),
+ 'Merchants mix these three up constantly. If you mix them up too, you cannot help them.', num='09'),
 
-{'h':'<h2>Order 1 &mdash; where it all went</h2><table>'
- '<tr><td>Ad to reach Mai</td><td class="n neg">&minus;$30.00</td></tr>'
- '<tr><td>Cart: moisturizer + travel size</td><td class="n">+$68.00</td></tr>'
- '<tr><td>Popup 10%</td><td class="n neg">&minus;$6.80</td></tr>'
- '<tr><td>Free shipping, Lumi pays it</td><td class="n neg">&minus;$7.00</td></tr>'
- '<tr><td>Processing</td><td class="n neg">&minus;$2.07</td></tr>'
- '<tr><td>Products</td><td class="n neg">&minus;$20.00</td></tr>'
- '<tr class="tot"><td>Lumi keeps</td><td class="n acc">+$2.13</td></tr></table>'
- ,'n':'Mai spent sixty-one twenty. The shop kept two thirteen. Stop talking for a second.'},
+slide(
+ cell(1,13,1,2,'<div class="t">Two machines, <em>opposite jobs</em></div>')
+ +cell(1,7,2,7,'<div class="n-sm">Referral</div><div class="ch mt">grows the base</div><div class="rule"></div>'
+   '<div class="b">New people arrive with <b>trust already loaded</b>. And you pay only when it works &mdash; '
+   'unlike an ad, which you pay on hope.</div>','lemon')
+ +cell(7,13,2,7,'<div class="n-sm">Loyalty</div><div class="ch mt">monetises the base</div><div class="rule"></div>'
+   '<div class="b">The <b>same people</b>, chosen again. Nothing new arrives.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">Remember this. Next session it decides <em>what you recommend</em> to a real merchant.</div>'),
+ 'The shop that must NOT be sold points is often exactly the shop that should run referral. So "not ready" is never a dead end.', num='10'),
 
-{'h':'<h2 class="dim">So what did the points actually do?</h2>'
- '<p class="punch">They did not make Mai <em>like</em> Lumi.</p>'
- '<p style="margin-top:1.2em">They gave her a reason to choose Lumi <b>instead of the alternative</b>, in that moment '
- '&mdash; and a nudge to do it <b>now</b> rather than in three weeks.</p>'
- '<p class="punch" style="margin-top:1.2em">Loyalty does not buy affection.<br>It buys <em>timing and preference.</em></p>'
- ,'n':'If you remember one sentence about our product, make it that one.'},
+WN('They ask for store credit. Do you switch it on?',
+ 'Credit fits &mdash; considered, rare, returns',
+ 'Expensive one-off purchases, or a shop with lots of returns. Credit is <b>understood instantly</b> '
+ 'and keeps the money in the shop instead of refunding it out.',
+ 'Points fit &mdash; refill, habit, membership',
+ 'Credit is <b>money with your logo on it</b> &mdash; transactional, no attachment, and you are holding their cash. '
+ 'Points are the brand&rsquo;s currency, and they build a habit.',
+ 'Neither is the default. Ask stage, product, repurchase cycle, return rate — then recommend, and be able to say what the other option loses. That last part is the job.',
+ num='11'),
 
-{'h':'<h2>Three things, not one thing</h2>'
- '<div class="viz" style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.5vw,22px)">'
- '<div class="tile"><h4>SUBSCRIPTION</h4><p class="dim">the next box is already agreed</p></div>'
- '<div class="tile hot"><h4 class="acc">LOYALTY</h4><p class="dim">a reason to choose <b>you</b> next time</p></div>'
- '<div class="tile"><h4>DISCOUNT</h4><p class="dim">this order is cheaper</p></div></div>'
- '<p class="punch" style="margin-top:.6em">A standing order does not mean she <em>chose</em> you.<br>'
- '<span class="dim" style="font-size:.7em">It means she has not cancelled yet.</span></p>'
- ,'n':'Merchants mix these up constantly. If you mix them up too, you cannot help them. And that gap — between not-cancelled and chosen — is exactly what we sell.'},
+slide(
+ cell(1,7,1,5,'<div class="l mut">Points</div><div class="st mt">The brand&rsquo;s <em>currency</em></div>'
+   '<div class="rule"></div>'
+   '<ul><li class="bs">abstract &mdash; needs explaining</li><li class="bs">feels like belonging, progress</li>'
+   '<li class="bs">you name it, you theme it</li><li class="bs">some are never redeemed</li></ul>')
+ +cell(7,13,1,5,'<div class="l">Store credit</div><div class="st mt">Money with your <em>logo</em> on it</div>'
+   '<div class="rule"></div>'
+   '<ul><li class="bs">understood instantly</li><li class="bs">feels like a transaction</li>'
+   '<li class="bs">looks like money, not like you</li><li class="bs">spent fast &mdash; you hold their cash</li></ul>','lemon')
+ +cell(1,13,5,9,'<div class="ch">Which is why <em>on-brand</em> is not decoration.</div>'
+   '<div class="b mt2">If the widget looks like a generic app bolted on, it is <b>not brand currency any more</b> '
+   '&mdash; it is a coupon machine, and you threw away the only reason you chose points.</div>','ink'),
+ 'This is the sharpest thing in the loyalty half. On-brand has a mechanical reason, not a cosmetic one.', num='12'),
 
-{'h':'<h2>Two machines, opposite jobs</h2>'+viz_grow_keep()
- ,'n':'A referred person arrives with trust already loaded, and you pay only when it works — unlike an ad, which you pay on hope. Remember this: next week it decides what you recommend to a real merchant.'},
+slide(
+ cell(1,13,1,4,'<div class="d">VIP tiers.<br>Spend $500 to reach Gold.</div>')
+ +cell(1,13,4,9,'<div class="d">Why <em>$500?</em></div>','lemon'),
+ 'Let them flounder. Nobody can defend it, because today the number is guessed. That is the problem.',
+ kicker='Ask the room', num='13'),
 
-WHYNOT('They ask for store credit. Do you just switch it on?',
- 'credit fits &mdash; considered, rare, returns','Expensive one-off purchases, or a shop with lots of returns. '
- 'Credit is understood instantly and <b>keeps the money in the shop</b> instead of refunding it out.',
- 'points fit &mdash; refill, habit, membership','Credit is money with your logo on it &mdash; transactional, no attachment, '
- 'and <b>you are holding their cash</b>. Points are the brand&rsquo;s currency, and they build a habit.',
- 'Neither is the default. Ask stage, product, repurchase cycle, return rate — then recommend, and be able to say what the other option loses. That last part is the job.'),
+slide(
+ cell(1,7,1,6,'<div class="l mut">Where the number comes from</div>'
+   '<ul><li class="b">Pull customers with total spend, last 12 months</li>'
+   '<li class="b">Sort, highest first</li>'
+   '<li class="b">Decide the share per tier &mdash; commonly <b>~5% top, ~20% middle</b></li>'
+   '<li class="b">The spend at that cut line <b>is</b> your threshold</li></ul>')
+ +cell(7,13,1,3,'<div class="c3">Too high</div><div class="bs mt">nobody reaches it &mdash; decoration</div>')
+ +cell(7,13,3,6,'<div class="c3">Too low</div><div class="bs mt">everybody clears it &mdash; a discount for everyone. '
+   '<b>Fear #2 with extra steps.</b></div>','ink')
+ +cell(1,13,6,9,'<div class="st">If you cannot say <em>why the number is that number</em>, do not set it.</div>'
+   '<div class="b mt mut">And the reason tiers exist at all is fear two: otherwise you hand the same coupon '
+   'to a first-time buyer and to someone who spends $2,000 a year.</div>','lemon'),
+ 'Sanity-check both ways: is the top tier big enough to be worth running, and is the next tier reachable in a year?', num='14'),
 
-{'h':'<h2>Points or credit &mdash; the whole trade</h2>'+viz_points_credit()+
- '<p class="punch" style="margin-top:.4em">Points are the brand&rsquo;s <em>currency</em>.<br>Store credit is just <em>money with your logo on it.</em></p>'
- ,'n':'Which is also why on-brand is not decoration. If the widget looks like a generic app bolted on, it is not brand currency any more — it is a coupon machine, and you threw away the only reason you chose points.'},
-
-{'k':'ask','h':'<h2>VIP tiers &mdash; spend $500 to reach Gold.</h2><p class="punch">Why <em>$500?</em></p>'
- ,'n':'Let them flounder. Nobody can defend it, because today the number is guessed. That is the problem.'},
-
-{'h':'<h2>Where the number actually comes from</h2>'
- '<ul><li>Pull customers with total spend, last 12 months</li><li>Sort, highest first</li>'
- '<li>Decide the share per tier &mdash; commonly <b class="acc">~5% top, ~20% middle</b></li>'
- '<li>The spend at that cut line <b>is</b> your threshold</li></ul>'
- '<div class="viz grid2" style="margin-top:1em">'
- '<div class="tile" style="border-color:var(--bad)"><h4 style="color:var(--bad)">too high</h4>'
- '<p class="dim">nobody reaches it &mdash; decoration</p></div>'
- '<div class="tile" style="border-color:var(--bad)"><h4 style="color:var(--bad)">too low</h4>'
- '<p class="dim">everybody clears it &mdash; a discount for everyone. <b>Fear #2 with extra steps.</b></p></div></div>'
- '<p class="punch" style="margin-top:.6em">If you cannot say <em>why the number is that number</em>, do not set it.</p>'
- ,'n':'And the reason tiers exist at all is fear two: otherwise you hand the same coupon to a first-time buyer and to someone who spends two thousand a year.'},
-
-{'k':'drill','h':'<h2>Now you &mdash; two brands, and a recommendation</h2>'
- '<ul><li>Pairs. One brand with a strong repeat reason, one with a weak one</li>'
- '<li>Teardown <b>&sect;4&ndash;5</b>, then <b>prescribe</b></li></ul>'
- '<p class="punch" style="margin-top:1em">Points, credit, tiers or referral &mdash; and <em>what does the option you rejected lose?</em></p>'
- ,'n':'The rejected option is the grading criterion. Anyone can pick something. Only someone who understands it can say what the alternative costs.'},
+slide(
+ cell(1,8,1,9,'<div class="l mut">Now you &middot; 50 minutes</div>'
+   '<div class="t mt">Two brands.<br>One <em>recommendation</em> each.</div><div class="rule"></div>'
+   '<ul><li class="b">One with a strong repeat reason, one with a weak one</li>'
+   '<li class="b">Teardown <b>&sect;4&ndash;5</b>, then prescribe</li></ul>')
+ +cell(8,13,1,5,'<div class="ch">Points, credit, tiers or referral &mdash; and <em>what does the option you rejected lose?</em></div>','lemon')
+ +cell(8,13,5,9,'<div class="c3 lem">The grading criterion</div>'
+   '<div class="bs mt">Anyone can pick something. Only somebody who understands it can say '
+   '<b>what the alternative costs.</b></div>','ink'),
+ 'Homework: what is the real reason someone reorders from YOUR store? Five tickets restated in two sentences each, own words, Vietnamese fine, no questions to the merchant.',
+ kicker='They do it', num='15'),
 ]
 
-# ═══════════════ SESSION 4 — BRING IT TOGETHER ═══════════════
+# ═════════════════ SESSION 3 — BRING IT TOGETHER ═════════════════
 S4=[
-{'h':'<h1>Bring it<br>together</h1><p class="dim" style="margin-top:1em">Session 4 · a real merchant, a real call</p>'
- ,'n':'Goal: given a real merchant, say whether it is ours, whether it needs us, and what to do. Tonight: two brands side by side, one of which we should turn down.'},
+TITLE('Goal: given a real merchant, say whether it is ours, whether it needs us, and what to do. Tonight: two brands side by side, one of which we should turn down.',
+ 'Session Three','Bring it<br><em>together</em>',
+ ('A real merchant. A real call.','Two brands side by side &mdash; and one of them we are going to turn down.'),'The<br>verdict'),
 
-{'h':'<h2>Three weeks ago you could not do any of this</h2>'
- '<ul><li>How does this shop make money on one order?</li>'
- '<li>How do people arrive, and where do they quit?</li>'
- '<li>Why would someone buy twice &mdash; and what is the brand doing about it?</li></ul>'
- '<p class="punch" style="margin-top:1.2em">Tonight we add the last one: <em>so what do we tell them?</em></p>'
- ,'n':'And you still have not opened Joy once.'},
+slide(
+ cell(1,8,1,6,'<div class="l mut">Two sessions ago you could not do any of this</div>'
+   '<ul><li class="b">How does this shop make money on one order?</li>'
+   '<li class="b">How do people arrive, and where do they quit?</li>'
+   '<li class="b">Why would someone buy twice &mdash; and what is the brand doing about it?</li></ul>')
+ +cell(8,13,1,6,'<div class="ch">Tonight we add the last one:</div>'
+   '<div class="st mt2">So what do we <em>tell them?</em></div>','lemon')
+ +cell(1,13,6,9,'<div class="st">And you still have not opened Joy <em>once.</em></div>','ink'),
+ 'Let that land. This is the moment the course pays off.', num='02'),
 
-{'k':'ask','h':'<p class="punch">Is Recharge a <em>subscription app?</em></p>'
- ,'n':'Let them say yes. Then say no — it is a solution for increasing lifetime value. Klaviyo is not an email app, it is a cheap way to talk to everyone at scale plus a CRM. We do not sell an app. We sell the solution the app is made of.'},
+slide(
+ cell(1,13,1,4,'<div class="d">Is Recharge a<br><em>subscription app?</em></div>')
+ +cell(1,7,4,9,'<div class="n-sm">No.</div><div class="rule"></div>'
+   '<div class="b">It is a solution for increasing <b>lifetime value</b>.</div>'
+   '<div class="b mt">Klaviyo is not an email app &mdash; it is a cheap way to talk to everyone at scale, '
+   'plus a CRM that remembers birthdays and order history.</div>','lemon')
+ +cell(7,13,4,9,'<div class="ch">We do not sell an app.</div>'
+   '<div class="ch mt2 lem">We sell the solution the app is <em>made of.</em></div>','ink'),
+ 'Let them say yes first. Then say no. Everything tonight depends on this reframe.',
+ kicker='Ask the room', num='03'),
 
-{'h':'<h2>Is it ours? Run the checklist</h2><table>'
- '<tr><td>Shopify or Plus</td><td class="n dim">&#9744;</td></tr>'
- '<tr><td>Category that repurchases <span class="dim">&mdash; beauty, apparel, wellness, kids, outdoor, pet, home</span></td><td class="n dim">&#9744;</td></tr>'
- '<tr><td>Roughly $5&ndash;40M</td><td class="n dim">&#9744;</td></tr>'
- '<tr><td><b>Klaviyo or Attentive</b> installed</td><td class="n dim">&#9744;</td></tr>'
- '<tr><td>Growing &mdash; raise, press, retail, viral</td><td class="n dim">&#9744;</td></tr>'
- '<tr><td><b>No</b> Rivo / Yotpo / Smile / LoyaltyLion / Growave</td><td class="n dim">&#9744;</td></tr></table>'
- '<p class="acc" style="margin-top:1em">Every line is visible from the public site. You never ask them.</p>'
- ,'n':'Joy real ICP, not something invented for class. And you already know how to check every line — that was last week.'},
+slide(
+ cell(1,8,1,9,'<div class="l mut">Is it ours? Run the checklist</div><div class="rule"></div>'
+   '<table>'
+   '<tr><td>Shopify or Plus</td><td class="r mut">&#9744;</td></tr>'
+   '<tr><td>Category that repurchases</td><td class="r mut">&#9744;</td></tr>'
+   '<tr><td>Roughly $5&ndash;40M</td><td class="r mut">&#9744;</td></tr>'
+   '<tr><td><b>Klaviyo or Attentive</b> installed</td><td class="r mut">&#9744;</td></tr>'
+   '<tr><td>Growing &mdash; raise, press, retail, viral</td><td class="r mut">&#9744;</td></tr>'
+   '<tr><td><b>No</b> Rivo / Yotpo / Smile / LoyaltyLion</td><td class="r mut">&#9744;</td></tr></table>'
+   '<div class="bs mt mut">beauty &middot; apparel &middot; wellness &middot; kids &middot; outdoor &middot; pet &middot; home</div>','flat')
+ +cell(8,13,1,5,'<div class="ch">Every line is visible from the <em>public site.</em></div>'
+   '<div class="b mt2">You never ask them. And you already know how to check every one &mdash; that was last session.</div>','lemon')
+ +cell(8,13,5,9,'<div class="c3 lem">The easiest win to recognise</div>'
+   '<div class="bs mt">Recharge or Appstle <b>+</b> Klaviyo <b>+</b> no loyalty app.</div>'
+   '<div class="bs mt">They already pay for repeat revenue and have nothing that gives a reason to return.</div>','ink'),
+ 'This is Joy real ICP, not something invented for class.', num='04'),
 
-BRAND(1,'Run the checklist on both brands. Out loud, line by line.',
- 'One should pass and one should fail. Do not tell them which. Let the checklist do it, and let them notice that they never had to ask the merchant anything.'),
+slide(
+ cell(1,7,1,6,'<div class="l mut">The textbook case</div>'
+   '<div class="t mt">rae<br>wellness</div><div class="rule"></div>'
+   '<ul><li class="bs">Recharge, heavily used</li><li class="bs">Klaviyo</li>'
+   '<li class="bs">Wellness &mdash; natural repurchase</li></ul>'
+   '<div class="ch mt2">/pages/rewards<br><em>&rarr; 404</em></div>')
+ +cell(7,13,1,6,img(RAE404),'photo')
+ +cell(1,13,6,9,'<div class="st">Thirty seconds. No login. No discovery call.</div>'
+   '<div class="b mt2 mut">Ctrl-F recharge &mdash; hit. klaviyo &mdash; hit. smile, loyaltylion, yotpo &mdash; nothing. '
+   'Then type <b>/pages/rewards</b>. That 404 is the entire pitch, and <b>they found it themselves.</b></div>','ink'),
+ 'Do it live rather than showing the screenshot, if the wifi holds. The screenshot is the fallback.',
+ kicker='Open it live', num='05'),
 
-{'h':'<h2>The easiest win to recognise</h2>'
- '<p class="punch">Recharge or Appstle <em>+</em> Klaviyo <em>+</em> no loyalty app</p>'
- '<p style="margin-top:1.4em">They already pay for repeat revenue. They have nothing that gives a reason to <b>return</b>.</p>'
- '<p class="dim" style="margin-top:1em">Subscription is not loyalty &mdash; not-cancelled is not the same as chosen.</p>'
- ,'n':'And it is not a rip-and-replace. Joy sits on top of the sub stack. That is why this one is easy.'},
+slide(
+ cell(1,13,1,4,'<div class="d">But does this shop need<br>a loyalty program <em>at all?</em></div>')
+ +cell(1,13,4,9,'<div class="st">This is the question that separates you from <em>a salesperson.</em></div>','lemon'),
+ 'Let it hang. Do not answer it for them.', kicker='Ask the room', num='06'),
 
-{'k':'look','h':'<h2>The textbook case</h2><p class="punch">raewellness.co</p>'
- '<ul><li>Recharge, heavily used</li><li>Klaviyo</li><li>Wellness &mdash; natural repurchase</li>'
- '<li><b class="acc">/pages/rewards &rarr; 404</b></li></ul>'
- ,'n':'Do it live. Thirty seconds. Ctrl-F recharge and klaviyo — both hit. Ctrl-F smile, loyaltylion, yotpo — nothing. Then slash pages slash rewards. 404. That is the entire pitch, and they found it themselves.'},
+slide(
+ cell(1,13,1,2,'<div class="t">A loyalty program is a <em>multiplier</em></div>')
+ +cell(1,7,2,7,'<div class="l mut">Shop A</div><div class="ch mt">100 customers &middot; 100% loyal</div>'
+   '<div class="mt" style="display:grid;grid-template-columns:repeat(20,1fr);gap:3px;max-width:66%">'
+   +''.join('<i style="display:block;width:100%;aspect-ratio:1;background:var(--ink)"></i>' for _ in range(100))
+   +'</div><div class="ch mt2">&asymp;100 extra orders<br><span class="mut">still dead</span></div>')
+ +cell(7,13,2,7,'<div class="l">Shop B</div><div class="ch mt">20,000 customers &middot; 5% loyal</div>'
+   '<div class="mt" style="display:grid;grid-template-columns:repeat(40,1fr);gap:2px">'
+   +''.join(f'<i style="display:block;width:100%;aspect-ratio:1;background:{"var(--ink)" if k%20==0 else "rgba(10,10,10,.18)"}"></i>' for k in range(600))
+   +'</div><div class="ch mt2">&asymp;3,000&ndash;4,000 extra orders<br><span>real money</span></div>','lemon')
+ +cell(1,13,7,9,'<div class="st">Multiply a small number &mdash; <em>it is still small.</em></div>'
+   '<div class="b mt mut">Shop A has a perfect loyalty program and is going out of business.</div>','ink'),
+ 'You cannot multiply your way out of a base of a hundred. This is the arithmetic behind every "not yet".', num='07'),
 
-{'k':'ask','h':'<p class="punch">But does this shop need a loyalty program <em>at all?</em></p>'
- ,'n':'This is the question that separates you from a salesperson. Let it hang.'},
+WN('A shop with 100 customers wants points. Do you sell it?',
+ 'No &mdash; they need a bigger base first',
+ 'Perfect retention on 100 people is still 100 people. They need <b>referral and acquisition</b> first. '
+ 'Points multiply a base that is not there yet.',
+ 'And if you sell it anyway',
+ 'It will not produce a result. They churn in six months &mdash; <b>correctly</b> &mdash; and blame us. '
+ 'You did not win an account. You borrowed one.',
+ 'Telling a survival-stage shop to launch points is not service. It is selling them the wrong thing. And "not ready" is never a dead end — it is a different recommendation.',
+ num='08'),
 
-{'h':'<h2>A loyalty program is a multiplier</h2>'+viz_dots()+
- '<p class="punch" style="margin-top:.4em">Multiply a small number &mdash; <em>it is still small.</em></p>'
- ,'n':'Shop A has a perfect loyalty program and is going out of business. You cannot multiply your way out of a base of a hundred.'},
+slide(
+ cell(1,13,1,2,'<div class="t">So the first question is <em>stage</em></div>')
+ +cell(1,13,2,4,'<div style="display:flex;align-items:center;gap:30px">'
+   '<div class="ch" style="flex:1">no real base yet</div><div class="st">&rarr;</div>'
+   '<div class="ch lem" style="flex:1">expand it &mdash; REFERRAL</div></div>','ink')
+ +cell(1,13,4,6,'<div style="display:flex;align-items:center;gap:30px">'
+   '<div class="ch" style="flex:1">a base, but they buy once</div><div class="st">&rarr;</div>'
+   '<div class="ch" style="flex:1">a reason to return &mdash; POINTS</div></div>','lemon')
+ +cell(1,13,6,8,'<div style="display:flex;align-items:center;gap:30px">'
+   '<div class="ch" style="flex:1">a base, discounting everyone</div><div class="st">&rarr;</div>'
+   '<div class="ch" style="flex:1">stop the blanket discount &mdash; TIERS</div></div>','lemon')
+ +cell(1,13,8,9,'<div class="b">Referral <b>grows</b> the base. Loyalty <b>monetises</b> it. Never confuse the two.</div>'),
+ 'The shop that must NOT be sold points is often exactly the shop that should run referral.', num='09'),
 
-WHYNOT('A shop with 100 customers wants points. Do you sell it?',
- 'no &mdash; they need a bigger base','Perfect retention on 100 people is still 100 people. '
- 'They need <b>referral and acquisition</b> first. Points multiply a base that is not there yet.',
- 'and if you sell it anyway','It will not produce a result. They will churn in six months &mdash; '
- '<b>correctly</b> &mdash; and blame us. You did not win an account, you borrowed one.',
- 'Telling a survival-stage shop to launch points is not service. It is selling them the wrong thing. And "not ready" is never a dead end — it is a different recommendation.'),
+slide(
+ cell(1,13,1,3,'<div class="l mut">The hardest thing you will have to say</div>'
+   '<div class="t mt">They installed a bundle app.<br>Their real leak is that <em>nobody comes back.</em></div>')
+ +cell(1,13,3,6,'<div class="st">They are fixing <b>the cart</b> while bleeding at <b>the second order.</b></div>')
+ +cell(1,7,6,9,'<div class="d">Do you tell them?</div>','ink')
+ +cell(7,13,6,9,'<div class="d">Yes.</div>'
+   '<div class="b mt">That is the service. And it costs something &mdash; you are telling a paying merchant '
+   'that the thing they bought is not their problem.</div>','lemon'),
+ 'That is the whole difference between answering the app and owning the outcome.', num='10'),
 
-{'h':'<h2>So the first question is stage</h2>'+viz_stage()+
- '<p style="margin-top:.4em">Referral <b>grows</b> the base. Loyalty <b>monetises</b> it. Never confuse the two.</p>'
- ,'n':'The shop that must NOT be sold points is often exactly the shop that should run referral.'},
+slide(
+ cell(1,8,1,9,'<div class="l mut">The conversation, replaced</div>'
+   '<div class="bs mut mt" style="font-family:\'JetBrains Mono\',monospace">Never: &ldquo;Points or store credit? '
+   'OK, I&rsquo;ll show you where to turn it on.&rdquo;</div><div class="rule"></div>'
+   '<ul><li class="b"><b>1 Stage</b> &mdash; is there a base to sell back to?</li>'
+   '<li class="b"><b>2 Base</b> &mdash; how many, how many return, typical basket</li>'
+   '<li class="b"><b>3 Fear</b> &mdash; losing new people, or over-discounting?</li>'
+   '<li class="b"><b>4 Mechanism</b> &mdash; referral, points, credit, tiers</li>'
+   '<li class="b"><b>5 Numbers</b> &mdash; thresholds from their data, defended</li>'
+   '<li class="b"><b>6 Placement</b> &mdash; from their journey, not the demo store</li></ul>')
+ +cell(8,13,1,5,'<div class="ch">Only step <em>6</em> is a screen.</div>'
+   '<div class="b mt2">Steps one to five are the service. That is what we are actually paid for.</div>','lemon')
+ +cell(8,13,5,9,'<div class="c3 lem">Remember the talk</div>'
+   '<div class="bs mt">AI took the execution. What is left for people is the <b>outcome</b> &mdash; '
+   'judgement about one specific business, and being accountable for it.</div>','ink'),
+ 'This is the closing argument of the whole course.', num='11'),
 
-{'h':'<h2 class="dim">The hardest thing you will have to say</h2>'
- '<p>They installed a bundle app. Their real leak is that <b>nobody comes back.</b></p>'
- '<p class="punch" style="margin:1.2em 0">They are fixing <em>the cart</em> while bleeding at <em>the second order.</em></p>'
- '<p class="punch">Do you <em>tell them?</em></p>'
- ,'n':'Yes. That is the service. That is the whole difference between answering the app and owning the outcome — and it costs something, because you are telling a paying merchant that the thing they bought is not their problem.'},
+slide(
+ cell(1,13,1,2,'<div class="t">The gate</div>')
+ +cell(1,5,2,7,'<div class="n-sm">01</div><div class="ch mt">A cold teardown</div><div class="rule"></div>'
+   '<div class="bs">A brand you have never seen. Fifteen minutes. A lead accepts it.</div>')
+ +cell(5,9,2,7,'<div class="n-sm">02</div><div class="ch mt">8 of 12 restatements</div><div class="rule"></div>'
+   '<div class="bs">Timed, from your own queue.</div>','lemon')
+ +cell(9,13,2,7,'<div class="n-sm">03</div><div class="ch mt">Your store, launched</div><div class="rule"></div>'
+   '<div class="bs">To standard. Max three apps, every one defensible.</div>','ink')
+ +cell(1,13,7,9,'<div class="b">&ldquo;Not yet&rdquo; is a normal outcome here too. It means <b>another stack of reps</b> '
+   '&mdash; not another lecture.</div>'),
+ 'They leave knowing exactly what they are measured on. No surprises.', num='12'),
 
-{'h':'<h2>The conversation, replaced</h2>'
- '<p class="dim">Never: <span class="mono">"Points or store credit? OK, I&rsquo;ll show you where to turn it on."</span></p>'
- '<ul style="margin-top:1em"><li><b>1 Stage</b> &mdash; is there a base to sell back to?</li>'
- '<li><b>2 Base</b> &mdash; how many, how many return, typical basket</li>'
- '<li><b>3 Fear</b> &mdash; losing new people, or over-discounting?</li>'
- '<li><b>4 Mechanism</b> &mdash; referral, points, credit, tiers</li>'
- '<li><b>5 Numbers</b> &mdash; thresholds from their data, defended</li>'
- '<li><b>6 Placement</b> &mdash; from their journey, not the demo store</li></ul>'
- '<p class="punch" style="margin-top:1em">Only step 6 is <em>a screen.</em></p>'
- ,'n':'Steps one to five are the service. That is what we are actually paid for. Call back to the talk — AI took the execution. What is left for people is the outcome.'},
+slide(
+ cell(1,8,1,9,'<div class="l mut">Now you &middot; 50 minutes</div>'
+   '<div class="t mt">Two brands.<br>One <em>verdict</em> each.</div><div class="rule"></div>'
+   '<ul><li class="b">One strong fit, one deliberately <b>not ours</b></li>'
+   '<li class="b">Full teardown, then a verdict <b>out loud</b> with the reason</li>'
+   '<li class="b">Fit is learned by contrast &mdash; never one brand alone</li></ul>')
+ +cell(8,13,1,5,'<div class="ch">Is it ours &middot; does it need this &middot; <em>what is the one thing we would change?</em></div>','lemon')
+ +cell(8,13,5,9,'<div class="c3 lem">How this is graded</div>'
+   '<div class="bs mt">A checklist memorised is trivia.</div>'
+   '<div class="bs mt">A checklist run against a brand that <b>fails</b> it is judgement.</div>','ink'),
+ 'That distinction is what we are grading, and it is the difference between a support person and an account manager.',
+ kicker='They do it', num='13'),
 
-{'h':'<h2>The gate</h2>'
- '<div class="viz grid2"><div class="tile"><h4>1 &middot; A cold teardown</h4>'
- '<p class="dim">a brand you have never seen &middot; 15 minutes &middot; a lead accepts it</p></div>'
- '<div class="tile"><h4>2 &middot; 8 of 12 restatements</h4><p class="dim">timed, from your own queue</p></div></div>'
- '<div class="tile" style="margin-top:clamp(12px,2vw,28px)"><h4>3 &middot; Your store, launched, to standard</h4>'
- '<p class="dim">max three apps, every one defensible</p></div>'
- ,'n':'"Not yet" is a normal outcome here too. It means another stack of reps, not another lecture.'},
-
-{'k':'drill','h':'<h2>Now you &mdash; two brands, one verdict each</h2>'
- '<ul><li><b>Two</b> brands side by side. One strong fit, one deliberately not ours</li>'
- '<li>Full teardown, then a <b>verdict out loud</b> with the reason</li>'
- '<li>Fit is learned by contrast &mdash; never one brand alone</li></ul>'
- '<p class="punch" style="margin-top:1em">Is it ours &middot; does it need this &middot; <em>what is the one thing we would change?</em></p>'
- ,'n':'A checklist memorised is trivia. A checklist run against a brand that fails it is judgement. That is what we grade.'},
-
-{'h':'<p class="punch">You have not opened Joy <em>once.</em></p>'
- '<p style="margin-top:1.4em">And you can already tell a merchant whether we can help them, and why.</p>'
- '<p class="dim" style="margin-top:1.2em">That was the whole point.</p>'
- ,'n':'End here. Do not add anything. Sit down.'},
+slide(
+ cell(1,13,1,5,'<div class="d">You have not opened Joy <em>once.</em></div>','ink')
+ +cell(1,13,5,9,'<div class="st">And you can already tell a merchant whether we can help them, and why.</div>'
+   '<div class="b mt2">That was the whole point.</div>','lemon'),
+ 'End here. Do not add anything. Sit down.', num='14'),
 ]
+
+# ── merge sessions 1 + 2 into one ──
+MERGED = [S1[i] for i in (0,1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3,11,12,13,14,15)]
+for k,s in enumerate(MERGED):
+    s['html'] = s['html'].replace('<div class="pn">','<div class="pn" data-x="').replace('</div><div class="kick"','</div><div class="kick"')
+MERGED[0] = TITLE(MERGED[0]['n'],'Session One','How a shop<br>works &mdash; and<br>how to <em>read one</em>',
+  ('A shop is a business, not a website.','Two and a half hours. No app, no Joy. One real brand, broken down together.'),'The<br>basics')
 
 if __name__=='__main__':
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    print('Building:')
-    build('session-1-basics.html','Session 1 — How a shop makes money','Session 1 · The basics',S1)
-    build('session-2-breakdown.html','Session 2 — Break down a brand','Session 2 · Break down a brand',S2)
-    build('session-3-retention.html','Session 3 — Why people come back','Session 3 · Retention & loyalty',S3)
-    build('session-4-together.html','Session 4 — Bring it together','Session 4 · Bring it together',S4)
-    print('Done. ← → move · S notes · Cmd-P to PDF.')
+    os.chdir(D)
+    print('Building (Neo-Grid Bold):')
+    build('session-1-basics.html','Session 1 — How a shop works, and how to read one',MERGED)
+    build('session-2-retention.html','Session 2 — Why people come back',S3)
+    build('session-3-together.html','Session 3 — Bring it together',S4)
