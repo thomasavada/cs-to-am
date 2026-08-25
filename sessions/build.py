@@ -49,7 +49,7 @@ img,svg{max-width:100%;max-height:100%}
 .card.lemon .lem{color:#fff}
 .card.photo{background:#000;padding:0;justify-content:stretch}
 .card.photo img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;max-height:none}
-.card.contain{background:#0d1117;padding:0}
+.card.contain{background:var(--stage-bg);padding:0}
 .card.contain img{width:100%;height:100%;object-fit:contain;display:block;max-height:none}
 .card.flat{justify-content:flex-start}
 .card.plain{background:transparent;padding:0}
@@ -91,13 +91,14 @@ tr.tot td{border-bottom:none;border-top:4px solid var(--ink);font-weight:700;fon
 
 .stack{display:flex;height:132px;border:4px solid var(--ink)}
 .stack>div{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-right:4px solid var(--ink);overflow:hidden;min-width:70px;flex-shrink:0}
+  border-right:4px solid var(--ink);overflow:hidden;min-width:82px;flex-shrink:0}
 .stack>div:last-child{border-right:none}
 .stack .v{font:700 40px/1 'Space Grotesk',sans-serif}
 .stack>div[style*='--lemon']{color:#fff}
 .stack .k{font:400 13px/1.15 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;
   margin-top:7px;text-align:center;padding:0 6px;opacity:.72}
 .stack .v.sm{font-size:24px;letter-spacing:-.02em}
+.stack .k.sm{font-size:10px;letter-spacing:.02em;margin-top:5px;padding:0 3px;opacity:.8}
 .bar{height:74px;border:4px solid var(--ink);display:flex;align-items:center;padding:0 20px;
   font:700 34px/1 'Space Grotesk',sans-serif}
 .tag{display:inline-block;padding:9px 20px;font:400 18px/1 'JetBrains Mono',monospace;
@@ -235,9 +236,10 @@ def stack(segs):
     for w,v,k,dark in segs:
         bg='var(--ink)' if dark==1 else ('var(--lemon)' if dark==2 else 'var(--paper)')
         fg='var(--paper)' if dark==1 else ('#fff' if dark==2 else 'var(--ink)')
-        vc='v' if w>=7 else 'v sm'
+        narrow = w < 7
+        vc, kc = ('v sm','k sm') if narrow else ('v','k')
         out+=(f'<div style="flex:{w} 1 auto;background:{bg};color:{fg}">'
-              f'<div class="{vc}">{v}</div>'+(f'<div class="k">{k}</div>' if w>=7 else '')+'</div>')
+              f'<div class="{vc}">{v}</div><div class="{kc}">{k}</div></div>')
     return f'<div class="stack">{out}</div>'
 
 def logo(name, size=46):
@@ -260,7 +262,7 @@ def video(vid, title='', thumb=''):
     back = (f'<img src="{thumb}" alt="" style="position:absolute;inset:0;width:100%;height:100%;'
             'object-fit:cover;z-index:0">') if thumb else ''
     play = ('<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1;'
-            'width:78px;height:78px;border-radius:50%;background:rgba(10,10,10,.82);color:#E6FF3D;'
+            'width:78px;height:78px;border-radius:50%;background:rgba(10,10,10,.82);color:var(--lemon);'
             'display:flex;align-items:center;justify-content:center;font-size:30px;pointer-events:none">&#9654;</div>')
     frame = ('<iframe src="https://www.youtube.com/embed/' + vid + '" title="' + title + '" '
              'allow="accelerometer;autoplay;clipboard-write;encrypted-media;picture-in-picture" '
