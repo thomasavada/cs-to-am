@@ -40,9 +40,9 @@ img,svg{max-width:100%;max-height:100%}
 .card.flat{justify-content:flex-start}
 .card.plain{background:transparent;padding:0}
 
-.d{font:700 132px/0.92 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.02em;text-transform:uppercase}
-.t{font:700 88px/0.95 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.015em;text-transform:uppercase}
-.st{font:700 56px/1 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
+.d{font:700 132px/1.42 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.02em;text-transform:uppercase}
+.t{font:700 88px/1.16 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.015em;text-transform:uppercase}
+.st{font:700 56px/1.14 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
 .n{font:700 156px/0.9 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.03em}
 .n-lg{font:700 240px/0.85 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.04em}
 .n-sm{font:700 96px/0.9 'Space Grotesk',Helvetica,Arial,sans-serif;letter-spacing:-.03em}
@@ -55,7 +55,7 @@ img,svg{max-width:100%;max-height:100%}
 .lx{font:400 14px/1.3 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
 .mut{color:var(--muted)}.lem{color:var(--lemon)}.inkc{color:var(--ink)}
 b,strong{font-weight:700}
-em{font-style:normal;background:var(--lemon);color:var(--ink);padding:0 .14em}
+em{font-style:normal;background:var(--lemon);color:var(--ink);padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .ink em{background:var(--lemon);color:var(--ink)}
 .lemon em{background:var(--ink);color:var(--lemon)}
 .mt{margin-top:20px}.mt2{margin-top:32px}.mb{margin-bottom:16px}
@@ -149,7 +149,7 @@ function autofit(){
   const sl=c.closest('.slide'); const was=sl.classList.contains('active');
   if(!was) sl.classList.add('active');
   let k=1;
-  while(c.scrollHeight-c.clientHeight>2 && k>0.6){ k-=0.04; c.style.zoom=k; }
+  while(c.scrollHeight-c.clientHeight>2 && k>0.5){ k-=0.03; c.style.zoom=k; }
   if(!was) sl.classList.remove('active');
  });}
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(autofit);}else{addEventListener('load',autofit);}
@@ -1626,9 +1626,178 @@ S4.insert(5, slide(
  'Use this as the report-out standard for the rep tonight. It is fast, it is fair, and it cannot be bluffed.',
  num='04b'))
 
+# ═════════════════ THE TALK — 20-25 min, standalone ═════════════════
+TALK=[
+slide(
+ cell(1,10,1,7,'<div class="l mut">Joy &middot; CS</div>'
+   '<div class="d mt">From app support<br>to <em>retention<br>service</em></div>','ink')
+ +cell(10,13,1,7,'<div class="l">20 minutes</div>'
+   '<div class="ch mt2">Then we<br>start the<br>work.</div>','lemon')
+ +cell(1,13,7,9,'<div class="st">Get the shop more customers coming back &mdash; in less time.</div>'
+   '<div class="b mt mut">No slides about the app today. Nothing to configure. Just what the job is turning into, '
+   'and why.</div>'),
+ 'Twenty minutes, then sit down. This is the heading, not the course. Do not let it drift into teaching.'),
+
+slide(
+ cell(1,13,1,4,'<div class="l mut">A ticket lands. Right now.</div>'
+   '<div class="d mt">&ldquo;Rewards aren&rsquo;t working.&rdquo;</div>')
+ +cell(1,13,4,9,'<div class="st">What do you write back?</div>'
+   '<div class="b mt2 mut">Out loud. Take three answers before I go on.</div>','lemon'),
+ 'Somebody will say "could you explain more" or "can you send a screenshot". Let it sit. Do not correct it — the next slide does.',
+ kicker='Ask the room'),
+
+slide(
+ cell(1,7,1,7,'<div class="l mut">What we write today</div>'
+   '<div class="ch mt">&ldquo;Could you please provide more details?&rdquo;</div><div class="rule"></div>'
+   '<div class="b mut">&rarr; she explains again</div>'
+   '<div class="b mut">&rarr; we copy</div>'
+   '<div class="b mut">&rarr; we forward</div>')
+ +cell(7,13,1,7,'<div class="l">What the other job writes</div>'
+   '<div class="ch mt">&ldquo;Members aren&rsquo;t using the reward, so it isn&rsquo;t creating a second order.&rdquo;</div>'
+   '<div class="rule"></div>'
+   '<div class="b">&ldquo;Do they <b>not see</b> the balance &mdash; or see it and it is <b>not worth</b> using?&rdquo;</div>','lemon')
+ +cell(1,13,7,9,'<div class="st">Same number of minutes. Only one of them <em>did the thinking.</em></div>','ink'),
+ 'Say the loop without shame: merchant talks, I do not get it, can you explain more, they write the ticket for me, I copy, I forward. That is transcription — and it is not a character flaw. It is what happens when you have no picture of a shop for their words to land on.'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">Two jobs</div>')
+ +cell(1,13,2,7,'<table style="font-size:26px">'
+   '<tr><th></th><th>CS</th><th>AM</th></tr>'
+   '<tr><td class="mut">You are judged on</td><td>the <b>ticket</b></td><td>the <b>shop</b></td></tr>'
+   '<tr><td class="mut">Who starts</td><td>they write to you</td><td><b>you</b> open it</td></tr>'
+   '<tr><td class="mut">You must know</td><td>the <b>app</b></td><td>the <b>business</b></td></tr>'
+   '<tr><td class="mut">Done means</td><td>ticket closed</td><td>the <b>result showed up</b></td></tr>'
+   '<tr><td class="mut">You lose when</td><td>backlog, slow reply</td><td>churn you never saw coming</td></tr>'
+   '</table>','flat')
+ +cell(1,13,7,9,'<div class="d">You can close every ticket perfectly<br>and still <em>lose the account.</em></div>','ink'),
+ 'Not a complaint about CS. The two scoreboards barely overlap — every CS number can be green while every AM number is red. That gap is the whole reason for this talk.'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">Why you freeze &mdash; and it is not what you think</div>'
+   '<div class="t mt">It was never <em>the English.</em></div>')
+ +cell(1,13,3,6,'<div class="b">Without a picture of how a real shop earns &mdash; get a customer, take the money, '
+   'need them back &mdash; her words have <b>nowhere to land</b>. So every sentence is noise, '
+   'and you ask her to keep talking until you can forward it.</div>')
+ +cell(1,13,6,9,'<div class="st">Không phải vì tiếng Anh. Vì chưa biết shop chạy thế nào, '
+   'nên câu của merchant <em>không ghim vào đâu được.</em></div>'
+   '<div class="b mt mut">Học xong, em phải nói lại được vấn đề. '
+   'Hỏi &ldquo;explain more&rdquo; là chưa hiểu &mdash; không phải là cách hiểu.</div>','ink'),
+ 'Say the Vietnamese line yourself, slowly. This is the moment the room stops feeling accused and starts feeling explained.'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">Why now &middot; 1</div>'
+   '<div class="t mt">The machine already answers<br>&ldquo;<em>where do I click?</em>&rdquo;</div>')
+ +cell(1,7,3,7,'<div class="c3">Better than us</div><div class="rule"></div>'
+   '<ul><li class="bs">instantly, 24/7, every language</li><li class="bs">perfect, polite English</li>'
+   '<li class="bs">reads the docs, writes the reply</li><li class="bs">never tired, never annoyed</li></ul>')
+ +cell(7,13,3,7,'<div class="c3">Cannot do at all</div><div class="rule"></div>'
+   '<ul><li class="bs">decide if points suit <b>this</b> merchant</li>'
+   '<li class="bs">own whether her customers came back</li>'
+   '<li class="bs">be accountable across a quarter</li></ul>','lemon')
+ +cell(1,13,7,9,'<div class="st">AI does not take the job. It takes <em>the execution.</em></div>'
+   '<div class="b mt mut">And notice which half it is best at: <b>the English.</b> '
+   'If your plan is to win on English, you picked the one race that is already lost.</div>','ink'),
+ 'Elevation, not threat. Nobody has automated being accountable for whether it worked. And this closes the English argument from the other end — the machine has perfect English and still cannot answer this merchant.'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">Why now &middot; 2</div>'
+   '<div class="t mt">Every loyalty app has<br>the <em>same features.</em></div>')
+ +cell(1,7,3,7,'<div class="c3">Rivo &middot; Yotpo &middot; Smile &middot; LoyaltyLion &middot; Growave &middot; BON</div>'
+   '<div class="rule"></div>'
+   '<div class="b">Points. Tiers. Referrals. Widgets. Anything we ship, they ship within a quarter.</div>'
+   '<div class="b mt2">So the app <b>cannot</b> be what a merchant chooses us for.</div>')
+ +cell(7,13,3,7,'<div class="ch">What is left to compete on</div>'
+   '<div class="st mt2">Whether the merchant actually <em>gets a result.</em></div>','lemon')
+ +cell(1,13,7,9,'<div class="st">We are not selling software. We are selling <em>the outcome it produces.</em></div>'
+   '<div class="b mt mut">Which makes the people who can produce that outcome not a support cost. '
+   'They are the product.</div>','ink'),
+ 'The company-level version of the same argument. Features are commoditised in a quarter. Service is not copyable, because it lives in people who understand ecom.'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">And merchants already decide this way</div>'
+   '<div class="t mt">They do not buy features.<br>They buy <em>a number.</em></div>')
+ +cell(1,7,3,7,'<div class="c3">A competitor&rsquo;s public page</div><div class="rule"></div>'
+   '<div class="b">19 case studies. Each one <b>a single number</b> &mdash; &ldquo;$450K in 90 days&rdquo; '
+   '&mdash; and <b>no feature list at all</b>.</div>'
+   '<div class="bs mt2 mut">Features get explained only after the number has persuaded you.</div>')
+ +cell(7,13,3,7,'<div class="ch">Asked what Avada does, we once said</div>'
+   '<div class="st mt2">&ldquo;We have <em>twenty apps.</em>&rdquo;</div>'
+   '<div class="bs mt2">They stopped wanting to talk.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">Not because twenty is too few. Because it reads as '
+   '<em>&ldquo;these people do not know what problem they solve.&rdquo;</em></div>','lemon'),
+ 'Real, and it happened. The right answer starts at the problem — we help merchants do X, measured by Y — never at the catalogue. "Where do I click" is the catalogue answer. "Here is the result you should expect" is the other one.'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">So where you are heading</div>'
+   '<div class="t mt">Four questions you can answer about <em>any</em> merchant &mdash; before opening Joy.</div>')
+ +cell(1,7,3,6,'<div class="b">1 &middot; What does this shop sell, and how does it make money on one order?</div>')
+ +cell(7,13,3,6,'<div class="b">2 &middot; How do people arrive, and where do they quit?</div>')
+ +cell(1,7,6,8,'<div class="b">3 &middot; Why would someone buy a <b>second</b> time &mdash; and what is the brand doing about it?</div>')
+ +cell(7,13,6,8,'<div class="b">4 &middot; Is it ours, does it need us, and what is the one thing we would change?</div>','lemon')
+ +cell(1,13,8,9,'<div class="c3">If you cannot answer 1&ndash;3, you are not allowed to open the app.</div>','ink'),
+ 'The app is the last mile, not the job. Say that plainly.'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">There is a rung in between. Nobody jumps.</div>')
+ +cell(1,13,2,4,'<div class="ch">CS <span class="mut">&mdash; answers the app</span></div>')
+ +cell(1,13,4,5,'<div class="bs mut">gate &middot; restate the merchant&rsquo;s outcome before you reply</div>','plain')
+ +cell(1,13,5,7,'<div class="ch">CS who reads <span class="mut">&mdash; answers the ticket behind the ticket</span></div>','lemon')
+ +cell(1,13,7,8,'<div class="bs mut">gate &middot; read a brand cold &middot; launch your own store</div>','plain')
+ +cell(1,13,8,9,'<div class="ch">AM <span class="mut">&mdash; answers for the account</span></div>','ink'),
+ 'The middle rung is a real job and a real raise. Aim there first. Not everyone will want rung three — owning revenue and renewals is a different appetite, not a better person.'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">And what it does for you on Monday</div>'
+   '<div class="t mt">This is not homework for <em>a promotion later.</em></div>')
+ +cell(1,7,3,7,'<ul><li class="b">You stop being stuck on tickets you do not understand</li>'
+   '<li class="b">You stop asking her to explain &mdash; you already know what she means</li>'
+   '<li class="b">Your forwards get <b>actioned</b>, because &ldquo;I think&hellip;&rdquo; is filled in</li></ul>')
+ +cell(7,13,3,7,'<ul><li class="b">Fewer angry follow-ups, because you solved <b>the real thing</b></li>'
+   '<li class="b">Faster replies &mdash; you are not decoding word by word</li>'
+   '<li class="b">The copy-forward loop &mdash; the part that makes the job feel bad &mdash; <b>stops</b></li></ul>','lemon')
+ +cell(1,13,7,9,'<div class="st">It makes Monday easier. The rest follows from that.</div>','ink'),
+ 'This is the slide that decides whether they do the reps. If they hear "promotion track" they will half-do it. If they believe it makes Monday easier, they show up.'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">How we will learn it &mdash; four sessions, two hours each</div>')
+ +cell(1,4,2,7,'<div class="n-sm">01</div><div class="ch mt">How a shop makes money</div>'
+   '<div class="rule"></div><div class="bs mut">price, margin, and why the second order is the business</div>')
+ +cell(4,7,2,7,'<div class="n-sm">02</div><div class="ch mt">What is wrong with this shop?</div>'
+   '<div class="rule"></div><div class="bs mut">find the real problem &mdash; and which one to fix first</div>','lemon')
+ +cell(7,10,2,7,'<div class="n-sm">03</div><div class="ch mt">Why people come back</div>'
+   '<div class="rule"></div><div class="bs mut">retention, and what actually makes someone return</div>')
+ +cell(10,13,2,7,'<div class="n-sm">04</div><div class="ch mt">Bring it together</div>'
+   '<div class="rule"></div><div class="bs mut">is it ours, does it need us, what do we say</div>','ink')
+ +cell(1,13,7,9,'<div class="st">No lectures. Every session you break down <em>a real brand</em> &mdash; '
+   'and you launch <em>a real store</em> of your own.</div>'),
+ 'Not a manual and not a product certification. Reps on real shops.'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">And a real store &mdash; not a development store</div>'
+   '<div class="t mt">You will be the <em>owner</em>, not the user.</div>'
+   '<div class="b mt2">One product. Real checkout. <b>Max three apps</b>, and every one has to survive '
+   '&ldquo;what job does this do?&rdquo;</div>')
+ +cell(7,13,1,6,'<table style="font-size:23px">'
+   '<tr><th>Dev store</th><th>Real store</th></tr>'
+   '<tr><td>you click Admin</td><td>you are the <b>owner</b></td></tr>'
+   '<tr><td>nothing is at stake</td><td>a wrong discount costs you</td></tr>'
+   '<tr><td>&ldquo;set up the app&rdquo; feels like the work</td><td><b>order 1 &rarr; order 2</b> is the work</td></tr>'
+   '<tr><td>you still think like CS</td><td>you think like the person on the call</td></tr></table>','flat')
+ +cell(1,13,6,9,'<div class="st">Complete <em>order one</em>. Then try to make <em>order two</em> happen.</div>'
+   '<div class="b mt mut">That is the whole simulation, and it is the part you will remember in a year.</div>','ink'),
+ 'Today CS stores are many apps, low quality, not to standard. That is the thing being fixed — and building one to standard is the cause, not a side exercise.'),
+
+slide(
+ cell(1,13,1,5,'<div class="d">We don&rsquo;t get paid because<br>they learned the app.</div>','ink')
+ +cell(1,13,5,9,'<div class="d">They get paid when the same<br>customer <em>orders again.</em></div>'
+   '<div class="st mt">Your job is that outcome &mdash; faster.</div>','lemon'),
+ 'Close here. Do not add anything. Sit down.'),
+]
+
 if __name__=='__main__':
     os.chdir(D)
     print('Building (Neo-Grid Bold):')
+    build('00-talk.html','The Talk — from app support to retention service',TALK)
     build('session-1-money.html','Session 1 — How a shop makes money',SESS1)
     build('session-2-troubleshoot.html','Session 2 — What is wrong with this shop?',SESS2)
     build('session-3-retention.html','Session 3 — Why people come back',S3)

@@ -14,6 +14,7 @@ Plain markdown. Not in Obsidian yet. Not a product certification. Not English cl
 questions.md       Thomas's raw gaps. The source everything answers.
 
 sessions/          WHAT HAPPENS IN THE ROOM
+  00-talk.html       the talk — 20-25 min, no app, no live sites
   session-N.html     the deck — Neo-Grid Bold, fixed 16:9, self-contained
   session-N.md       the runsheet — prep, timing, live beats, homework
   resources.md       every video, link, live tool and number, with sources
@@ -41,8 +42,9 @@ Each is one topic, one goal. **Model → diagnosis → domain → judgement.**
 Decks are **Neo-Grid Bold** (frontend-slides by zarazhangrui) — fixed 16:9, open in any browser,
 **← →** to move, **S** for speaker notes, **Cmd-P** to export PDF.
 
-| | Session | Goal | Lands on |
+| | | Goal | Lands on |
 |---|---|---|---|
+| **00** | **The Talk** *(20–25 min)* | why the job is changing, and what we are going to do | *Your job is that outcome — faster.* |
 | **1** | **How a shop makes money** | a shop is a business, not a website | *The business is not the shirt. It is the second shirt.* |
 | **2** | **What is wrong with this shop?** | find the real problem, and say which to fix first | *Every merchant message is a symptom, never a cause.* |
 | **3** | **Why people come back** | why someone buys twice, and what makes them | *Multiply a bad product and it is still nothing.* |
