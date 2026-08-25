@@ -63,27 +63,25 @@ Decks and runsheets: [`sessions/`](sessions/).
 
 | | Session | Goal |
 |---|---|---|
-| **1** | **The basics** — how a shop makes money | a shop is a business, not a website |
-| **2** | **Break down a brand** | open any brand, say what it does and where it leaks |
+| **1** | **How a shop makes money** | a shop is a business, not a website |
+| **2** | **What is wrong with this shop?** | find the real problem, and say which to fix first |
 | **3** | **Why people come back** | why someone buys twice, and what actually makes them |
 | **4** | **Bring it together** | is it ours, does it need us, what do we say |
 
-The arc is **model → method → domain → judgement.** Session 1 gives them the mental model.
-Session 2 gives them the method. Session 3 gives them our subject. Session 4 makes them decide.
+The arc is **model → diagnosis → domain → judgement.** Session 1 gives them the mental model.
+Session 2 makes them a troubleshooter. Session 3 gives them our subject. Session 4 makes them decide.
 
 **Shape of every session — 2 hours:**
 
 | | |
 |---|---|
 | 0:00 | Store checkpoint, homework on the table |
-| 0:10 | **Teach — ~20 min of slides. That is all the talking.** |
-| 0:30 | Live beats — real sites, real ads, view-source |
-| 0:45 | **Rep — teardown on a real brand, in pairs, 50 min** |
-| 1:35 | Report out, every pair |
-| 1:55 | Homework |
+| 0:10 | **Teach — slides, with live-site beats woven through** |
+| 1:00 | **Rep — a real brand, in pairs, 45 min** |
+| 1:45 | Report out, every pair |
 
-If the teaching ever runs past 25 minutes it is eating the reps, which is the failure this course exists
-to fix.
+If the teaching ever crowds the rep out, it is eating the thing that actually works.
+
 
 ## The ticket track — homework, then the gate
 

@@ -1,0 +1,52 @@
+# Session 2 — What is wrong with this shop?
+
+**Goal:** given a shop you have never seen, find what is **actually** wrong with it — and say which problem to fix first.
+**Deck:** `session-2-troubleshoot.html` · 19 slides · **Resources:** [`resources.md`](resources.md)
+**Material:** [`shop vs online`](../material/journey/2-shop-vs-online.md) · [`stops 1–9`](../material/journey/3-stops-1-9.md) · [`problem decoder`](../material/journey/10-merchant-problem-decoder.md) · [`stack is a confession`](../material/journey/7-stack-confession.md) · [`full stack map`](../material/journey/9-stack-map.md) · [`what an app really solves`](../material/money/8-what-an-app-really-solves.md)
+
+## Prep
+- [ ] **Walk Halfdays yourself the night before** — know where its popup fires
+- [ ] Brand site open, cart empty, **not logged in** · phone mirrored if possible
+- [ ] **Practise the view-source demo once** — know the keystrokes cold
+- [ ] Everyone brings a charged phone
+
+## Run of show — 2 hours
+| Time | Beat | Format |
+|---|---|---|
+| 0:00 | Checkpoint + homework on the table | round the room |
+| 0:10 | **Every merchant message is a symptom, never a cause** | slides |
+| 0:14 | Outside-in · a shop vs online · *someone who leaves is a list* | slides |
+| 0:16 | **The funnel — 100 land, 3 pay** | slides |
+| 0:20 | **The problem decoder** — what they say → what it means → where | slides |
+| 0:25 | The product-page fixes — *move everything upward* | slides |
+| 0:29 | **The checkout killers — including our own widget** | slides |
+| 0:34 | "Conversion is down" is a symptom | slides |
+| 0:37 | **View source, live** → the stack is a confession | ◉ live |
+| 0:42 | The real board — 28 fields, one of them ours · the yotpo trap | slides |
+| 0:47 | **Alia** and **Order Editing** — what an app really solves | slides |
+| 0:53 | **Which problem do you fix first?** — ranking by people-lost and cost-to-fix | slides |
+| 0:58 | **Brand beat** — what is this owner paying to fix? | ◉ live |
+| 1:05 | **Rep: diagnose a brand, then rank the problems** | ▲ 45 min |
+| 1:50 | Report out — three problems, ranked, with the cost of each | — |
+
+## The most senior beat in the session
+**Which one do you fix first?** Anyone can list problems. Ranking them — by *how many people it loses*
+and *what it costs to fix* — is judgement. And the honest order puts **us last**: a merchant with a
+broken checkout button does not need a loyalty program, and if we sell them one it will not work.
+
+> Recommending someone else's fix first is how you earn the conversation about ours.
+
+## The two beats that carry it
+**The view-source demo.** Sixty seconds and they know more than a discovery call would tell them.
+
+**The loyalty-widget slide.** A loyalty widget covering the checkout button is a named conversion killer
+— that is *our app*. Read the quote slowly, then land it. It turns an annoying ticket ("can you move the
+widget?") into a real signal, and makes them the person who catches it.
+
+**Live, not screenshots.** Walk the real site. Screenshots in `resources.md` are the wifi fallback.
+**Stop before paying** — nobody buys anything on the projector.
+
+## Homework
+1. A full teardown on two more brands — **three ranked problems each**
+2. Walk your own store on your phone and diagnose it. Be honest.
+3. Three tickets — which step of the path is each really about?

@@ -181,14 +181,16 @@ def cell(c1,c2,r1,r2,inner,cls=''):
     return (f'<div class="card {cls}" style="grid-column:{c1}/{c2};grid-row:{r1}/{r2}">{inner}</div>')
 
 def slide(frame_html, notes='', kicker=None, num=None):
-    extra = (f'<div class="kick">{kicker}</div>' if kicker else '') + (f'<div class="pn">{num}</div>' if num else '')
+    # `num` is ignored — build() numbers slides by position so a split cannot desync them
+    extra = f'<div class="kick">{kicker}</div>' if kicker else ''
     return {'html':f'<div class="frame">{frame_html}</div>{extra}','n':notes}
 
 def build(fn, title, slides):
     secs=''
     for k,s in enumerate(slides):
         s.setdefault('n','')
-        secs+=f'<section class="slide" data-notes="{H.escape(s["n"])}">{s["html"]}</section>'
+        pn = '' if k==0 else f'<div class="pn">{k+1:02d}</div>'
+        secs+=f'<section class="slide" data-notes="{H.escape(s["n"])}">{s["html"]}{pn}</section>'
     doc=(f'<!doctype html><html lang="en"><head><meta charset="utf-8">'
          f'<meta name="viewport" content="width=device-width,initial-scale=1"><title>{H.escape(title)}</title>'
          '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
@@ -662,12 +664,13 @@ BRANDBEAT(2,'What are they <em>paying to fix</em> &mdash; and is it their real l
  'Halfdays runs Klaviyo, Yotpo Reviews and Rebuy — and no loyalty. Rebuy says they think their orders are too thin. Klaviyo says they want to reach people again. Nothing says they have solved coming back. Now ask whether that matches where you actually watched people fall out.','15','Halfdays','halfdays.com'),
 
 slide(
- cell(1,8,1,9,'<div class="l mut">Now you &middot; 50 minutes</div>'
-   '<div class="t mt">A brand you have <em>not</em> seen.</div><div class="rule"></div>'
+ cell(1,8,1,9,'<div class="l mut">Now you &middot; 45 minutes</div>'
+   '<div class="t mt">Diagnose a shop you have <em>not</em> seen.</div><div class="rule"></div>'
    '<ul><li class="b">Pairs, <b>phones out</b>, real money in the cart</li>'
    '<li class="b">Walk it as a customer. Fill <b>&sect;0&ndash;6</b></li>'
-   '<li class="b">Every step: what you saw &middot; what they wanted &middot; <b>what would make you quit</b></li></ul>')
- +cell(8,13,1,5,'<div class="ch">The main door, the place you would quit, and <em>what this owner is paying to fix.</em></div>','lemon')
+   '<li class="b">Write down <b>every problem you find</b> &mdash; then <b>rank them</b></li></ul>')
+ +cell(8,13,1,5,'<div class="ch">Three problems, ranked. And <em>what it would cost</em> to fix each one.</div>'
+   '<div class="bs mt2 mut">If loyalty is not in your top three, say so.</div>','lemon')
  +cell(8,13,5,9,'<div class="c3 lem">Homework</div>'
    '<div class="bs mt">A full teardown on two more brands.</div>'
    '<div class="bs mt">Walk your own store. Mark where you would quit.</div>'
@@ -678,7 +681,7 @@ slide(
 # ═════════════════ SESSION 2 — WHY PEOPLE COME BACK ═════════════════
 S3=[
 TITLE('Goal: why a person buys a second time, and what actually makes them. Today we break down TWO brands — one with a strong reason to return, one with none.',
- 'Session Two','Why people<br>come<br><em>back</em>',
+ 'Session Three','Why people<br>come<br><em>back</em>',
  ('Retention and loyalty. Our own subject.','Last session ended when she paid. Everything today is after the money changed hands.'),'Our<br>subject'),
 
 slide(
@@ -919,6 +922,47 @@ slide(
  'This is the most uncomfortable slide in session one and the most useful. It converts an annoying ticket — move the widget — into a real signal, and it makes them the person who catches it.',
  num='25d'),
 ]
+
+_DIAGNOSE = slide(
+ cell(1,13,1,3,'<div class="l mut">Every merchant message you will ever get is one of these</div>'
+   '<div class="t mt">A <em>symptom.</em> Never a cause.</div>')
+ +cell(1,7,3,6,'<div class="c3">What lands in your queue</div><div class="rule"></div>'
+   '<div class="bs">&ldquo;Rewards aren&rsquo;t working&rdquo;</div>'
+   '<div class="bs">&ldquo;Conversion is down&rdquo;</div>'
+   '<div class="bs">&ldquo;Sales are flat&rdquo;</div>'
+   '<div class="bs">&ldquo;People aren&rsquo;t coming back&rdquo;</div>'
+   '<div class="bs">&ldquo;The widget looks wrong&rdquo;</div>')
+ +cell(7,13,3,6,'<div class="c3">What is actually true</div><div class="rule"></div>'
+   '<div class="b">Each one has <b>a cause somewhere on the path</b> &mdash; and it is almost never '
+   'where the merchant is pointing.</div>','lemon')
+ +cell(1,13,6,9,'<div class="st">Today: a shop you have never seen. Find what is <em>actually</em> wrong. '
+   'Then say <em>which one to fix first.</em></div>'
+   '<div class="b mt mut">Not to fix it yourself &mdash; to find it, name it, and rank it. '
+   'That is the whole job, and nobody else in the company is doing it.</div>','ink'),
+ 'Set the frame before any content. Every complaint is a symptom. The path is where causes live. And the skill that separates an AM is not finding problems — it is knowing which one matters most.',
+ num='02')
+
+_RANK = slide(
+ cell(1,13,1,3,'<div class="l mut">Finding problems is the easy half</div>'
+   '<div class="t mt">Which one do you <em>fix first?</em></div>')
+ +cell(1,7,3,7,'<div class="c3">Rank by two things only</div><div class="rule"></div>'
+   '<div class="b"><b>1 &middot; How many people does it lose?</b><br>'
+   '<span class="mut">90 of 100 left at the product page. Nothing else on the site is close.</span></div>'
+   '<div class="b mt2"><b>2 &middot; What does it cost to fix?</b><br>'
+   '<span class="mut">Three bullets and better photos cost nothing. A subscription programme costs months.</span></div>')
+ +cell(7,13,3,7,'<div class="ch">So the order is usually</div>'
+   '<div class="rule"></div>'
+   '<div class="bs">1. something is <b>broken</b> &mdash; free to fix, fix today</div>'
+   '<div class="bs">2. the <b>product page</b> &mdash; free, biggest leak</div>'
+   '<div class="bs">3. <b>shipping and checkout</b> &mdash; cheap, second biggest</div>'
+   '<div class="bs">4. <b>AOV</b> &mdash; bundles, thresholds</div>'
+   '<div class="bs">5. <b>coming back</b> &mdash; slowest, and where we live</div>','ink')
+ +cell(1,13,7,9,'<div class="st">Notice where <em>we</em> come.</div>'
+   '<div class="b mt mut">Last. A merchant with a broken checkout button does not need a loyalty program &mdash; '
+   'and if we sell them one, it will not work, and they will be right to blame us. '
+   '<b>Recommending someone else&rsquo;s fix first is how you earn the conversation about ours.</b></div>','lemon'),
+ 'This is the most senior thing in the session. Anyone can list problems. Ranking them by people-lost and cost-to-fix is judgement — and being honest that we come last is what makes the recommendation credible when we finally do come up.',
+ num='15')
 
 # ── the real board: every field, filed by funnel step ──
 _STACKMAP = [
@@ -1176,7 +1220,7 @@ slide(
 # ═════════════════ SESSION 3 — BRING IT TOGETHER ═════════════════
 S4=[
 TITLE('Goal: given a real merchant, say whether it is ours, whether it needs us, and what to do. Today: two brands side by side, one of which we should turn down.',
- 'Session Three','Bring it<br><em>together</em>',
+ 'Session Four','Bring it<br><em>together</em>',
  ('A real merchant. A real call.','Two brands side by side &mdash; and one of them we are going to turn down.'),'The<br>verdict'),
 
 slide(
@@ -1483,7 +1527,14 @@ slide(
  num='07'),
 ]
 
-MERGED = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3)] + _DECODER + [S2[i] for i in (11,12,13)] + _STACKMAP + [S2[i] for i in (14,15)]
+# ── SESSION 1: why we are here + how a shop makes money ──
+SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16,17)]
+
+# ── SESSION 2: how to read a shop ──
+SESS2 = [TITLE('Goal: given a shop you have never seen, find what is actually wrong with it — and say which problem to fix first. Today we diagnose one together, then you diagnose another alone.',
+  'Session Two','What is<br><em>wrong</em><br>with this shop?',
+  ('Troubleshooting a real business.','Every merchant complaint is a symptom. Today you learn to find the cause.'),'Trouble-<br>shooting')] \
+  + [_DIAGNOSE] + [S2[i] for i in (1,2,3)] + _DECODER + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
 
 
 S4.insert(4, slide(
@@ -1524,6 +1575,7 @@ S4.insert(5, slide(
 if __name__=='__main__':
     os.chdir(D)
     print('Building (Neo-Grid Bold):')
-    build('session-1-basics.html','Session 1 — How a shop works, and how to read one',MERGED)
-    build('session-2-retention.html','Session 2 — Why people come back',S3)
-    build('session-3-together.html','Session 3 — Bring it together',S4)
+    build('session-1-money.html','Session 1 — How a shop makes money',SESS1)
+    build('session-2-troubleshoot.html','Session 2 — What is wrong with this shop?',SESS2)
+    build('session-3-retention.html','Session 3 — Why people come back',S3)
+    build('session-4-together.html','Session 4 — Bring it together',S4)

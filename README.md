@@ -35,17 +35,18 @@ handouts/          WHAT THEY HOLD
 **Two zones.** `sessions/` is the training itself — mixed format, live sites, video, drills.
 `material/` is the knowledge, atomized one concept per file, so a session can point at exactly what it needs.
 
-### The three sessions
+### The four sessions
 
-Each is one topic, one goal. Model+method &rarr; domain &rarr; judgement.
+Each is one topic, one goal. **Model → diagnosis → domain → judgement.**
 Decks are **Neo-Grid Bold** (frontend-slides by zarazhangrui) — fixed 16:9, open in any browser,
 **← →** to move, **S** for speaker notes, **Cmd-P** to export PDF.
 
 | | Session | Goal | Lands on |
 |---|---|---|---|
-| **1** | **How a shop works, and how to read one** *(2.5h)* | a shop is a business, not a website | *The business is not the shirt. It is the second shirt.* |
-| **2** | **Why people come back** | why someone buys twice, and what makes them | *Loyalty buys timing and preference, not affection.* |
-| **3** | **Bring it together** | is it ours, does it need us, what do we say | *"Not yet" is a correct answer.* |
+| **1** | **How a shop makes money** | a shop is a business, not a website | *The business is not the shirt. It is the second shirt.* |
+| **2** | **What is wrong with this shop?** | find the real problem, and say which to fix first | *Every merchant message is a symptom, never a cause.* |
+| **3** | **Why people come back** | why someone buys twice, and what makes them | *Multiply a bad product and it is still nothing.* |
+| **4** | **Bring it together** | is it ours, does it need us, what do we say | *"Not yet" is a correct answer.* |
 
 Joy appears on a screen only **after** the graduation gate — placement and on-brand config,
 from `material/loyalty/5` and `/6`.
@@ -57,9 +58,10 @@ TALK  (20–25 min, no Joy)
   │
 BUILD TRACK  ── launch a real store, to standard, runs throughout
   │
-S1  how a shop works     money, price, the shoe, the path, the stack read
-S2  why they come back   retention, points vs credit, tiers, referral
-S3  bring it together    ICP, stage, the verdict, the prescription
+S1  how a shop makes money   price layers, the $100 shoe, order 1 vs order 2, allowable CAC
+S2  what is wrong with it     the funnel, the problem decoder, the stack read, ranking the fixes
+S3  why people come back      the product first, the ways back, points vs credit, tiers
+S4  bring it together         ICP, stage, the verdict, the prescription
 
     (handouts/ teardown-sheet + shop-map are on the table for all four)
   │
