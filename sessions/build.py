@@ -848,6 +848,78 @@ S1.append(slide(
  'The threshold rule is the concrete one to remember: one dollar above where their average order sits today. Set it lower and it does nothing; set it far higher and it reads as a wall. Source: Chase Chappell, and it matches what we see in accounts.',
  num='23'))
 
+# ── the merchant problem decoder ──
+_DECODER = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">A merchant never says &ldquo;I have a leak at the product page&rdquo;</div>'
+   '<div class="st mt">They say a <em>number is bad.</em> Here is how to translate.</div>')
+ +cell(1,13,2,8,'<table style="font-size:23px">'
+   '<tr><th>What they say</th><th>What it actually means</th><th>Where</th></tr>'
+   '<tr><td><b>Sales flat, ROAS great</b></td><td>ads are re-reaching people who already buy</td><td class="mut">come back</td></tr>'
+   '<tr><td><b>Low returning rate</b></td><td>nothing brings them back &mdash; fix depends on what they sell</td><td class="mut">come back</td></tr>'
+   '<tr><td><b>Low AOV</b></td><td>not enough money per order</td><td class="mut">cart</td></tr>'
+   '<tr><td><b>Low ROAS, but clicks and CVR fine</b></td><td><b>AOV is the issue</b> &mdash; nothing is broken</td><td class="mut">money</td></tr>'
+   '<tr><td><b>Good clicks, cheap reach, low CVR</b></td><td>a <b>site</b> problem, not an ads problem</td><td class="mut">product page</td></tr>'
+   '<tr><td><b>Low CVR but high AOV</b></td><td><b>normal.</b> A $1,700 machine will never convert like a candle</td><td class="mut">&mdash;</td></tr>'
+   '<tr><td><b>8% add to cart, 1% conversion</b></td><td><b>shipping too expensive</b> &mdash; or something is literally broken</td><td class="mut">checkout</td></tr>'
+   '</table>','flat')
+ +cell(1,13,8,9,'<div class="c3">You are not memorising this. You are learning the <em>path</em> &mdash; '
+   'so you could rebuild most of it yourself.</div>','ink'),
+ 'Do not hand this out as a list. Use it as the answer key while pairs work a real brand: they name the symptom, they say where on the journey it lives, THEN you check it here. Source is Chase Chappell — the site and business half only.',
+ num='25a'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">When the product page is the problem</div>'
+   '<div class="t mt">Move everything <em>upward.</em></div>'
+   '<div class="b mt2">On first load she should see the offer, the proof and the price &mdash; without scrolling once.</div>')
+ +cell(7,13,1,6,'<ul><li class="bs"><b>Three bullets</b> stating the offer, up top</li>'
+   '<li class="bs"><b>Five to seven images</b> &mdash; ingredients, benefits, serving, lifestyle</li>'
+   '<li class="bs"><b>Subscribe &amp; save selected by default</b></li>'
+   '<li class="bs"><b>Remove the quantity selector</b> &mdash; she can add more from the cart</li>'
+   '<li class="bs">Show the pack she actually picked. Six-pack? Show six.</li>'
+   '<li class="bs"><b>Banner + free shipping above the fold</b></li>'
+   '<li class="bs">Collapse the padding</li></ul>')
+ +cell(1,13,6,9,'<div class="st">Ninety of a hundred people left on this page. '
+   'These seven fixes cost <em>nothing</em> and no app is required.</div>'
+   '<div class="b mt mut">Which is worth saying to a merchant who is about to buy their fourth app: '
+   'the biggest leak on your site is free to fix.</div>','ink'),
+ 'This is the single most actionable list in the course, and it is the leak the funnel just showed them — 90 of 100. Nobody needs to sell them anything to fix it.',
+ num='25b'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">8% add to cart, 1% conversion &mdash; something is broken</div>'
+   '<div class="st mt">Ninety percent of the time it is just <em>shipping.</em></div>')
+ +cell(1,7,2,7,'<div class="c3">$30 product. $20 to ship.</div>'
+   '<div class="b mt2">She added it, saw the total, and left. It is not the price of the product &mdash; '
+   'it is <b>the surprise</b>.</div>','lemon')
+ +cell(7,13,2,7,'<div class="c3">And when it is not shipping</div><div class="rule"></div>'
+   '<ul><li class="bs">a button <b>covering</b> the button</li>'
+   '<li class="bs">cart page <b>and</b> drawer cart both loading</li>'
+   '<li class="bs"><b>a loyalty widget over the checkout button</b></li>'
+   '<li class="bs">a support widget over the CTA</li>'
+   '<li class="bs">three payment options instead of fifteen</li>'
+   '<li class="bs">targeting a country they cannot ship to</li></ul>')
+ +cell(1,13,7,9,'<div class="d">One of those is <em>our app.</em></div>','ink'),
+ 'Read the list slowly and let them hear it. Then land the last panel.',
+ num='25c'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">Read it again</div>'
+   '<div class="st mt">&ldquo;A loyalty button that is 10% off if you claim it &mdash; but the checkout button '
+   'is here, and a support button there, and the only spot you can click is <em>this little spot.</em>&rdquo;</div>'
+   '<div class="bs mt mut">&mdash; and that is a conversion killer.</div>')
+ +cell(1,7,3,7,'<div class="ch">Our widget can be the reason<br>their checkout is failing.</div>'
+   '<div class="b mt2">Which is why <b>placement is not a preference.</b> It costs the merchant money.</div>','lemon')
+ +cell(7,13,3,7,'<div class="c3">So when a merchant says<br>&ldquo;can you move the widget?&rdquo;</div>'
+   '<div class="b mt2">That is <b>not</b> fussiness. They may have watched their conversion rate fall.</div>'
+   '<div class="ch mt2 lem">Move it &mdash; then ask what changed.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">The one app on their site you are responsible for '
+   'is on the shortlist of things that break checkout.</div>'
+   '<div class="b mt mut">Nobody else in this company is going to tell them. You will be the one who sees it.</div>'),
+ 'This is the most uncomfortable slide in session one and the most useful. It converts an annoying ticket — move the widget — into a real signal, and it makes them the person who catches it.',
+ num='25d'),
+]
+
 # ── the real board: every field, filed by funnel step ──
 _STACKMAP = [
 slide(
@@ -1411,7 +1483,7 @@ slide(
  num='07'),
 ]
 
-MERGED = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3,11,12,13)] + _STACKMAP + [S2[i] for i in (14,15)]
+MERGED = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3)] + _DECODER + [S2[i] for i in (11,12,13)] + _STACKMAP + [S2[i] for i in (14,15)]
 
 
 S4.insert(4, slide(

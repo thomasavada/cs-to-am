@@ -24,7 +24,9 @@
 | 0:29 | **Brand beat 1** — what does it cost them to make? | ◉ live |
 | 0:33 | **Build order 1 on the whiteboard** | ✎ live — do not show the total |
 | 0:40 | Why would anybody run this? → order 2 → allowable CAC → once vs again → two fears | slides |
-| 0:48 | Outside-in · a shop vs online · the path · conversion is a symptom | slides |
+| 0:48 | Outside-in · a shop vs online · **the funnel: 100 land, 3 pay** | slides |
+| 0:54 | **The merchant problem decoder** — what they say → what it means → where | slides |
+| 0:58 | The product-page fixes · **the checkout killers, including our own widget** | slides |
 | 0:56 | **View source, live** → the stack is a confession | ◉ live |
 | 1:02 | **Brand beat 2** — what is this owner paying to fix? | ◉ live |
 | 1:10 | **Rep: full teardown §0–6, pairs** | ▲ 50 min |
@@ -37,6 +39,11 @@ Then stop, and let the silence work before order 2.
 
 **The view-source demo.** Sixty seconds, and they know more than a discovery call would tell them.
 It is the moment the job changes shape for them.
+
+**The loyalty-widget slide.** A loyalty widget covering the checkout button is a named conversion killer
+— that is our app. Read the quote slowly, then land it. It converts an annoying ticket ("can you move
+the widget?") into a real signal, and makes them the person who catches it.
+Decoder and sources: [`material/journey/10-merchant-problem-decoder.md`](../material/journey/10-merchant-problem-decoder.md).
 
 ## Homework
 1. A full teardown on **two** more brands
