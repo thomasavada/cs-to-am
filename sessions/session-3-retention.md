@@ -31,6 +31,28 @@
 > now live in session 2, where the diagnosis belongs. This session is the **prescription**:
 > does the product deserve a second purchase, and what should they actually run?
 
+## Running the 45 minutes
+
+| | |
+|---|---|
+| **3 min** | Get your two brands — one strong repeat reason, one weak |
+| **10 min** | Brand A — why would a human buy this twice? What do they already do? |
+| **10 min** | Brand B — same. **"No reason" is allowed, and often right.** |
+| **12 min** | Prescribe one thing each — or *nothing yet* |
+| **10 min** | **Name what you rejected, and what it would have lost** |
+
+**Say the grading criterion before they start.** Otherwise they spend forty minutes on the
+recommendation and thirty seconds on the part you are actually marking.
+
+> Anyone can pick something. Only somebody who understands it can say what the alternative costs.
+
+### What you do while they work
+The weak-repeat brand is where the learning is. When a pair tries to force a points programme onto a
+product bought once, ask: **"when do the points expire, and when does she need another one?"**
+
+If nobody in the room ever recommends something we do not sell, they have not understood the job —
+the worked example on screen recommends referral and range for HexClad on purpose.
+
 ## The beat that reframes everything
 **The product comes first.** Before any channel or mechanism: *why would she buy it again? Because she
 liked it. Did she? Do we know?*
