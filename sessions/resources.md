@@ -94,6 +94,25 @@ Built as HTML/CSS inside the slides, so they scale on any projector and print to
 - **S3** — the email timeline, week 6 highlighted
 - **S4** — Shop A vs Shop B, the multiplier
 
+## Assets already captured
+
+`sessions/assets/` — referenced by the decks, so **keep the folder next to the HTML**.
+
+| File | What | Used in |
+|---|---|---|
+| `crownaffair.jpg` | homepage — free shipping $75, Hair Quiz visible | S2 winner audit |
+| `halfdays.jpg` | homepage — the 10% capture tab is visible on the left | S1 brand beat |
+| `hexclad.jpg` | homepage — end-of-summer sale, 52% off | S2 Plus store |
+| `hexclad-popup.jpg` | **the live popup: "WANT TO SHOP UP TO 52% OFF?"** | S2 popup, S3 HexClad |
+| `dsc-store.jpg` | Dollar Shave Club today — $4.99 starter set | S1 DSC live |
+| `rae-404.jpg` | `/pages/rewards` → 404 | S4 the money shot |
+| `sneaker.jpg` | generated shoe illustration | S1 the $100 shoe |
+| `logos/` | **30 app marks** — Klaviyo, Recharge, Rivo, Smile, Okendo… | stack tables everywhere |
+
+The HexClad popup is the single best teaching image in the set: a real brand handing out **52% off for
+an email**, before you have looked at a single pan. It carries the popup lesson, fear #2, and the
+deals-trap all at once.
+
 ## Screenshots still to capture
 
 Not blocking, but each one saves a live-demo risk:

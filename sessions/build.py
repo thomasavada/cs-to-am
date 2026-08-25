@@ -15,6 +15,7 @@ def _asset(n):
     import base64
     return 'data:image/jpeg;base64,' + base64.b64encode(open(jpg,'rb').read()).decode()
 SNEAKER, DSC, RAE404 = _asset('sneaker'), _asset('dsc-store'), _asset('rae-404')
+CROWN, HALFDAYS, HEXCLAD, HEXPOPUP = _asset('crownaffair'), _asset('halfdays'), _asset('hexclad'), _asset('hexclad-popup')
 
 CSS = """
 :root{--paper:#F5F4EF;--bg:#ECECE8;--ink:#0A0A0A;--lemon:#E6FF3D;--muted:#8A8A85;--stage-bg:#1A1A1A}
@@ -224,6 +225,20 @@ def stack(segs):
         out+=(f'<div style="flex:{w} 1 auto;background:{bg};color:{fg}">'
               f'<div class="{vc}">{v}</div>'+(f'<div class="k">{k}</div>' if w>=7 else '')+'</div>')
     return f'<div class="stack">{out}</div>'
+
+def logo(name, size=46):
+    p = os.path.join(D,'assets','logos',name+'.png')
+    if not os.path.exists(p): return ''
+    src = ('data:image/png;base64,'+__import__('base64').b64encode(open(p,'rb').read()).decode()) if EMBED else f'assets/logos/{name}.png'
+    return (f'<img src="{src}" alt="" style="width:{size}px;height:{size}px;object-fit:contain;'
+            'vertical-align:middle;background:#fff;border-radius:8px;padding:4px;margin-right:10px">')
+
+def applogo(name, label, size=46):
+    return ('<span style="display:inline-flex;align-items:center;margin:0 22px 12px 0;white-space:nowrap">'
+            + logo(name,size) + f'<span class="bs">{label}</span></span>')
+
+def logorow(items, size=46):
+    return '<div style="display:flex;flex-wrap:wrap;align-items:center">' + ''.join(applogo(n,l,size) for n,l in items) + '</div>'
 
 def link(url, label=None):
     """A clickable chip. The deck's click-to-advance handler ignores <a>, so these open cleanly."""
@@ -635,6 +650,7 @@ slide(
  'Do this live with Halfdays. Find a real ad, click through, and judge the match as a room.',
  kicker='Open it live', num='06'),
 
+
 WN('Should a shop run a popup?',
  'Yes &mdash; it buys her identity',
  'Not the sale &mdash; the <b>email</b>. Without it you cannot recover a cart, send a refill reminder, or retarget. '
@@ -704,23 +720,23 @@ slide(
    '<div class="t mt">View<br>source.</div>'
    '<div class="b mt2">Right-click &rarr; View Page Source &rarr; Ctrl-F</div>'
    '<div class="bs mt mut">Then the footer &middot; /account &middot; /pages/rewards</div>')
- +cell(7,13,1,6,'<div class="ls mut mb">search for</div>'
-   '<div class="bs" style="font-family:\'JetBrains Mono\',monospace;line-height:2">'
-   'klaviyo &middot; attentive &middot; recharge<br>appstle &middot; skio &middot; smile &middot; yotpo<br>'
-   'loyaltylion &middot; rivo &middot; growave<br>okendo &middot; judge.me &middot; gorgias<br>rebuy &middot; subscribe</div>','ink')
+ +cell(7,13,1,6,'<div class="ls mb">search for these</div>'+logorow([
+   ('klaviyo','klaviyo'),('attentive','attentive'),('recharge','recharge'),('skio','skio'),
+   ('smile','smile'),('yotpo','yotpo'),('loyaltylion','loyaltylion'),('rivo','rivo'),
+   ('okendo','okendo'),('judgeme','judge.me'),('gorgias','gorgias'),('rebuy','rebuy')],40),'ink')
  +cell(1,13,6,9,'<div class="st">Sixty seconds, and you know more than <em>a discovery call</em> would tell you.</div>','lemon'),
  'Do it live on Halfdays. It is genuinely fun to watch.', kicker='Open it live', num='13'),
 
 slide(
  cell(1,13,1,2,'<div class="t">The stack is a <em>confession</em></div>')
- +cell(1,13,2,7,'<table>'
+ +cell(1,13,2,7,'<table style="font-size:24px">'
    '<tr><th>They installed</th><th>So they believe their problem is</th></tr>'
-   '<tr><td><b>Klaviyo / Attentive</b></td><td>&ldquo;I cannot reach my visitors again&rdquo;</td></tr>'
-   '<tr><td><b>a popup tool</b></td><td>&ldquo;too many people leave anonymous&rdquo;</td></tr>'
-   '<tr><td><b>Okendo / Judge.me</b></td><td>&ldquo;strangers do not trust me yet&rdquo;</td></tr>'
-   '<tr><td><b>Rebuy / bundle</b></td><td>&ldquo;my orders are too thin&rdquo; &mdash; AOV</td></tr>'
-   '<tr><td><b>Recharge / Skio</b></td><td>&ldquo;customers buy once and vanish&rdquo; &mdash; LTV</td></tr>'
-   '<tr><td><b>a loyalty app</b></td><td>&ldquo;I have a base and nothing brings them back&rdquo;</td></tr>'
+   f'<tr><td>{logo("klaviyo",38)}{logo("attentive",38)}<b>Klaviyo / Attentive</b></td><td>&ldquo;I cannot reach my visitors again&rdquo;</td></tr>'
+   f'<tr><td>{logo("alia",38)}<b>a popup tool</b></td><td>&ldquo;too many people leave anonymous&rdquo;</td></tr>'
+   f'<tr><td>{logo("okendo",38)}{logo("judgeme",38)}<b>Okendo / Judge.me</b></td><td>&ldquo;strangers do not trust me yet&rdquo;</td></tr>'
+   f'<tr><td>{logo("rebuy",38)}<b>Rebuy / bundle</b></td><td>&ldquo;my orders are too thin&rdquo; &mdash; AOV</td></tr>'
+   f'<tr><td>{logo("recharge",38)}{logo("skio",38)}<b>Recharge / Skio</b></td><td>&ldquo;customers buy once and vanish&rdquo; &mdash; LTV</td></tr>'
+   f'<tr><td>{logo("smile",38)}{logo("rivo",38)}<b>a loyalty app</b></td><td>&ldquo;I have a base and nothing brings them back&rdquo;</td></tr>'
    '<tr><td class="mut">nothing at all</td><td class="mut">very early &mdash; or nobody is minding the shop</td></tr>'
    '</table>','flat')
  +cell(1,13,7,9,'<div class="st">Nobody installs a bundle app for fun.</div>'
@@ -841,6 +857,17 @@ slide(
  +cell(1,13,6,9,'<div class="b">Let the room struggle on the weak one. <b>Do not rescue them.</b> '
    'The struggle is the lesson, and it is the whole setup for the last session.</div>','ink'),
  'This is the question the entire course has been walking toward.', kicker='Ask the room', num='05'),
+
+slide(
+ cell(1,6,1,9,'<div class="l mut">And here is what they do instead</div>'
+   '<div class="t mt">52% off,<br><em>for an email.</em></div>'
+   '<div class="rule"></div>'
+   '<div class="b">HexClad, today. A brand with no natural repeat, discounting hard to win the first order.</div>'
+   '<div class="b mt2">That is a rational answer for a product bought once &mdash; and a <b>terrible</b> '
+   'habit to build if you ever want a second order at full price.</div>')
+ +cell(6,13,1,9,img(HEXPOPUP),'photo'),
+ 'Show it before the why/why-not. It makes the next slide concrete: this is a real brand making a real choice, and you can see the trade-off on screen.',
+ kicker='Open it live'),
 
 WN('Does a loyalty program help this shop?',
  'Lumi &mdash; a refill brand',
@@ -1013,9 +1040,13 @@ slide(
 slide(
  cell(1,13,1,2,'<div class="l mut">8% add to cart, 1% conversion &mdash; something is broken</div>'
    '<div class="st mt">Ninety percent of the time it is just <em>shipping.</em></div>')
- +cell(1,7,2,7,'<div class="c3">$30 product. $20 to ship.</div>'
-   '<div class="b mt2">She added it, saw the total, and left. It is not the price of the product &mdash; '
-   'it is <b>the surprise</b>.</div>','lemon')
+ +cell(1,7,2,5,'<div class="c3">$30 product. $20 to ship.</div>'
+   '<div class="b mt2">She added it, saw the total, and left. Not the price of the product &mdash; '
+   '<b>the surprise</b>.</div>','lemon')
+ +cell(1,7,5,7,'<div style="display:flex;gap:34px;align-items:baseline">'
+   '<div><div class="n-sm">39%</div><div class="ls mut">abandon over extra costs<br>&mdash; the #1 reason</div></div>'
+   '<div><div class="n-sm">70%</div><div class="ls mut">of all carts abandoned<br>&mdash; normal, not failure</div></div>'
+   '</div><div class="bs mt2 mut">Baymard Institute &mdash; cite it, merchants respect it</div>','ink')
  +cell(7,13,2,7,'<div class="c3">And when it is not shipping</div><div class="rule"></div>'
    '<ul><li class="bs">a button <b>covering</b> the button</li>'
    '<li class="bs">cart page <b>and</b> drawer cart both loading</li>'
@@ -1100,15 +1131,13 @@ slide(
  'Give a room a checklist of faults and they become fault-finders. Give them a working machine first and they can tell the difference - which is the actual skill.'),
 
 slide(
- cell(1,7,1,6,'<div class="l mut">An ICP-matched store</div>'
+ cell(1,6,1,6,'<div class="l mut">An ICP-matched store</div>'
    '<div class="t mt">Crown<br>Affair</div>'
    '<div>'+link('crownaffair.com')+'</div>'
    '<div class="rule"></div>'
-   '<div class="b">Haircare. Oil, shampoo, tools. Things that <b>run out</b>.</div>')
- +cell(7,13,1,4,'<div class="c3">What to notice</div>'
-   '<div class="bs mt">Not whether it is pretty. <b>Whether every step has something doing a job.</b></div>','lemon')
- +cell(7,13,4,6,'<div class="c3">Free shipping at $75</div>'
-   '<div class="bs mt">That number sits just above where their average order already lands. Deliberate.</div>','ink')
+   '<div class="b">Haircare. Oil, shampoo, tools. Things that <b>run out</b>.</div>'
+   '<div class="bs mt2 mut">Free shipping $75 &mdash; just above their average order. Deliberate.</div>')
+ +cell(6,13,1,6,img(CROWN),'photo')
  +cell(1,13,6,9,'<div class="st">Fill the sheet as we go. Same questions &mdash; on a shop that <em>works.</em></div>'),
  'Open the real site and let them look before you say anything. Ask what they notice first - usually the quiz.',
  kicker='Open it live'),
@@ -1149,12 +1178,13 @@ slide(
  kicker='Open it live'),
 
 slide(
- cell(1,7,1,6,'<div class="l mut">And this is what a Plus store looks like</div>'
+ cell(1,5,1,6,'<div class="l mut">What a Plus store looks like</div>'
    '<div class="t mt">HexClad</div>'
    '<div>'+link('hexclad.com')+'</div>'
    '<div class="rule"></div>'
-   '<div class="b">Bigger merchant, bigger stack &mdash; and you can tell from the source in under a minute.</div>')
- +cell(7,13,1,6,'<div class="c3">How to tell it is Plus</div><div class="rule"></div>'
+   '<div class="bs">Bigger merchant, bigger stack &mdash; readable from the source in a minute.</div>')
+ +cell(5,9,1,6,img(HEXCLAD),'photo')
+ +cell(9,13,1,6,'<div class="c3">How to tell it is Plus</div><div class="rule"></div>'
    '<ul><li class="bs"><b>Checkout extensions</b> &mdash; the checkout itself is customised</li>'
    '<li class="bs"><b>Markets</b> &mdash; more than one country and currency</li>'
    '<li class="bs"><b>B2B</b> on the same store</li>'
@@ -1285,7 +1315,8 @@ slide(
 
 slide(
  cell(1,7,1,6,'<div class="l mut">One job, taken to ten out of ten</div>'
-   '<div class="t mt">Alia</div>'
+   f'<div class="mt">{logo("alia",64)}</div>'
+   '<div class="t">Alia</div>'
    '<div class="bs mut" style="font-family:\'JetBrains Mono\',monospace">field: capture &mdash; a popup</div>'
    '<div class="rule"></div>'
    '<div class="b">Everyone ships a popup. Alia&rsquo;s whole company rests on noticing what a normal one <b>does</b>.</div>')
@@ -1301,7 +1332,8 @@ slide(
 
 slide(
  cell(1,7,1,4,'<div class="l mut">An app that exists because of <em>one ticket</em></div>'
-   '<div class="t mt">Order<br>Editing</div>'
+   f'<div class="mt">{logo("shopify",56)}</div>'
+   '<div class="t">Order<br>Editing</div>'
    '<div class="bs mut" style="font-family:\'JetBrains Mono\',monospace">one job: let her fix an unfulfilled order</div>')
  +cell(7,13,1,4,'<div class="b">&ldquo;A wrong address, size, variant or forgotten item becomes a support ticket '
    '&mdash; and can turn into a <b>mis-shipment</b> if the warehouse acts first.&rdquo;</div>'
@@ -1384,7 +1416,8 @@ slide(
  cell(1,13,1,2,'<div class="l mut">Before we talk about loyalty</div>'
    '<div class="t mt">How many ways are there to <em>bring her back?</em></div>')
  +cell(1,5,2,6,'<div class="l">Owned</div><div class="rule"></div>'
-   '<div class="b">email &middot; SMS &middot; WhatsApp &middot; her account &middot; loyalty</div>'
+   +logorow([('klaviyo','email'),('attentive','SMS'),('smile','loyalty')],34)+
+   '<div class="b">&hellip; and her account</div>'
    '<div class="bs mt2">You can reach her again for <b>almost nothing</b>, forever.</div>','lemon')
  +cell(5,9,2,6,'<div class="c3">Rented</div><div class="rule"></div>'
    '<div class="b">organic social &middot; community &middot; creators</div>'
@@ -1401,8 +1434,8 @@ slide(
  cell(1,13,1,2,'<div class="t">The cost of one message</div>')
  +cell(1,13,2,6,'<table>'
    '<tr><th>Channel</th><th>Roughly costs</th><th>Reach it gets</th><th>Use it for</th></tr>'
-   '<tr><td><b>Email</b></td><td>fractions of a cent</td><td>~20&ndash;40% opened</td><td>everything &mdash; the default</td></tr>'
-   '<tr><td><b>SMS</b></td><td>cents per message</td><td><b>~90%+ read, in minutes</b></td><td>time-boxed moments only</td></tr>'
+   f'<tr><td>{logo("klaviyo",34)}<b>Email</b></td><td>fractions of a cent</td><td>~20&ndash;40% opened</td><td>everything &mdash; the default</td></tr>'
+   f'<tr><td>{logo("attentive",34)}{logo("postscript",34)}<b>SMS</b></td><td>cents per message</td><td><b>~90%+ read, in minutes</b></td><td>time-boxed moments only</td></tr>'
    '<tr><td><b>WhatsApp</b></td><td>per conversation</td><td>very high, conversational</td><td>markets where it <b>is</b> the phone</td></tr>'
    '<tr><td><b>Retargeting</b></td><td>real money, every time</td><td>whoever still matches</td><td>people who did not convert</td></tr>'
    '<tr><td class="mut">Organic social</td><td class="mut">time, not money</td><td class="mut">whatever the algorithm gives</td><td class="mut">staying in mind</td></tr>'
@@ -1519,12 +1552,13 @@ slide(
    '<tr><td>Roughly $5&ndash;40M</td><td class="r mut">&#9744;</td></tr>'
    '<tr><td><b>Klaviyo or Attentive</b> installed</td><td class="r mut">&#9744;</td></tr>'
    '<tr><td>Growing &mdash; raise, press, retail, viral</td><td class="r mut">&#9744;</td></tr>'
-   '<tr><td><b>No</b> Rivo / Yotpo / Smile / LoyaltyLion</td><td class="r mut">&#9744;</td></tr></table>'
+   f'<tr><td><b>No</b> {logo("rivo",30)}{logo("yotpo",30)}{logo("smile",30)}{logo("loyaltylion",30)}</td><td class="r mut">&#9744;</td></tr></table>'
    '<div class="bs mt mut">beauty &middot; apparel &middot; wellness &middot; kids &middot; outdoor &middot; pet &middot; home</div>','flat')
  +cell(8,13,1,5,'<div class="ch">Every line is visible from the <em>public site.</em></div>'
    '<div class="b mt2">You never ask them. And you already know how to check every one &mdash; that was last session.</div>','lemon')
  +cell(8,13,5,9,'<div class="c3 lem">The easiest win to recognise</div>'
-   '<div class="bs mt">Recharge or Appstle <b>+</b> Klaviyo <b>+</b> no loyalty app.</div>'
+   +logorow([('recharge','Recharge'),('klaviyo','Klaviyo')],34)+
+   '<div class="bs mt">&hellip; and <b>no loyalty app</b>.</div>'
    '<div class="bs mt">They already pay for repeat revenue and have nothing that gives a reason to return.</div>','ink'),
  'This is Joy real ICP, not something invented for class.', num='04'),
 
@@ -1795,13 +1829,36 @@ slide(
 ]
 
 # ── SESSION 1: why we are here + how a shop makes money ──
-SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2]] + [S1[i] for i in (8,9,10,11,12,13)] + [_STORES[0]] + [S1[i] for i in (14,)] + [_STORES[1]] + [S1[i] for i in (16,17)]
+_HALFDAYS = slide(
+ cell(1,6,1,9,'<div class="l mut">Today&rsquo;s brand &middot; breakdown 1</div>'
+   '<div class="t mt">Halfdays</div>'
+   '<div>'+link('halfdays.com')+'</div>'
+   '<div class="rule"></div>'
+   '<div class="b">Outdoor apparel. Find the hero jacket and its price.</div>'
+   '<div class="b mt2">Guess what it <b>costs them to make</b>, out loud, as a room.</div>'
+   '<div class="bs mt2 mut">See the little tab on the left? That is the capture popup, waiting.</div>')
+ +cell(6,13,1,9,img(HALFDAYS),'photo'),
+ 'You will be roughly right, and being roughly right is the whole skill. Then note the free-shipping threshold: $95. Ask why that number.',
+ kicker='Open it live')
+
+_POPUP = slide(
+ cell(1,6,1,9,'<div class="l mut">A real one, right now</div>'
+   '<div class="t mt">52% off &mdash; <em>for an email.</em></div>'
+   '<div class="rule"></div>'
+   '<div class="b">HexClad, today. The popup fires before you have seen a single pan.</div>'
+   '<div class="b mt2">Ask the room: <b>what is actually being bought here?</b></div>'
+   '<div class="bs mt2 mut">Not the sale. The email. And a very large discount handed to everyone who arrives.</div>')
+ +cell(6,13,1,9,img(HEXPOPUP),'photo'),
+ 'This is the single best teaching image in the deck because it is live and enormous. Fifty-two percent, before she has looked at anything. Ask what that trains a customer to do — wait for the sale. Then go to the next slide.',
+ kicker='Open it live')
+
+SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2], _HALFDAYS] + [S1[i] for i in (9,10,11,12,13)] + [_STORES[0]] + [S1[i] for i in (14,)] + [_STORES[1]] + [S1[i] for i in (16,17)]
 
 # ── SESSION 2: how to read a shop ──
 SESS2 = [TITLE('Goal: given a shop you have never seen, find what is actually wrong with it — and say which problem to fix first. Today we diagnose one together, then you diagnose another alone.',
   'Session Two','What is<br><em>wrong</em><br>with this shop?',
   ('Troubleshooting a real business.','Every merchant complaint is a symptom. Today you learn to find the cause.'),'Trouble-<br>shooting')] \
-  + [_DIAGNOSE] + _WINNER + [S2[i] for i in (1,2,3)] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
+  + [_DIAGNOSE] + _WINNER + [S2[i] for i in (1,2,3)] + [_POPUP] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
 
 
 S4.insert(4, slide(
