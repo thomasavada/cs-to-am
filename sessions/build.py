@@ -2440,7 +2440,8 @@ slide(
 slide(
  cell(1,13,1,3,'<div class="l mut">Why now &middot; 2</div>'
    '<div class="t mt">Every loyalty app has<br>the <em>same features.</em></div>')
- +cell(1,7,3,7,'<div class="c3">Rivo &middot; Yotpo &middot; Smile &middot; LoyaltyLion &middot; Growave &middot; BON</div>'
+ +cell(1,7,3,7,logorow([('rivo','Rivo'),('yotpo','Yotpo'),('smile','Smile'),
+     ('loyaltylion','LoyaltyLion'),('growave','Growave')],36)+
    '<div class="rule"></div>'
    '<div class="b">Points. Tiers. Referrals. Widgets. Anything we ship, they ship within a quarter.</div>'
    '<div class="b mt2">So the app <b>cannot</b> be what a merchant chooses us for.</div>')
@@ -2532,10 +2533,39 @@ slide(
  'Close here. Do not add anything. Sit down.'),
 ]
 
+# ── talk: the shoe, and where it all came from ──
+_TALK_SHOE = slide(
+ cell(1,6,1,6,'<div class="l mut">And this is what a merchant actually keeps</div>'
+   '<div class="t mt">One $100 shoe</div>'
+   '<div class="bs mt2 mut">Nguồn: Brands Vietnam · Trí Thức Trẻ<br>từ báo cáo tài chính Nike &amp; adidas 2015</div>')
+ +cell(6,13,1,6,img(SNEAKER),'contain')
+ +cell(1,13,6,8,'<div class="ls mut mb">adidas · one pair · US retail</div>'
+   +stack([(21,'$21','make it',0),(5,'$5','ship',0),(8,'$8','marketing',0),
+           (13,'$13','staff &amp; the rest',0),(1,'$1','tax',0),(2,'$2','profit',2),
+           (50,'$50','the shop that sells it',1)]))
+ +cell(1,13,8,9,'<div class="c3">adidas keeps <em>$2</em>. The shop that sold it keeps about <b>$6</b>. '
+   'That is why &ldquo;<b>earn more</b>&rdquo; is not a slogan to them.</div>','ink'),
+ 'Ninety-two of the hundred dollars is the machine — making it, moving it, marketing it, selling it. When a merchant asks whether loyalty will make them money, this is the arithmetic in their head. Nobody in that chain is getting rich.')
+
+_TALK_SRC = slide(
+ cell(1,13,1,2,'<div class="l mut">Everything here is checkable</div>'
+   '<div class="st mt">None of it is mine. <em>Go and look.</em></div>')
+ +cell(1,13,2,8,
+   src_row('brandsvietnam','Bài toán chi phí — Nike &amp; adidas','brandsvietnam.com/12953-bai-toan-chi-phi-va-gia-thanh-tren-moi-doi-giay-nike-adidas','&mdash; the $100 shoe, from 2015 filings')
+  +src_row('rivo2','Rivo — case studies','rivo.io','&mdash; 19 studies, one number each, no feature lists')
+  +src_row('youtube','Dollar Shave Club, 2012','youtube.com/watch?v=RBHMf7BNd8o','&mdash; we watch this in session one')
+  +src_row('raewellness','Rae Wellness','raewellness.co','&mdash; a shop doing everything right except the one thing')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; and one that already has a competitor installed')
+   ,'flat')
+ +cell(1,13,8,9,'<div class="c3">Four sessions start <em>next week</em>. Bring a phone.</div>','ink'),
+ 'Put this up while people are packing away. It is the proof that this is not a motivational talk — every number in it has a link.',
+ kicker='All clickable')
+
 if __name__=='__main__':
     os.chdir(D)
     print('Building (Neo-Grid Bold):')
-    build('00-talk.html','The Talk — from app support to retention service',TALK)
+    build('00-talk.html','The Talk — from app support to retention service',
+          TALK[:7] + [_TALK_SHOE] + TALK[7:-1] + [_TALK_SRC, TALK[-1]])
     build('session-1-money.html','Session 1 — How a shop makes money',SESS1)
     build('session-2-troubleshoot.html','Session 2 — What is wrong with this shop?',SESS2)
     build('session-3-retention.html','Session 3 — Why people come back',S3)
