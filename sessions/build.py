@@ -94,6 +94,13 @@ tr.tot td{border-bottom:none;border-top:4px solid var(--ink);font-weight:700;fon
   padding:9px 16px;font:400 20px/1 'JetBrains Mono',monospace;letter-spacing:.05em}
 .kick{position:absolute;right:40px;top:40px;z-index:5;background:var(--lemon);color:var(--ink);
   padding:9px 18px;font:400 18px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase}
+.frow{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.fbar{min-width:76px;height:52px;display:flex;align-items:center;justify-content:center;
+  font:700 28px/1 'Space Grotesk',Helvetica,sans-serif;background:var(--ink);color:var(--paper)}
+.fbar.win{background:var(--lemon);color:var(--ink)}
+.fdrop{display:flex;align-items:baseline;gap:12px;margin:0 0 6px 8px;
+  border-left:4px solid var(--muted);padding:4px 0 8px 16px}
+.fdrop b.n{font:700 24px/1 'Space Grotesk',Helvetica,sans-serif;color:var(--bad)}
 .dots{display:grid;gap:3px}
 .dots i{display:block;width:100%;aspect-ratio:1}
 
@@ -208,6 +215,29 @@ def stack(segs):
 
 def img(src, cls='photo'):
     return f'<img src="{src}" alt="">' if src else '<div class="bs mut">image missing</div>'
+
+
+def viz_funnel_real():
+    """A funnel with real ecom numbers. 100 arrive, 2-3 pay. The drop is the lesson."""
+    bands = [(100, 'land on the site', '100', 0),
+             (10, 'add to cart', '10', 0),
+             (7, 'start checkout', '7', 0),
+             (3, 'pay', '3', 1)]
+    drops = [(90, 'leave without adding a single thing', 'the product page did not convince them'),
+             (3, 'never reach checkout', 'shipping appears, or the cart is clumsy'),
+             (4, 'abandon at checkout', '<b>39%</b> of them over extra costs')]
+    out = []
+    for i, (pct, label, num, win) in enumerate(bands):
+        w = max(pct, 4.5)
+        cls = 'fbar win' if win else 'fbar'
+        out.append('<div class="frow"><div class="' + cls + '" style="width:' + str(w) + '%">'
+                   + num + '</div><div class="bs" style="white-space:nowrap"><b>' + label + '</b></div></div>')
+        if i < len(drops):
+            n, what, why = drops[i]
+            out.append('<div class="fdrop"><b class="n">&minus;' + str(n) + '</b>'
+                       '<div class="bs"><b>' + what + '</b> <span class="mut">&mdash; ' + why + '</span></div></div>')
+    return '<div style="width:100%">' + ''.join(out) + '</div>'
+
 
 # ═════════════════ SESSION 1 — THE BASICS ═════════════════
 S1=[
@@ -505,18 +535,19 @@ slide(
 
 slide(
  cell(1,13,1,2,'<div class="l mut">The path you are looking for</div>'
-   '<div class="st mt">Stranger &rarr; paid</div>')
- +cell(1,13,2,6,'<div style="display:flex;align-items:flex-end;height:calc(100% - 42px);gap:10px">'
-   +''.join(f'<div style="flex:1;height:{h}%;background:{c};border:3px solid var(--ink);position:relative">'
-            f'<div class="lx" style="position:absolute;bottom:-26px;left:-4px;right:-4px;text-align:center;color:var(--muted)">{t}</div></div>'
-            for t,h,c in [('the ad',100,'var(--lemon)'),('lands',78,'var(--paper)'),('popup',70,'var(--paper)'),
-                          ('product',54,'var(--paper)'),('offer',46,'var(--paper)'),('cart',36,'var(--paper)'),
-                          ('leaves',22,'var(--ink)'),('checkout',16,'var(--paper)'),('paid',12,'var(--lemon)')])
-   +'</div>','plain')
- +cell(1,13,6,9,'<div class="st">Your job is to find <em>where people fall out.</em></div>'
-   '<div class="b mt2 mut">Not to fix it. To find it. ~70% of carts end at that black step &mdash; '
-   'that is normal, not failure.</div>','ink'),
- 'Nine steps from stranger to paid. Walking a brand means finding the leak, not repairing it.', num='04'),
+   '<div class="st mt">Out of <em>100</em> people who land&hellip;</div>')
+ +cell(1,9,2,9,viz_funnel_real())
+ +cell(9,13,2,5,'<div class="ch">Nearly everyone leaves.</div>'
+   '<div class="b mt2">A 2&ndash;3% conversion rate is <b>normal</b>, not broken. '
+   'Ninety-seven people walking out is the <b>everyday condition</b> of every shop you will ever read.</div>','lemon')
+ +cell(9,13,5,7,'<div class="c3">So the question is never</div>'
+   '<div class="bs mt">&ldquo;why did they leave?&rdquo;</div>'
+   '<div class="c3 mt2 lem">It is</div>'
+   '<div class="bs mt"><b>&ldquo;which step lost the most, and is that step fixable?&rdquo;</b></div>','ink')
+ +cell(9,13,7,9,'<div class="bs mut">Biggest single leak here</div>'
+   '<div class="c3 mt">the product page &mdash; 90 of 100</div>')
+ ,'Put the real numbers up before any theory. A hundred people arrive and two or three pay. When a merchant says conversion is bad, they usually mean it is 2% instead of 3% — and that half a percent is the whole argument. Ask the room where they would look first: the answer is the product page, because that is where 90 of the 100 went.',
+ num='04'),
 
 BRANDBEAT(1,'Where do they get their <em>people</em> from?',
  'Ad Library first — are they running ads, and what do the ads promise? Then: Instagram linked? A blog? A quiz? A popup? Name the main door out loud before moving on.','05','Halfdays','halfdays.com'),
