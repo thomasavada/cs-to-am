@@ -585,6 +585,49 @@ slide(
  kicker='Open it live'),
 ]
 
+# ── session 1 drill: timeboxed, with a worked target ──
+_DRILL1 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">A brand you have <em>not</em> seen today.</div>')
+ +cell(1,13,2,3,'<div class="frow"><div class="fbar" style="width:110px">3 min</div>'
+   '<div class="bs"><b>Get your brand.</b> <span class="mut">One per pair, handed to you. Open it on your phone.</span></div></div>','flat')
+ +cell(1,13,3,4,'<div class="frow"><div class="fbar" style="width:110px">12 min</div>'
+   '<div class="bs"><b>Sheet &sect;0</b> <span class="mut">&mdash; what they sell, the hero product, its price, who buys it.</span></div></div>','flat')
+ +cell(1,13,4,5,'<div class="frow"><div class="fbar win" style="width:110px">17 min</div>'
+   '<div class="bs"><b>Sheet &sect;1 &mdash; the money on one unit.</b> '
+   '<span class="mut">The hard part. Guess the cost to make. Take out shipping, fees, a discount, the ad.</span></div></div>','flat')
+ +cell(1,13,5,6,'<div class="frow"><div class="fbar" style="width:110px">8 min</div>'
+   '<div class="bs"><b>Write your answer</b> <span class="mut">to the question below. One number, one sentence.</span></div></div>','flat')
+ +cell(1,13,6,7,'<div class="frow"><div class="fbar" style="width:110px">5 min</div>'
+   '<div class="bs"><b>Swap sheets</b> <span class="mut">with the pair next to you. Mark theirs. Do you believe their number?</span></div></div>','flat')
+ +cell(1,13,7,9,'<div class="st">At that margin, <em>how many orders</em> before they are ahead?</div>'
+   '<div class="b mt mut">Every pair answers that out loud. Sixty seconds each. One number, one sentence &mdash; '
+   'not a tour of the website.</div>','ink'),
+ 'Read the timings out and put them on the board. Without a clock a pair finishes section zero in eight minutes and then drifts. The swap at the end is not filler — marking somebody else forces them to decide what a good answer looks like.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like &mdash; so you have a target</div>'
+   '<div class="st mt">Rae Wellness &middot; a $25 daily supplement</div>')
+ +cell(1,7,2,8,'<table style="font-size:24px">'
+   '<tr><td>They charge</td><td class="r">$25.00</td></tr>'
+   '<tr><td>Guess: cost to make <span class="mut">(powder, capsule, jar, label)</span></td><td class="r">&minus;$7.00</td></tr>'
+   '<tr><td>Free shipping over $30, so they eat it</td><td class="r">&minus;$5.00</td></tr>'
+   '<tr><td>Processing</td><td class="r">&minus;$1.03</td></tr>'
+   '<tr><td class="mut">before any advertising</td><td class="r mut">$11.97</td></tr>'
+   '<tr class="tot"><td>Say they pay $15 to find her</td><td class="r">&minus;$3.03</td></tr></table>')
+ +cell(7,13,2,5,'<div class="c3 lem">The answer</div>'
+   '<div class="b mt">&ldquo;They lose about three dollars on the first order. '
+   'They need <b>two</b> before they are ahead &mdash; and it is a supplement, so a second order is realistic.&rdquo;</div>','ink')
+ +cell(7,13,5,8,'<div class="c3">Why this is good</div>'
+   '<div class="bs mt">Every number is a <b>guess</b>. None of them are researched. '
+   'And it still produces a real answer somebody could act on.</div>')
+ +cell(1,13,8,9,'<div class="c3">Nobody looked up a cost. <em>Guess, do not research.</em> '
+   'Roughly right and fast beats precisely right and late.</div>','lemon'),
+ 'Put this up before they start and leave it up. Without a target they will either write one line or try to research real COGS and burn the whole session. The point of the slide is permission to guess.'),
+]
+
 # ═════════════════ SESSION 2 — BREAK DOWN A BRAND ═════════════════
 S2=[
 TITLE('Goal: open a brand you have never seen and say what it is doing, and where it loses people. Today we do one together, slowly, then you do one alone.',
@@ -813,6 +856,49 @@ slide(
    'You are looking at the arithmetic we just did on a whiteboard, running in public.</div>','ink'),
  'Close the money half here. The video showed them the idea; the live site shows them it still runs. Ask the room to find where the site pushes subscription — it is everywhere once you look.',
  kicker='Open it live'),
+]
+
+# ── session 1 drill: timeboxed, with a worked target ──
+_DRILL1 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">A brand you have <em>not</em> seen today.</div>')
+ +cell(1,13,2,3,'<div class="frow"><div class="fbar" style="width:110px">3 min</div>'
+   '<div class="bs"><b>Get your brand.</b> <span class="mut">One per pair, handed to you. Open it on your phone.</span></div></div>','flat')
+ +cell(1,13,3,4,'<div class="frow"><div class="fbar" style="width:110px">12 min</div>'
+   '<div class="bs"><b>Sheet &sect;0</b> <span class="mut">&mdash; what they sell, the hero product, its price, who buys it.</span></div></div>','flat')
+ +cell(1,13,4,5,'<div class="frow"><div class="fbar win" style="width:110px">17 min</div>'
+   '<div class="bs"><b>Sheet &sect;1 &mdash; the money on one unit.</b> '
+   '<span class="mut">The hard part. Guess the cost to make. Take out shipping, fees, a discount, the ad.</span></div></div>','flat')
+ +cell(1,13,5,6,'<div class="frow"><div class="fbar" style="width:110px">8 min</div>'
+   '<div class="bs"><b>Write your answer</b> <span class="mut">to the question below. One number, one sentence.</span></div></div>','flat')
+ +cell(1,13,6,7,'<div class="frow"><div class="fbar" style="width:110px">5 min</div>'
+   '<div class="bs"><b>Swap sheets</b> <span class="mut">with the pair next to you. Mark theirs. Do you believe their number?</span></div></div>','flat')
+ +cell(1,13,7,9,'<div class="st">At that margin, <em>how many orders</em> before they are ahead?</div>'
+   '<div class="b mt mut">Every pair answers that out loud. Sixty seconds each. One number, one sentence &mdash; '
+   'not a tour of the website.</div>','ink'),
+ 'Read the timings out and put them on the board. Without a clock a pair finishes section zero in eight minutes and then drifts. The swap at the end is not filler — marking somebody else forces them to decide what a good answer looks like.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like &mdash; so you have a target</div>'
+   '<div class="st mt">Rae Wellness &middot; a $25 daily supplement</div>')
+ +cell(1,7,2,8,'<table style="font-size:24px">'
+   '<tr><td>They charge</td><td class="r">$25.00</td></tr>'
+   '<tr><td>Guess: cost to make <span class="mut">(powder, capsule, jar, label)</span></td><td class="r">&minus;$7.00</td></tr>'
+   '<tr><td>Free shipping over $30, so they eat it</td><td class="r">&minus;$5.00</td></tr>'
+   '<tr><td>Processing</td><td class="r">&minus;$1.03</td></tr>'
+   '<tr><td class="mut">before any advertising</td><td class="r mut">$11.97</td></tr>'
+   '<tr class="tot"><td>Say they pay $15 to find her</td><td class="r">&minus;$3.03</td></tr></table>')
+ +cell(7,13,2,5,'<div class="c3 lem">The answer</div>'
+   '<div class="b mt">&ldquo;They lose about three dollars on the first order. '
+   'They need <b>two</b> before they are ahead &mdash; and it is a supplement, so a second order is realistic.&rdquo;</div>','ink')
+ +cell(7,13,5,8,'<div class="c3">Why this is good</div>'
+   '<div class="bs mt">Every number is a <b>guess</b>. None of them are researched. '
+   'And it still produces a real answer somebody could act on.</div>')
+ +cell(1,13,8,9,'<div class="c3">Nobody looked up a cost. <em>Guess, do not research.</em> '
+   'Roughly right and fast beats precisely right and late.</div>','lemon'),
+ 'Put this up before they start and leave it up. Without a target they will either write one line or try to research real COGS and burn the whole session. The point of the slide is permission to guess.'),
 ]
 
 # ═════════════════ SESSION 2 — WHY PEOPLE COME BACK ═════════════════
@@ -1852,7 +1938,7 @@ _POPUP = slide(
  'This is the single best teaching image in the deck because it is live and enormous. Fifty-two percent, before she has looked at anything. Ask what that trains a customer to do — wait for the sale. Then go to the next slide.',
  kicker='Open it live')
 
-SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2], _HALFDAYS] + [S1[i] for i in (9,10,11,12,13)] + [_STORES[0]] + [S1[i] for i in (14,)] + [_STORES[1]] + [S1[i] for i in (16,17)]
+SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2], _HALFDAYS] + [S1[i] for i in (9,10,11,12,13)] + [_STORES[0]] + [S1[i] for i in (14,)] + [_STORES[1]] + [S1[16]] + _DRILL1
 
 # ── SESSION 2: how to read a shop ──
 SESS2 = [TITLE('Goal: given a shop you have never seen, find what is actually wrong with it — and say which problem to fix first. Today we diagnose one together, then you diagnose another alone.',

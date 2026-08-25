@@ -31,8 +31,8 @@
 | 1:04 | **Four shops, four shipping thresholds — open all four** | ◉ live |
 | 1:08 | Bought once vs bought again — **predict the stack, then check** | ◉ live |
 | 1:14 | The two fears, as arithmetic | slides |
-| 1:08 | **Rep: teardown §0–1, pairs** | ▲ 45 min |
-| 1:53 | Report out | — |
+| 1:08 | **Rep: teardown §0–1, pairs — timeboxed on screen** | ▲ 45 min |
+| 1:53 | Report out — 60 seconds a pair | — |
 
 ## The deck is not the demo
 Every store on a slide is a **clickable chip** — click it and the real site opens in a new tab.
@@ -49,6 +49,44 @@ Then stop, and let the silence work before order 2.
 ## The slide that decides the course
 **"What it does for you on Monday."** If they think this is homework for a promotion, they will half-do
 the reps. If they believe it makes Monday easier, they will show up.
+
+## Running the 45 minutes
+
+The deck timeboxes it and puts the clock on screen. **Write the times on the board too** — without a
+clock a pair finishes §0 in eight minutes and then drifts.
+
+| | |
+|---|---|
+| **3 min** | Get your brand — one per pair, handed out. Open it on a phone. |
+| **12 min** | §0 — what they sell, hero product, price, who buys |
+| **17 min** | §1 — the money on one unit. **The hard part.** |
+| **8 min** | Write the answer: one number, one sentence |
+| **5 min** | **Swap sheets with the next pair and mark theirs** |
+
+**Hand the brands out; do not let them choose.** Choosing burns five minutes and they will pick something
+they already know. Pull from `material/cases/brand-list.md` backups, or any Joy merchant.
+
+**The one rule, and say it twice: guess, do not research.** Nobody looks up a real cost of goods. The
+worked example on screen is entirely guesses and still produces an answer somebody could act on.
+A number they can defend beats a blank every time.
+
+**If a pair finishes early** — hand them a second brand. Do not let them polish.
+
+### What you do while they work
+Circulate. **Do not answer questions — ask "why do you think that?"** Most pairs stick on the
+cost-to-make guess, which is the whole point; unstick them with *"what would you pay for the
+ingredients and the jar?"* and move on.
+
+Note two pairs who **disagree** about the same kind of product. Call on those two first in the
+report-out — the contrast teaches more than any correct answer.
+
+### Report out — 60 seconds each
+One number, one sentence. **Not a tour of the website.** Cut anyone who starts describing the homepage.
+
+> "They lose about three dollars on the first order. They need two before they're ahead — and it's a
+> supplement, so a second order is realistic."
+
+That is a complete answer and it took nine seconds.
 
 ## Homework
 1. §0–1 on **two** more brands
