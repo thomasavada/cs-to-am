@@ -937,6 +937,64 @@ slide(
  num='28d'),
 ]
 
+# ── the question under all the others: is the product worth returning to? ──
+_PRODUCT = [
+slide(
+ cell(1,13,1,3,'<div class="l mut">Before a single channel, a single point, a single email</div>'
+   '<div class="t mt">Why would she buy it <em>again?</em></div>')
+ +cell(1,7,3,6,'<div class="ch">&ldquo;Because she liked it.&rdquo;</div>'
+   '<div class="rule"></div>'
+   '<div class="b">That is the whole answer. Everything else in this session is <b>a way of reminding her</b> '
+   'of something she already wants.</div>')
+ +cell(7,13,3,6,'<div class="ch">So the real question is</div>'
+   '<div class="st mt2">Did she <em>like it?</em><br>Do we <em>know?</em></div>','lemon')
+ +cell(1,13,6,9,'<div class="d">A loyalty program is a multiplier.</div>'
+   '<div class="st mt">Multiply a small base and it is still small.<br>'
+   'Multiply a <em>bad product</em> and it is still <em>nothing.</em></div>','ink'),
+ 'This is the honest first answer and almost nobody gives it, because it is not sellable. If the product does not earn a second purchase, no mechanism creates one. Points on a product she did not like just means you paid her to be disappointed twice. Say it plainly — the room will trust everything after it more.',
+ num='04a'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">Six reasons she does not come back &mdash; in the order you should check them</div>')
+ +cell(1,13,2,3,'<div class="frow"><div class="fbar" style="width:82px">1</div>'
+   '<div class="bs"><b>The product is not good enough.</b> '
+   '<span class="mut">She used it and was not impressed. &rarr; fix the product. Nothing else works.</span></div></div>','flat')
+ +cell(1,13,3,4,'<div class="frow"><div class="fbar" style="width:82px">2</div>'
+   '<div class="bs"><b>She never actually used it.</b> '
+   '<span class="mut">It is in a drawer. &rarr; onboarding, the &ldquo;how to use it&rdquo; email.</span></div></div>','flat')
+ +cell(1,13,4,5,'<div class="frow"><div class="fbar" style="width:82px">3</div>'
+   '<div class="bs"><b>There is no natural repeat.</b> '
+   '<span class="mut">A mattress, even a great one. &rarr; accessories, range, referral &mdash; not points.</span></div></div>','flat')
+ +cell(1,13,5,6,'<div class="frow"><div class="fbar" style="width:82px">4</div>'
+   '<div class="bs"><b>She forgot.</b> '
+   '<span class="mut">She would buy again and it never crossed her mind. &rarr; email, SMS, the week-6 reminder.</span></div></div>','flat')
+ +cell(1,13,6,7,'<div class="frow"><div class="fbar win" style="width:82px">5</div>'
+   '<div class="bs"><b>No reason to choose <em>you</em> over the alternative.</b> '
+   '<span class="mut">She is buying &mdash; from somebody. &rarr; <b>this is where we live.</b></span></div></div>','flat')
+ +cell(1,13,7,8,'<div class="frow"><div class="fbar" style="width:82px">6</div>'
+   '<div class="bs"><b>She would, but it is a hassle.</b> '
+   '<span class="mut">&rarr; subscription &mdash; agree the next one in advance.</span></div></div>','flat')
+ +cell(1,13,8,9,'<div class="c3">Everything above rung 5 has to be true <em>before</em> our product does anything at all.</div>','ink'),
+ 'Work down the list with a real merchant and you will usually stop above rung five. That is not bad news — it is the most useful thing you can tell them, and it is the thing a salesperson will not say.',
+ num='04b'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">And you can check rung 1 from outside</div>'
+   '<div class="t mt">Read the <em>reviews</em> &mdash; but read the <b>complaints.</b></div>'
+   '<div class="b mt2">Not the star rating. The one- and two-star text, and the recent ones.</div>')
+ +cell(7,13,1,3,'<div class="c3">Complaints about shipping, packaging, support</div>'
+   '<div class="bs mt">The product is fine. The <b>operation</b> is leaking. Rungs 2&ndash;6 are live options.</div>','lemon')
+ +cell(7,13,3,6,'<div class="c3">Complaints about the product itself</div>'
+   '<div class="bs mt">&ldquo;did not work for me&rdquo; &middot; &ldquo;not worth the price&rdquo; &middot; &ldquo;broke&rdquo;</div>'
+   '<div class="bs mt"><b>Retention work is premature.</b> Say so.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Reviews are the only honest thing on a product page &mdash; '
+   'and they are <em>public.</em></div>'
+   '<div class="b mt mut">Which means you can answer &ldquo;is this product worth coming back to?&rdquo; '
+   'in three minutes, for free, before anybody asks you about points.</div>'),
+ 'This is the outside-in test for rung one. And it is a genuinely uncomfortable finding to deliver — you are telling a merchant their product is the problem. Do it anyway, gently, with the reviews on screen so it is their customers saying it, not you.',
+ num='04c'),
+]
+
 # ── the ways back: inserted after the brand beat, before "why would a human buy twice" ──
 WAYS = [
 slide(
@@ -1130,7 +1188,22 @@ WN('A shop with 100 customers wants points. Do you sell it?',
  num='08'),
 
 slide(
- cell(1,13,1,2,'<div class="t">So the first question is <em>stage</em></div>')
+ cell(1,13,1,3,'<div class="l mut">&ldquo;Not yet&rdquo; has two causes, and only one of them is about size</div>'
+   '<div class="t mt">No base &mdash; or <em>no product</em> worth returning to.</div>')
+ +cell(1,7,3,6,'<div class="ch">No base yet</div><div class="rule"></div>'
+   '<div class="b">A real product, too few people. <b>Fixable, and quickly</b> &mdash; '
+   'referral and acquisition. Come back to us in six months.</div>','lemon')
+ +cell(7,13,3,6,'<div class="ch">No reason to return</div><div class="rule"></div>'
+   '<div class="b">Read the one-star reviews. If the complaints are about <b>the product itself</b>, '
+   'no mechanism we sell will create a second order.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">One is a <em>timing</em> answer. The other is a <em>product</em> answer.</div>'
+   '<div class="b mt mut">Do not give the timing answer to a product problem. They will come back in six months '
+   'with the same base and the same reviews, and we will have wasted everybody&rsquo;s year.</div>'),
+ 'Rung one from last session. Check the reviews before you promise them anything — it is three minutes and it changes what you say.',
+ num='08a'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">Then the question is <em>stage</em></div>')
  +cell(1,13,2,4,'<div style="display:flex;align-items:center;gap:30px">'
    '<div class="ch" style="flex:1">no real base yet</div><div class="st">&rarr;</div>'
    '<div class="ch lem" style="flex:1">expand it &mdash; REFERRAL</div></div>','ink')
@@ -1203,7 +1276,7 @@ slide(
 ]
 
 # ── merge sessions 1 + 2 into one ──
-S3 = S3[:4] + WAYS + S3[4:]
+S3 = S3[:4] + _PRODUCT + WAYS + S3[4:]
 
 _RTRAP = [
 slide(

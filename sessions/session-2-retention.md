@@ -15,6 +15,7 @@
 |---|---|---|
 | 0:00 | Checkpoint + homework | round the room |
 | 0:10 | The wait · **their own WISMO numbers** | slides + ask |
+| 0:14 | **The product comes first** — the six-rung ladder, and reading the complaints | slides |
 | 0:15 | The 8-week timeline · week 6 beats the ad | slides |
 | 0:18 | **Brand beat** — open their real inbox | ◉ live |
 | 0:22 | **"Why would a human buy this twice?"** | ask — do not rescue |
@@ -26,6 +27,17 @@
 | 0:50 | **Rep: two brands, teardown §4–5, then prescribe** | ▲ 50 min |
 | 1:40 | Report out — what did the rejected option lose? | — |
 | 1:55 | Homework | — |
+
+## The beat that reframes the whole session
+
+**The product comes first.** Before any channel or mechanism, the honest answer to *"why would she buy
+it again?"* is *"because she liked it"* — so the real question is whether she did. Work down the six
+rungs with a real merchant and you will often stop above rung five, which is where we live.
+
+> A loyalty program is a multiplier. Multiply a small base and it is still small.
+> Multiply a **bad product** and it is still **nothing**.
+
+Deliver it plainly. It is not sellable, which is exactly why the room will trust everything after it.
 
 ## The two beats that carry it
 **Their own inbox.** They placed real orders in the build track. Put a real one on screen and walk it.
