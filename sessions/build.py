@@ -124,24 +124,64 @@ def build(fn, title, subtitle, slides):
     print(f'  {fn}  ({len(slides)} slides)')
 
 # ─────────────────────────── ILLUSTRATIONS (HTML/CSS) ───────────────────────────
+import os as _os
+_D = _os.path.dirname(_os.path.abspath(__file__))
+_p = _os.path.join(_D,'assets','sneaker.datauri')
+SNEAKER = open(_p).read().strip() if _os.path.exists(_p) else ''
+
 GR = {'gold':'linear-gradient(160deg,#ffd166,#e0a020)','amber':'linear-gradient(160deg,#e0a020,#a8761a)',
       'bronze':'linear-gradient(160deg,#a8761a,#6b4a12)','deep':'linear-gradient(160deg,#6b4a12,#3d2a09)',
       'green':'linear-gradient(160deg,#5ddb7a,#2f9946)','red':'linear-gradient(160deg,#ff7b72,#c9382f)',
       'slate':'linear-gradient(160deg,#6b7280,#3f4650)','steel':'linear-gradient(160deg,#4a5560,#2b323b)'}
 
-def viz_shoe():
-    """The $100 sneaker. Real numbers, and the punchline."""
-    segs=[(28,'$28','made in the factory','gold'),(22,'$22','the brand','amber'),(50,'$50','the shop that sells it','bronze')]
-    bar=''.join(f'<div style="flex:{w};background:{GR[g]}"><div class="v">{v}</div><div class="k">{k}</div></div>'
-                for w,v,k,g in segs)
-    return ('<div class="viz"><div class="cap">what you pay for a $100 shoe</div>'
-            f'<div class="stack">{bar}</div>'
-            '<div class="scale"><span>$0</span><span>$50 &nbsp;·&nbsp; what the shop paid</span><span>$100</span></div>'
-            '<div style="margin-top:1.1em;display:flex;align-items:center;gap:.9em;flex-wrap:wrap">'
-            '<span class="pill" style="background:var(--line);color:var(--dim)">then take out marketing, R&amp;D, admin, tax</span>'
-            '<span style="font-size:clamp(15px,2vw,28px)">&rarr;</span>'
-            '<span class="pill" style="background:var(--bad);color:#fff">adidas keeps about <b>$2</b></span>'
+def viz_shoe(brand='adidas'):
+    """The $100 shoe, opened up. Source: Brands Vietnam / Tri Thuc Tre, from Nike & adidas 2015 filings."""
+    D_ = {'adidas':[(21,'make it','gold'),(5,'ship, insure, customs','amber'),(8,'marketing','bronze'),
+                    (13,'staff &amp; everything else','deep'),(1,'tax','steel'),(2,'PROFIT','red'),
+                    (50,'the shop that sells it','slate')],
+          'nike':  [(22,'make it','gold'),(5,'ship, insure, customs','amber'),(5,'marketing','bronze'),
+                    (11,'staff &amp; everything else','deep'),(2,'tax','steel'),(5,'PROFIT','red'),
+                    (50,'the shop that sells it','slate')]}[brand]
+    bar=''.join(
+        f'<div style="flex:{w};background:{GR[g]}">'
+        + (f'<div class="v">${w}</div><div class="k">{k}</div>' if w>=8 else
+           f'<div class="v" style="font-size:clamp(11px,1.4vw,19px)">${w}</div>')
+        + '</div>' for w,k,g in D_)
+    legend=''.join(
+        f'<span style="display:inline-flex;align-items:center;gap:.45em;margin-right:1.4em;white-space:nowrap">'
+        f'<i style="width:.85em;height:.85em;border-radius:3px;background:{GR[g]};display:inline-block"></i>'
+        f'<b>${w}</b> <span class="dim">{k}</span></span>' for w,k,g in D_ if w<8)
+    prof = next(w for w,k,_ in D_ if k=='PROFIT')
+    img = (f'<img src="{SNEAKER}" alt="" style="width:clamp(88px,13vw,190px);border-radius:14px;flex:none">'
+           if SNEAKER else '')
+    return ('<div class="viz">'
+            '<div style="display:flex;gap:clamp(14px,2.4vw,34px);align-items:center;margin-bottom:.9em">'
+            + img +
+            '<div style="flex:1"><div class="cap" style="margin-bottom:.3em">one $100 shoe</div>'
+            '<p style="font-size:clamp(15px,2.1vw,30px);line-height:1.3">You have held one of these.<br>'
+            '<b class="acc">Where does the hundred dollars actually go?</b></p></div></div>'
+            f'<div class="stack" style="min-height:clamp(74px,9vw,116px)">{bar}</div>'
+            f'<div style="margin-top:.7em;font-size:clamp(11px,1.35vw,18px)">{legend}</div>'
+            '<div style="margin-top:1em;display:flex;align-items:center;gap:.8em;flex-wrap:wrap">'
+            f'<span class="pill" style="background:var(--bad);color:#fff">{brand} keeps <b>${prof}</b></span>'
+            '<span class="dim" style="font-size:clamp(12px,1.5vw,20px)">&mdash; and the shop that sold it keeps about <b>$6</b></span>'
             '</div></div>')
+
+def viz_shoe_pair():
+    """Nike vs adidas, side by side. The margin is the point."""
+    def col(name, prod, mkt, other, tax, prof, pct):
+        return ('<div class="tile"><h4>'+name+' <span class="dim" style="font-weight:400">&middot; '+pct+' net margin</span></h4>'
+                '<table style="margin:.3em 0"><tr><td class="dim">make it</td><td class="n">$'+str(prod)+'</td></tr>'
+                '<tr><td class="dim">ship, insure, customs</td><td class="n">$5</td></tr>'
+                '<tr><td class="dim">marketing</td><td class="n">$'+str(mkt)+'</td></tr>'
+                '<tr><td class="dim">staff &amp; everything else</td><td class="n">$'+str(other)+'</td></tr>'
+                '<tr><td class="dim">tax</td><td class="n">$'+str(tax)+'</td></tr>'
+                '<tr><td class="dim">the shop</td><td class="n">$50</td></tr>'
+                '<tr class="tot"><td>they keep</td><td class="n acc">$'+str(prof)+'</td></tr></table></div>')
+    return ('<div class="viz grid2">'
+            +col('Nike',22,5,11,2,5,'5.3%')
+            +col('adidas',21,8,13,1,2,'2.5%')
+            +'</div>')
 
 def viz_layers():
     segs=[(30,'$30','factory','gold'),(30,'+$30','brand','amber'),(15,'+$15','distributor','bronze'),(25,'+$25','retail shop','deep')]
@@ -314,19 +354,40 @@ S1=[
  ,'n':'Goal: a shop is a business, not a website. Tonight is arithmetic on real things. We break down one real brand together as we go, and you break down another one at the end.'},
 
 {'k':'ask','h':'<h2>You can buy this shirt for <span class="acc">$30</span>.</h2><p class="punch">What do you sell it for?</p>'
- '<p class="dim" style="margin-top:1.4em">Everyone answers. No wrong answers yet.</p>'
+ '<div class="viz grid2" style="margin-top:1.4em">'
+ '<div class="tile"><h4 class="dim">Write every answer up</h4>'
+ '<p class="dim">$45? $60? $90? Nobody is wrong yet &mdash; they are all guesses about the same thing: '
+ '<b>how much does it cost to run a business?</b></p></div>'
+ '<div class="tile"><h4 class="dim">Then ask the second one</h4>'
+ '<p class="dim">&ldquo;How much of that do you think you <b>keep</b>?&rdquo; '
+ 'Almost everyone says half. By the end of tonight you will know why that is wildly wrong.</p></div></div>'
  ,'n':'Write every answer up. Someone will say sixty. Keep them all on the board — you come back to them at the end.'},
 
-{'h':'<h2>Start with something you have held</h2>'+viz_shoe()+
- '<p class="dim" style="margin-top:.3em">Sources: WearTesters, Solereview, adidas &amp; Nike annual reports</p>'
- ,'n':'A hundred dollar shoe costs about twenty-eight to make. The brand sells it to the shop for fifty. The shop sells it to you for a hundred. And after marketing, R&D, admin and tax, adidas keeps about two dollars. Two. Let that number sit — nobody in the room expects it.'},
+{'h':'<h2>Start with something you have held</h2>'+viz_shoe('adidas')+
+ '<p class="dim" style="margin-top:.3em">Nguồn: Brands Vietnam &middot; Trí Thức Trẻ &mdash; từ báo cáo tài chính Nike &amp; adidas 2015</p>'
+ ,'n':'Ask first: a hundred dollar shoe — how much do you think adidas makes? Let them guess. They will say forty, fifty. Then show it. Twenty-one dollars to make. Fifty goes to the shop that sells it. And after shipping, marketing, staff and tax, adidas keeps TWO DOLLARS. Let that sit. Nobody expects it.'},
+
+{'h':'<h2>Both of them. Same shoe, same $100.</h2>'+viz_shoe_pair()+
+ '<p class="punch" style="margin-top:.5em">Nike keeps <em>$5</em>. adidas keeps <em>$2</em>.<br>'
+ '<span class="dim" style="font-size:.62em">And the shop that sold it keeps about $6.</span></p>'
+ ,'n':'The difference is almost entirely marketing — adidas spends eight where Nike spends five, and it comes straight out of the profit. This is a real business decision you can see in the numbers. Then the big one: of a hundred dollars, about eight is profit for anybody. Ninety-two is the machine.'},
+
+{'k':'ask','h':'<p class="punch">$100 in. <em>$8</em> of profit out, split between two companies.</p>'
+ '<p style="margin-top:1.4em">So where did the other <b class="acc">$92</b> go?</p>'
+ ,'n':'Making it, moving it, marketing it, and selling it. Nobody in this chain is getting rich. That is why merchants care so much about margin, and why they flinch at discounts. It is not greed — it is that there is almost nothing there to give away.'},
 
 {'h':'<h2>So price is <span class="acc">layers</span>, not cost</h2>'+viz_layers()+
  '<p style="margin-top:.4em">Every layer is somebody who <b class="acc">has to eat</b> — rent, staff, a shelf, a warehouse.</p>'
  ,'n':'The shop is not greedy. The shop has rent. Point at the gap between thirty and a hundred: none of that is shirt.'},
 
-{'h':'<p class="punch">The further a product travels from the factory, the <em>more mouths</em> it has to feed.</p>'
- '<p class="punch" style="margin-top:1.1em">A discount does not eat the profit. It eats <em>the layer that was paying for everything else.</em></p>'
+{'h':'<h2 class="dim">Two laws to remember</h2>'
+ '<p class="punch">The further a product travels from the factory, the <em>more mouths</em> it has to feed.</p>'
+ '<p class="punch" style="margin-top:1em">A discount does not eat the profit. It eats <em>the layer that was paying for everything else.</em></p>'
+ '<div class="tile" style="margin-top:1.2em;border-color:var(--bad)">'
+ '<h4 style="color:var(--bad)">Do the arithmetic on that second one</h4>'
+ '<p>adidas keeps <b>$2</b> on a $100 shoe. A <b>10% discount</b> is $10. '
+ 'That does not shrink the profit &mdash; it <b>erases it five times over</b>. '
+ 'Every time a merchant flinches at a discount, this is the number in their head.</p></div>'
  ,'n':'Remember the second one. Every time a merchant flinches at a discount, this is why. If adidas keeps two dollars, a ten percent discount does not cut their profit — it erases it four times over.'},
 
 {'h':'<h2>Which is why DTC exists</h2>'+viz_dtc()
@@ -357,7 +418,14 @@ BRAND(1,'What does tonight&rsquo;s brand sell &mdash; and what do you think it c
  ,'n':'Stop here. Let it sit. Do not rescue them.'},
 
 {'k':'ask','h':'<p class="punch">So why would anybody <em>run this business?</em></p>'
- ,'n':'Say nothing. Wait. Somebody will get close.'},
+ '<div class="viz grid2" style="margin-top:1.6em">'
+ '<div class="tile"><h4 class="dim">Answers you will hear</h4>'
+ '<p class="dim">&ldquo;Sell more of them.&rdquo; &mdash; volume does not help; every unit loses the same.<br>'
+ '&ldquo;Raise the price.&rdquo; &mdash; then fewer people buy, and the ad costs more per sale.<br>'
+ '&ldquo;Spend less on ads.&rdquo; &mdash; then nobody arrives at all.</p></div>'
+ '<div class="tile hot"><h4 class="acc">The only answer that works</h4>'
+ '<p>Sell to <b>the same person again</b>, when finding her costs nothing.</p></div></div>'
+ ,'n':'Say nothing at first. Wait. They will offer volume, price and cheaper ads — let each one die on its own before you reveal the last tile.'},
 
 {'h':'<h2>Because of the second one</h2>'+
  viz_bars([('ORDER 1',-2,'&minus;$2 &nbsp; paid for the ad, nothing else','red'),

@@ -35,6 +35,40 @@ gorgias · rebuy · subscribe
 
 ---
 
+## The $100 shoe — the source
+
+**[Bài toán chi phí và giá thành trên mỗi đôi giày Nike & Adidas](https://www.brandsvietnam.com/12953-bai-toan-chi-phi-va-gia-thanh-tren-moi-doi-giay-nike-adidas)**
+— Brands Vietnam / Trí Thức Trẻ, 19/07/2017, from Nike & adidas **2015 financial reports**.
+
+**In Vietnamese — send the link to the team before session 1.** They can read the source themselves,
+which is worth more than taking our word for it.
+
+On a **$100** shoe:
+
+| | Nike | adidas |
+|---|---|---|
+| Giá sản xuất (FOB) | $22 | $21 |
+| Vận chuyển, bảo hiểm, hải quan | $5 | $5 |
+| Marketing | $5 | **$8** |
+| Nhân sự và chi phí khác | $11 | **$13** |
+| Thuế | $2 | $1 |
+| Chi phí bán sỉ (the shop) | $50 | $50 |
+| **Lợi nhuận** | **$5** | **$2** |
+| Net margin, 2015 | 5.3% | 2.5% |
+
+**And the shop keeps almost nothing either.** Of its $50: an average **24% discount** across the year
+(Black Friday, Christmas), at least **$17** per pair to run the store (rent, staff, fit-out, inventory
+risk, distribution) — leaving roughly **$6** profit after tax.
+
+> **$100 in. About $8 of profit out, split between two companies. The other $92 is the machine.**
+
+Three things this teaches at once:
+1. **Price is layers**, and every layer is thin
+2. **A discount is not a haircut on profit** — 10% off a $100 shoe is five times adidas's entire margin
+3. **Marketing is a visible line item** — adidas spends $8 where Nike spends $5, and you can see it land in the profit
+
+---
+
 ## Numbers worth citing, with sources
 
 | Claim | Number | Source |
