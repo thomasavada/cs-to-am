@@ -56,127 +56,34 @@ Checkpoint at the top of every session: 10 min, screens on the wall.
 
 ---
 
-## Rep 1 — Money on one unit
+## The four sessions
 
-**Lens:** how does anything make money on one sale? *(no ecom words yet)*
+Each session is **one topic with one goal**, and each is a rep of the teardown sheet, not a lecture.
+Decks and runsheets: [`sessions/`](sessions/).
 
-**Full material: [3-money.md](3-money.md).** Layers and distribution · the $30 shirt drill ·
-allowable CAC · bought-once vs bought-again · Dollar Shave Club · **apps are solutions, not apps** ·
-AOV as an auction weapon.
-
-Start on a shoe, not a shop. Adidas: $180 retail, ~$25–30 to make, ~$90 to the shop, outlet at $108
-still above what the shop paid. Price is **layers**, and a discount eats the layer that pays for everything else.
-
-DTC skips the shop — and pays for **traffic** instead. The ad is the new middleman.
-
-Then **Lumi**: one moisturizer, $42, refill ~8 weeks. $30 to get Mai. After product, Shopify fee and
-shipping, order 1 is thin. **If Mai never comes back, the shop lost money on her.** Order 2 is the business.
-
-**Rep:** teardown sections **0–1** on a real brand, in pairs.  
-**Report out:** "at that margin, how many orders before they are ahead?"
-
-**Leave with:** the two fears are now arithmetic, not slogans.
-1. I keep buying new people who vanish.
-2. I keep making this order cheaper for people who would have paid anyway.
-
-**Also leave with:** *bought once* vs *bought again* — the one classification that predicts most of what a
-merchant does, including whether they need a loyalty program at all.
-
-**Homework:** sections 0–1 on **two** more brands. Classify each as bought-once or bought-again, then
-**predict the stack before looking.** Then look, and score yourself. Plus: what does one order cost *your* store?
-
----
-
-## Rep 2 — How the order happens
-
-**Lens:** the path from stranger to paid, and where people quit.
-
-Ads / social / SEO / email / referral → land → product page → add to cart → checkout → paid.
-
-This is all "conversion" means: **people came, some quit, where.** No optimisation. No metrics to hit.
-You walk it yourself and say where *you* would have quit.
-
-**Read first:** [4-journey.md](4-journey.md) stops 1–9. That is this rep, narrated end to end on one customer.
-
-**Rep:** teardown sections **2–3**, live, walking the site as a customer.  
-**Report out:** each pair names the main door, and the one place they would quit.
-
-**Leave with:** "conversion is down" / "add to cart rate" / "traffic" stop being words. They are a place on a path.
-
-**Homework:** sections 2–3 on two more brands. Plus: walk your own store and mark where you would quit.
-
----
-
-## Rep 3 — After the order, and the second one
-
-**Lens:** operations, then the only box that pays.
-
-Ship, track, refund, support — would you feel safe giving this shop $80?
-
-Then the real one: **why would a human buy this twice?** Sometimes the honest answer is *no reason* —
-and that tells you everything about what that merchant needs.
-
-Name it correctly:
-
-| Subscription | Loyalty | Discount |
+| | Session | Goal |
 |---|---|---|
-| next box already agreed | a reason to choose *you* next time | this order is cheaper |
+| **1** | **The basics** — how a shop makes money | a shop is a business, not a website |
+| **2** | **Break down a brand** | open any brand, say what it does and where it leaks |
+| **3** | **Why people come back** | why someone buys twice, and what actually makes them |
+| **4** | **Bring it together** | is it ours, does it need us, what do we say |
 
-**Read first:** [4-journey.md](4-journey.md) stops 10–14, and the two money tables. Order 1 keeps $2.13.
-Order 2 keeps $17.28. That is the whole business.
+The arc is **model → method → domain → judgement.** Session 1 gives them the mental model.
+Session 2 gives them the method. Session 3 gives them our subject. Session 4 makes them decide.
 
-**Rep:** teardown sections **4–5**. Deliberately include one brand with a strong repeat reason
-(refill / consumable) and one with a weak one (one-time purchase).
+**Shape of every session — 2 hours:**
 
-**Leave with:** COME BACK is where our money is, and it is not the same as a discount.
-
-**Homework:** sections 4–5 on two brands. Plus: what is the real reason someone would reorder from your store?
-
----
-
-## Rep 4 — The stack, and is it ours
-
-**Lens:** read the installed apps, infer the owner's intent, then judge fit.
-
-View source, Ctrl-F, `/account`, `/pages/rewards`.
-
-**The stack is a confession.** Every app is money spent because the owner was worried about something —
-so the stack tells you what keeps them up at night **before they say a word.** That is the AM read.
-Answer key and the leak-to-app map: [4-journey.md](4-journey.md).
-
-Then the question that turns reading into advising: **is what they installed aimed at their real leak?**
-A bundle app fixes thin orders. If the actual bleed is that nobody comes back, they are fixing stop 6
-while dying at stop 11 — and telling them so is the service.
-
-Then the ICP checklist (section 7). Run it on **two brands side by side — one strong fit, one not ours** —
-so fit is learned by contrast, not by memorising a list.
-
-The pattern worth recognising by name: **Recharge or Appstle + Klaviyo + no loyalty app.**
-They already pay for repeat revenue and have nothing that gives a reason to return.
-Textbook: `raewellness.co` — Recharge heavy, Klaviyo, `/rewards` 404s.
-
-**Rep:** teardown sections **6–8**, both brands, then verdict out loud with the reason.
-
-**Then the same judgement, asked the other way** — this is the hinge into block 2:
-
-> Does this shop need a loyalty program **at all**?
-
-A loyalty program is a **multiplier on a base you already have**, not a growth engine.
-100 customers with a perfect repeat rate is still a dead shop — you cannot multiply your way out of 100.
-20,000 customers with a loyal 5% is a real business.
-
-| Their stage | What they actually need |
+| | |
 |---|---|
-| Still running ads to survive, no real base | **expand the base** — referral, acquisition. Not points. |
-| Base exists, people buy once and vanish | a **reason to return** — points, tiers |
-| Base exists, discounting everyone | **stop the blanket discount** — VIP tiers |
+| 0:00 | Store checkpoint, homework on the table |
+| 0:10 | **Teach — ~20 min of slides. That is all the talking.** |
+| 0:30 | Live beats — real sites, real ads, view-source |
+| 0:45 | **Rep — teardown on a real brand, in pairs, 50 min** |
+| 1:35 | Report out, every pair |
+| 1:55 | Homework |
 
-*"Not yet"* is a correct and common answer. If they cannot say it out loud, they are selling, not advising.
-
-**Leave with:** you can look at a brand and say *is this ours, does it even need this, and what is the one
-thing we would change* — without opening Joy.
-
----
+If the teaching ever runs past 25 minutes it is eating the reps, which is the failure this course exists
+to fix.
 
 ## The ticket track — homework, then the gate
 

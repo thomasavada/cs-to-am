@@ -86,263 +86,430 @@ def build(fn, title, subtitle, slides):
     open(fn,'w').write(doc)
     print(f'  {fn}  ({len(slides)} slides)')
 
-# ─────────────────────────────── SESSION 1 ───────────────────────────────
+# ─────────────────────────── ILLUSTRATIONS ───────────────────────────
+A,G,R,D,L,C,W = '#f0b429','#3fb950','#f85149','#8b949e','#30363d','#161b22','#e6edf3'
+def _s(vb,body,h='auto'):
+    return f'<svg viewBox="{vb}" style="width:100%;height:{h};display:block;margin:.6em 0" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Inter,sans-serif">{body}</svg>'
+
+def svg_layers():
+    """Price built up in layers: each layer adds a slice."""
+    segs=[("Factory",0,30,A),("Brand",30,60,"#c98a1f"),("Distributor",60,75,"#8f6416"),("Retail shop",75,100,"#5c4110")]
+    b=''
+    for name,a,z,col in segs:
+        x,w=a*8,(z-a)*8
+        b+=f'<rect x="{x}" y="40" width="{w}" height="70" fill="{col}" stroke="#0d1117" stroke-width="2"/>'
+        b+=f'<text x="{x+w/2}" y="82" fill="#0d1117" font-size="17" font-weight="800" text-anchor="middle">+${z-a}</text>'
+        b+=f'<text x="{x+w/2}" y="132" fill="{D}" font-size="15" text-anchor="middle">{name}</text>'
+    b+=f'<text x="0" y="26" fill="{D}" font-size="15">$0</text>'
+    b+=f'<text x="800" y="26" fill="{W}" font-size="22" font-weight="800" text-anchor="end">$100 to you</text>'
+    b+=f'<line x1="240" y1="34" x2="240" y2="116" stroke="{W}" stroke-width="2" stroke-dasharray="5 4"/>'
+    b+=f'<text x="248" y="26" fill="{A}" font-size="15" font-weight="700">cost to make</text>'
+    return _s("0 0 800 145",b)
+
+def svg_eaten():
+    """The $60 bar, and the costs that exceed it."""
+    P=11.5
+    b=f'<text x="0" y="20" fill="{D}" font-size="15">WHAT SHE PAYS</text>'
+    b+=f'<rect x="0" y="30" width="{60*P}" height="44" rx="4" fill="{C}" stroke="{G}" stroke-width="2"/>'
+    b+=f'<text x="{30*P}" y="59" fill="{G}" font-size="21" font-weight="800" text-anchor="middle">$60.00</text>'
+    b+=f'<text x="0" y="110" fill="{D}" font-size="15">WHAT IT COSTS HER SHOP</text>'
+    costs=[("discount",9,"#8f6416"),("the shirt",30,"#5a5f66"),("ship",6,"#484d54"),("fee",1.78,"#3a3f45"),("ads",15,R)]
+    x=0
+    for n,v,col in costs:
+        w=v*P
+        b+=f'<rect x="{x}" y="120" width="{w}" height="44" rx="4" fill="{col}" stroke="#0d1117" stroke-width="2"/>'
+        if v>4: b+=f'<text x="{x+w/2}" y="148" fill="#0d1117" font-size="15" font-weight="800" text-anchor="middle">{n}</text>'
+        x+=w
+    b+=f'<line x1="{60*P}" y1="24" x2="{60*P}" y2="176" stroke="{W}" stroke-width="2" stroke-dasharray="5 4"/>'
+    b+=f'<rect x="{60*P}" y="120" width="{x-60*P}" height="44" rx="4" fill="none" stroke="{R}" stroke-width="3"/>'
+    b+=f'<text x="{x+10}" y="150" fill="{R}" font-size="21" font-weight="800">−$1.78</text>'
+    return _s("0 0 800 182",b)
+
+def svg_two_orders(l1,v1,l2,v2,neg1=True):
+    z=280
+    w1=abs(v1)/22*440; w2=abs(v2)/22*440
+    b=f'<line x1="{z}" y1="10" x2="{z}" y2="150" stroke="{L}" stroke-width="2"/>'
+    b+=f'<text x="{z-w1-12}" y="45" fill="{D}" font-size="15" text-anchor="end">ORDER 1</text>' if neg1 else ''
+    if neg1:
+        b+=f'<rect x="{z-w1}" y="24" width="{w1}" height="46" rx="4" fill="{R}"/>'
+        b+=f'<text x="{z-w1/2}" y="54" fill="#0d1117" font-size="19" font-weight="800" text-anchor="middle">{l1}</text>'
+    else:
+        b+=f'<rect x="{z}" y="24" width="{w1}" height="46" rx="4" fill="{A}"/>'
+        b+=f'<text x="{z+w1/2}" y="54" fill="#0d1117" font-size="19" font-weight="800" text-anchor="middle">{l1}</text>'
+        b+=f'<text x="{z-12}" y="54" fill="{D}" font-size="15" text-anchor="end">ORDER 1</text>'
+    b+=f'<rect x="{z}" y="88" width="{w2}" height="46" rx="4" fill="{G}"/>'
+    b+=f'<text x="{z+w2/2}" y="118" fill="#0d1117" font-size="19" font-weight="800" text-anchor="middle">{l2}</text>'
+    b+=f'<text x="{z-12}" y="118" fill="{D}" font-size="15" text-anchor="end">ORDER 2</text>'
+    return _s("0 0 800 155",b)
+
+def svg_dtc():
+    b=''
+    for i,(t,on) in enumerate([("factory",1),("brand",1),("distributor",0),("shop",0),("you",1)]):
+        x=i*160
+        col=A if on else C; tc="#0d1117" if on else D
+        b+=f'<rect x="{x}" y="30" width="132" height="56" rx="8" fill="{col}" stroke="{L if not on else col}" stroke-width="2"/>'
+        b+=f'<text x="{x+66}" y="64" fill="{tc}" font-size="17" font-weight="700" text-anchor="middle">{t}</text>'
+        if not on:
+            b+=f'<line x1="{x+14}" y1="80" x2="{x+118}" y2="36" stroke="{R}" stroke-width="4"/>'
+        if i<4: b+=f'<text x="{x+142}" y="64" fill="{D}" font-size="20" text-anchor="middle">→</text>'
+    b+=f'<path d="M330 108 L330 128 L560 128" stroke="{R}" stroke-width="3" fill="none"/>'
+    b+=f'<text x="345" y="152" fill="{R}" font-size="18" font-weight="800">you buy an ad instead — every single customer</text>'
+    return _s("0 0 800 165",b)
+
+def svg_funnel():
+    stops=[("1 ad",100),("2 land",78),("3 popup",70),("4 product",52),("5 offer",44),("6 cart",34),("7 leave",20),("8 checkout",15),("9 paid",11)]
+    b=''; x=0
+    for i,(t,pct) in enumerate(stops):
+        w=84; h=pct*1.5
+        y=120-h/2
+        col=A if i in(0,8) else (R if i==6 else "#2f4f6f")
+        b+=f'<rect x="{x}" y="{y}" width="{w-10}" height="{h}" rx="4" fill="{col}" opacity="{0.55+i*0.05}"/>'
+        b+=f'<text x="{x+37}" y="212" fill="{D}" font-size="13" text-anchor="middle">{t}</text>'
+        x+=w
+    b+=f'<text x="0" y="20" fill="{A}" font-size="16" font-weight="700">everyone who saw the ad</text>'
+    b+=f'<text x="756" y="20" fill="{G}" font-size="16" font-weight="700" text-anchor="end">paid</text>'
+    b+=f'<text x="530" y="238" fill="{R}" font-size="15" font-weight="700" text-anchor="middle">~70% of carts end here</text>'
+    return _s("0 0 800 248",b)
+
+def svg_shop_online():
+    b=f'<rect x="0" y="0" width="380" height="200" rx="12" fill="{C}" stroke="{L}" stroke-width="2"/>'
+    b+=f'<text x="24" y="36" fill="{D}" font-size="17" font-weight="700">A SHOP</text>'
+    b+=f'<circle cx="90" cy="105" r="24" fill="none" stroke="{D}" stroke-width="3" stroke-dasharray="6 5"/>'
+    b+=f'<path d="M130 105 L250 105" stroke="{D}" stroke-width="3" stroke-dasharray="8 6"/><path d="M240 96 l12 9 -12 9" fill="none" stroke="{D}" stroke-width="3"/>'
+    b+=f'<text x="268" y="100" fill="{R}" font-size="20" font-weight="800">gone</text>'
+    b+=f'<text x="268" y="124" fill="{D}" font-size="14">no name. no record.</text>'
+    b+=f'<rect x="420" y="0" width="380" height="200" rx="12" fill="{C}" stroke="{A}" stroke-width="2"/>'
+    b+=f'<text x="444" y="36" fill="{A}" font-size="17" font-weight="700">ONLINE</text>'
+    b+=f'<circle cx="510" cy="105" r="24" fill="none" stroke="{W}" stroke-width="3"/>'
+    b+=f'<path d="M550 105 L668 105" stroke="{W}" stroke-width="3"/><path d="M658 96 l12 9 -12 9" fill="none" stroke="{W}" stroke-width="3"/>'
+    b+=f'<text x="686" y="100" fill="{D}" font-size="18">left</text>'
+    b+=f'<rect x="486" y="146" width="150" height="34" rx="17" fill="{A}"/>'
+    b+=f'<text x="561" y="169" fill="#0d1117" font-size="15" font-weight="800" text-anchor="middle">@ on a list</text>'
+    return _s("0 0 800 205",b)
+
+def svg_timeline():
+    pts=[(0,"order","",A),(1,"ships","",D),(2,"arrives","",D),(3,"how to use it","wk 1",D),
+         (5,"review","wk 2",D),(9,"running low?","wk 6",A),(12,"REORDERS","wk 8",G)]
+    b=f'<line x1="30" y1="80" x2="770" y2="80" stroke="{L}" stroke-width="3"/>'
+    for t,lab,sub,col in pts:
+        x=30+t*61.6
+        big = col in (A,G)
+        b+=f'<circle cx="{x}" cy="80" r="{11 if big else 7}" fill="{col}"/>'
+        b+=f'<text x="{x}" y="{52 if big else 58}" fill="{col}" font-size="{16 if big else 13}" font-weight="{800 if big else 500}" text-anchor="middle">{lab}</text>'
+        if sub: b+=f'<text x="{x}" y="108" fill="{D}" font-size="13" text-anchor="middle">{sub}</text>'
+    b+=f'<rect x="520" y="24" width="250" height="76" rx="8" fill="none" stroke="{A}" stroke-width="2" stroke-dasharray="6 5"/>'
+    b+=f'<text x="645" y="134" fill="{A}" font-size="15" font-weight="700" text-anchor="middle">worth more than the ad</text>'
+    return _s("0 0 800 145",b)
+
+def svg_dots():
+    b=f'<text x="0" y="20" fill="{D}" font-size="15">SHOP A — 100 customers, 100% loyal</text>'
+    for i in range(100):
+        b+=f'<rect x="{(i%20)*9}" y="{34+(i//20)*9}" width="6" height="6" fill="{A}"/>'
+    b+=f'<text x="0" y="106" fill="{R}" font-size="18" font-weight="800">≈100 extra orders — still dead</text>'
+    b+=f'<text x="330" y="20" fill="{D}" font-size="15">SHOP B — 20,000 customers, 5% loyal</text>'
+    for i in range(1000):
+        col = A if i%20==0 else "#252b33"
+        b+=f'<rect x="{330+(i%50)*9}" y="{34+(i//50)*3.4}" width="6" height="2.4" fill="{col}"/>'
+    b+=f'<text x="330" y="106" fill="{G}" font-size="18" font-weight="800">≈3,000–4,000 extra orders — real money</text>'
+    return _s("0 0 800 118",b)
+
+def svg_grow_vs_keep():
+    b=f'<circle cx="180" cy="105" r="62" fill="none" stroke="{W}" stroke-width="3"/>'
+    b+=f'<text x="180" y="112" fill="{W}" font-size="16" font-weight="700" text-anchor="middle">the base</text>'
+    for a in (-40,0,40):
+        import math
+        r=math.radians(a); x1,y1=180+130*math.cos(r),105+130*math.sin(r); x2,y2=180+72*math.cos(r),105+72*math.sin(r)
+        b+=f'<path d="M{x1:.0f} {y1:.0f} L{x2:.0f} {y2:.0f}" stroke="{G}" stroke-width="3"/>'
+        b+=f'<path d="M{x2+13:.0f} {y2-8:.0f} L{x2:.0f} {y2:.0f} L{x2+13:.0f} {y2+8:.0f}" fill="none" stroke="{G}" stroke-width="3"/>'
+    b+=f'<text x="180" y="205" fill="{G}" font-size="19" font-weight="800" text-anchor="middle">REFERRAL grows it</text>'
+    b+=f'<circle cx="600" cy="105" r="62" fill="none" stroke="{W}" stroke-width="3"/>'
+    b+=f'<text x="600" y="112" fill="{W}" font-size="16" font-weight="700" text-anchor="middle">the base</text>'
+    b+=f'<path d="M600 40 A62 62 0 1 1 538 105" fill="none" stroke="{A}" stroke-width="4"/>'
+    b+=f'<path d="M528 92 L538 105 L551 98" fill="none" stroke="{A}" stroke-width="4"/>'
+    b+=f'<path d="M672 105 L740 105" stroke="{A}" stroke-width="3"/><path d="M730 96 l12 9 -12 9" fill="none" stroke="{A}" stroke-width="3"/>'
+    b+=f'<text x="600" y="205" fill="{A}" font-size="19" font-weight="800" text-anchor="middle">LOYALTY monetises it</text>'
+    return _s("0 0 800 218",b)
+
+def svg_once_again():
+    b=f'<text x="0" y="20" fill="{D}" font-size="15">BOUGHT ONCE — mattress, cookware, luggage</text>'
+    b+=f'<line x1="10" y1="52" x2="780" y2="52" stroke="{L}" stroke-width="2"/>'
+    b+=f'<circle cx="30" cy="52" r="12" fill="{A}"/><text x="56" y="58" fill="{D}" font-size="14">then nothing for years</text>'
+    b+=f'<text x="0" y="106" fill="{D}" font-size="15">BOUGHT AGAIN — soap, shampoo, razors, skincare</text>'
+    b+=f'<line x1="10" y1="138" x2="780" y2="138" stroke="{L}" stroke-width="2"/>'
+    for i in range(7):
+        x=30+i*118
+        b+=f'<circle cx="{x}" cy="138" r="{12 if i==0 else 10}" fill="{A if i==0 else G}"/>'
+    b+=f'<text x="640" y="168" fill="{G}" font-size="15" font-weight="700" text-anchor="middle">this is where we live</text>'
+    return _s("0 0 800 178",b)
+
+def svg_ceiling():
+    b=''
+    for i,(lab,val,w,col) in enumerate([("1 order",13.22,150,D),("3 orders",57,470,A)]):
+        y=30+i*80
+        b+=f'<rect x="150" y="{y}" width="{w}" height="48" rx="4" fill="{col}" opacity=".85"/>'
+        b+=f'<text x="140" y="{y+31}" fill="{D}" font-size="16" text-anchor="end">{lab}</text>'
+        b+=f'<text x="{160+w}" y="{y+31}" fill="{col}" font-size="20" font-weight="800">${val}</text>'
+    b+=f'<text x="150" y="196" fill="{W}" font-size="17" font-weight="700">how long she stays = what you may pay to get her</text>'
+    return _s("0 0 800 208",b)
+
+def svg_confession():
+    rows=[("Klaviyo","cannot reach my visitors"),("Rebuy","my orders are too thin"),
+          ("Recharge","customers buy once"),("Gorgias","drowning in where-is-my-order"),
+          ("Loyalty app","have a base, nothing brings them back")]
+    b=''
+    for i,(app,fear) in enumerate(rows):
+        y=i*44
+        b+=f'<rect x="0" y="{y}" width="200" height="34" rx="6" fill="{C}" stroke="{A}" stroke-width="2"/>'
+        b+=f'<text x="100" y="{y+23}" fill="{A}" font-size="16" font-weight="700" text-anchor="middle">{app}</text>'
+        b+=f'<path d="M212 {y+17} L258 {y+17}" stroke="{D}" stroke-width="2"/><path d="M250 {y+11} l9 6 -9 6" fill="none" stroke="{D}" stroke-width="2"/>'
+        b+=f'<text x="272" y="{y+23}" fill="{W}" font-size="17">&#8220;{fear}&#8221;</text>'
+    b+=f'<text x="0" y="{len(rows)*44+26}" fill="{D}" font-size="15">what they bought &#8594; what they were afraid of</text>'
+    return _s(f"0 0 800 {len(rows)*44+38}",b)
+
+def svg_points_credit():
+    b=f'<rect x="0" y="0" width="380" height="196" rx="12" fill="{C}" stroke="{A}" stroke-width="2"/>'
+    b+=f'<text x="24" y="38" fill="{A}" font-size="20" font-weight="800">POINTS</text>'
+    b+=f'<text x="24" y="66" fill="{W}" font-size="16">the brand&#8217;s currency</text>'
+    for i,t in enumerate(["abstract — needs explaining","feels like belonging, progress","you name it, you theme it","some never redeemed"]):
+        b+=f'<text x="24" y="{98+i*24}" fill="{D}" font-size="14">&#183; {t}</text>'
+    b+=f'<rect x="420" y="0" width="380" height="196" rx="12" fill="{C}" stroke="{G}" stroke-width="2"/>'
+    b+=f'<text x="444" y="38" fill="{G}" font-size="20" font-weight="800">STORE CREDIT</text>'
+    b+=f'<text x="444" y="66" fill="{W}" font-size="16">money with your logo on it</text>'
+    for i,t in enumerate(["understood instantly","feels like a transaction","looks like money, not like you","spent fast — you hold their cash"]):
+        b+=f'<text x="444" y="{98+i*24}" fill="{D}" font-size="14">&#183; {t}</text>'
+    return _s("0 0 800 205",b)
+
+def svg_boxes():
+    bx=[("GET PEOPLE IN","ads, email, they remember you"),("ON THE SITE","home, product, cart, popup"),
+        ("PAY","checkout, discount, shipping"),("AFTER THE ORDER","email, where is my order, refund"),
+        ("COME BACK","refill, drop, membership"),("MONEY","order 1 cost them. order 2 is the win")]
+    b=''
+    for i,(t,sub) in enumerate(bx):
+        x=(i%3)*270; y=(i//3)*104
+        hot = t in ("COME BACK","MONEY")
+        b+=f'<rect x="{x}" y="{y}" width="250" height="86" rx="10" fill="{C}" stroke="{A if hot else L}" stroke-width="2"/>'
+        b+=f'<text x="{x+18}" y="{y+34}" fill="{A if hot else W}" font-size="16" font-weight="800">{t}</text>'
+        b+=f'<text x="{x+18}" y="{y+60}" fill="{D}" font-size="13">{sub}</text>'
+    return _s("0 0 800 200",b)
+
+def svg_stage():
+    rows=[("no real base yet","expand the base &#8212; REFERRAL",G),
+          ("base, but they buy once","a reason to return &#8212; POINTS",A),
+          ("base, discounting everyone","stop the blanket discount &#8212; TIERS",A)]
+    b=''
+    for i,(l,r,col) in enumerate(rows):
+        y=i*62
+        b+=f'<rect x="0" y="{y}" width="330" height="48" rx="8" fill="{C}" stroke="{L}" stroke-width="2"/>'
+        b+=f'<text x="18" y="{y+30}" fill="{W}" font-size="16">{l}</text>'
+        b+=f'<path d="M344 {y+24} L392 {y+24}" stroke="{col}" stroke-width="3"/><path d="M383 {y+17} l10 7 -10 7" fill="none" stroke="{col}" stroke-width="3"/>'
+        b+=f'<text x="406" y="{y+30}" fill="{col}" font-size="17" font-weight="700">{r}</text>'
+    return _s("0 0 800 190",b)
+
+# ═══════════════ SESSION 1 — THE BASICS: how a shop makes money ═══════════════
 S1=[
-{'h':'<h1>Money on<br>one unit</h1><p class="dim" style="margin-top:1em">Session 1 · 2 hours · no Joy, no app, no screens</p>'
- ,'n':'Goal: you can say how a shop makes money on one order, and why the second order is the business.'},
+{'h':'<h1>How a shop<br>makes money</h1><p class="dim" style="margin-top:1em">Session 1 · the basics · no website, no app, no Joy</p>'
+ ,'n':'Goal: you understand a shop as a business, not as a website. Everything else this month sits on top of tonight.'},
 
 {'k':'ask','h':'<h2>You can buy this shirt for <span class="acc">$30</span>.</h2><p class="punch">What do you sell it for?</p>'
- ,'n':'Shout it out. Take every answer, write them all up, judge none of them. Someone will say sixty.'},
+ ,'n':'Shout it out. Write every answer up, judge none. Someone will say sixty.'},
 
-{'h':'<h2>Same shirt. Three prices.</h2><div class="two"><div class="card"><h3 class="dim">Retail shop</h3><p class="punch">$100</p></div>'
+{'h':'<h2>Same shirt. Three prices.</h2><div class="two">'
+ '<div class="card"><h3 class="dim">Retail shop</h3><p class="punch">$100</p></div>'
  '<div class="card"><h3 class="dim">Outlet, next season</h3><p class="punch">$60</p></div></div>'
  '<p style="margin-top:1.2em">Why? It is not brand. It is not quality.</p>'
- ,'n':'Let them guess. They will say brand and quality. Both mostly wrong.'},
+ ,'n':'Let them guess. They will say brand and quality. Both mostly wrong. It is distribution.'},
 
-{'h':'<h2>Price is layers</h2><table>'
- '<tr><td>Factory</td><td class="dim">fabric, labour</td><td class="n acc">$30</td></tr>'
- '<tr><td>Brand</td><td class="dim">design, marketing, warehouse</td><td class="n">$60</td></tr>'
- '<tr><td>Distributor</td><td class="dim">moving it, holding stock</td><td class="n">$75</td></tr>'
- '<tr class="tot"><td>Retail shop</td><td class="dim">rent, staff, the shelf</td><td class="n">$100</td></tr></table>'
- ,'n':'Price is not the cost of the thing. Price is a stack of layers, and every layer is somebody who has to eat. The shop is not greedy. The shop has rent.'},
+{'h':'<h2>Price is layers</h2>'+svg_layers()+
+ '<p style="margin-top:.4em">Every layer is somebody who <b class="acc">has to eat</b>.</p>'
+ ,'n':'Price is not the cost of the thing. The shop is not greedy — the shop has rent, staff and a shelf. Point at the gap between thirty and a hundred: none of that is shirt.'},
 
 {'h':'<p class="punch">The further a product travels from the factory, the <em>more mouths</em> it has to feed.</p>'
  '<p class="punch" style="margin-top:1em">A discount does not eat the profit. It eats <em>the layer that was paying for everything else.</em></p>'
  ,'n':'Remember the second one. Every time a merchant flinches at a discount, this is why.'},
 
-{'h':'<h2>So DTC deletes the layers</h2>'
- '<p class="mono" style="font-size:clamp(17px,2.4vw,34px)">factory → brand → <s class="dim">distributor</s> → <s class="dim">shop</s> → you</p>'
- '<p style="margin-top:1.2em">Sell straight to the person. Keep the layers.</p>'
- '<p class="punch" style="margin-top:.7em">But they deleted the shop and bought <em>an ad</em> instead.</p>'
- ,'n':'Nothing is free. And unlike a shop, you pay the ad again for every single customer. That is the whole game.'},
+{'h':'<h2>So DTC deletes the layers</h2>'+svg_dtc()
+ ,'n':'Sell straight to the person, keep the layers. That is why DTC can charge less and keep more. But nothing is free — they deleted the shop and bought an ad instead, and unlike a shop you pay the ad again for every single customer.'},
 
 {'k':'watch','h':'<h2>The clearest example ever filmed</h2><p><b>Dollar Shave Club</b>, March 2012. 90 seconds.</p>'
- '<ul><li>Shot in one day for <b class="acc">$4,500</b></li><li><b class="acc">12,000 orders</b> in 48 hours — the servers fell over</li>'
- '<li>~25 million views · sold to Unilever for <b class="acc">~$1B</b></li></ul>'
+ '<ul><li>Shot in one day for <b class="acc">$4,500</b></li>'
+ '<li><b class="acc">12,000 orders</b> in 48 hours — the servers fell over</li>'
+ '<li>~25M views · sold to Unilever for <b class="acc">~$1B</b></li></ul>'
  '<div class="res">youtube.com/watch?v=RBHMf7BNd8o</div>'
- ,'n':'Watch it. Then ask: what did they actually delete? The supermarket shelf. And what replaced it — subscription replaced remembering to buy, referral replaced the shelf. Their innovation was the price structure, not the razor.'},
+ ,'n':'Watch it, then ask: what did they actually delete? The supermarket shelf. And what replaced it — subscription replaced remembering to buy, referral replaced the shelf. Their innovation was the price structure, not the razor.'},
 
-{'k':'board','h':'<h2>Back to your shirt</h2><p class="punch">$30 → you said <em>$60</em>.</p><p style="margin-top:1em">Let us find out what actually stays in your pocket.</p>'
- ,'n':'Whiteboard from here. Build it live, one line at a time. Do NOT show them the finished table.'},
+{'k':'board','h':'<h2>Back to your shirt</h2><p class="punch">$30 → you said <em>$60</em>.</p>'
+ '<p style="margin-top:1em">Let us find out what actually stays in your pocket.</p>'
+ ,'n':'Whiteboard from here. Build it live, one line at a time. Do NOT show them the finished picture.'},
 
-{'h':'<h2>Order one</h2><table>'
- '<tr><td>Sticker price</td><td class="n">$60.00</td></tr>'
- '<tr><td>15% off <span class="dim">— a stranger needs a reason</span></td><td class="n neg">−$9.00</td></tr>'
- '<tr><td class="dim">Collected</td><td class="n dim">$51.00</td></tr>'
- '<tr><td>The shirt</td><td class="n neg">−$30.00</td></tr>'
- '<tr><td>Shipping</td><td class="n neg">−$6.00</td></tr>'
- '<tr><td>Processing</td><td class="n neg">−$1.78</td></tr>'
- '<tr><td>Ads, to make this person show up</td><td class="n neg">−$15.00</td></tr>'
- '<tr class="tot"><td>Kept</td><td class="n neg">−$1.78</td></tr></table>'
- ,'n':'You sold a shirt and you are down one dollar seventy-eight.'},
+{'h':'<h2>Order one</h2>'+svg_eaten()+
+ '<p style="margin-top:.4em">The costs run <b class="neg">past the end</b> of what she paid.</p>'
+ ,'n':'You sold a shirt and you are down one dollar seventy-eight. The bar literally overflows — that is the point.'},
 
-{'h':'<h2>And nothing else is paid yet</h2><p class="mono dim" style="font-size:clamp(16px,2.2vw,30px)">Shopify plan · apps · salary · rent · tax</p>'
+{'h':'<h2>And nothing else is paid yet</h2>'
+ '<p class="mono dim" style="font-size:clamp(16px,2.2vw,30px)">Shopify plan · apps · salary · rent · tax</p>'
  '<p class="punch" style="margin-top:1em">The honest number is closer to <em class="neg">−$8</em>.</p>'
  ,'n':'The app stack alone is around ten percent of revenue at this size. Stop here. Let it sit.'},
 
 {'k':'ask','h':'<p class="punch">So why would anybody <em>run this business?</em></p>'
  ,'n':'Say nothing. Wait. Let them answer. Somebody will get close.'},
 
-{'h':'<h2>Because of this one</h2><p class="dim">Order 2 — same customer, eight weeks later</p><table>'
- '<tr><td>Sticker price</td><td class="n">$60.00</td></tr>'
- '<tr><td>First-order discount</td><td class="n dim">none — she is not a stranger</td></tr>'
- '<tr><td>The shirt</td><td class="n neg">−$30.00</td></tr>'
- '<tr><td>Shipping</td><td class="n neg">−$6.00</td></tr>'
- '<tr><td>Processing</td><td class="n neg">−$2.04</td></tr>'
- '<tr><td><b>Ads</b></td><td class="n pos">$0.00 — she came back on her own</td></tr>'
- '<tr class="tot"><td>Kept</td><td class="n pos">+$21.96</td></tr></table>'
- ,'n':'Same shirt. Same price. Twenty-two dollars instead of minus two. The only difference is nobody had to pay to find her.'},
+{'h':'<h2>Because of this one</h2>'+svg_two_orders('−$2',2,'+$22',22)+
+ '<p class="punch" style="margin-top:.6em">The business is not the shirt.<br>It is the <em>second shirt.</em></p>'
+ ,'n':'Same shirt, same price. Twenty-two dollars instead of minus two. The only difference is nobody had to pay to find her. Write this down — everything for the next four weeks comes back to it.'},
 
-{'h':'<h2 class="dim">The whole business</h2>'
- '<div style="margin:1.4em 0"><p class="dim" style="font-size:.8em">ORDER 1</p>'
- '<div class="bar" style="width:12%;background:var(--bad)">−$2</div></div>'
- '<div><p class="dim" style="font-size:.8em">ORDER 2</p>'
- '<div class="bar" style="width:100%;background:var(--good)">+$22</div></div>'
- '<p class="punch" style="margin-top:1.4em">The business is not the shirt.<br>It is the <em>second shirt.</em></p>'
- ,'n':'Write this down. Everything we do for the next four weeks comes back to this.'},
+{'h':'<h2>So how much are you <em class="acc">allowed</em> to spend?</h2>'+svg_ceiling()
+ ,'n':'Same product, same ad, same market — the brand that gets a second order can outspend the brand that does not. That is why retention is not a nice-to-have. It is how you afford to compete at all.'},
 
-{'h':'<h2>So how much are you <em class="acc">allowed</em> to spend?</h2><table>'
- '<tr><td>Order 1 keeps, before ads</td><td class="n acc">$13.22</td></tr>'
- '<tr><td>If she only ever buys once, your ceiling is</td><td class="n">$13.22</td></tr>'
- '<tr><td>If she buys three times</td><td class="n acc">≈ $57</td></tr>'
- '<tr class="tot"><td>Now you can spend</td><td class="n pos">$30–40 and still win</td></tr></table>'
- ,'n':'How long a customer stays decides how much you are allowed to pay for her. Same product, same ad, same market — the brand that gets a second order can outspend the brand that does not. That is why retention is not a nice-to-have. It is how you afford to compete at all.'},
+{'h':'<h2>Not every product is the same business</h2>'+svg_once_again()
+ ,'n':'One question — bought once or bought again — predicts most of what a merchant does, including whether they need us at all. Hold onto this. Session four is built on it.'},
 
-{'h':'<h2>Not every product is the same business</h2><table>'
- '<tr><th></th><th>Bought once</th><th>Bought again</th></tr>'
- '<tr><td class="dim"></td><td>mattress, cookware, luggage</td><td>soap, shampoo, razors, skincare</td></tr>'
- '<tr><td class="dim">Shots you get</td><td class="bad"><b>one</b></td><td><b>many</b></td></tr>'
- '<tr><td class="dim">So order 1 must</td><td><b>be squeezed</b></td><td>only cover itself</td></tr>'
- '<tr><td class="dim">They install</td><td>bundle / upsell</td><td>subscription, email, <b class="acc">loyalty</b></td></tr>'
- '<tr><td class="dim">Grows by</td><td>referral, new products</td><td><b>repeat</b></td></tr></table>'
- ,'n':'One question — bought once, or bought again — predicts most of what a merchant does. Including whether they need us at all. Hold onto this. Session four is built on it.'},
+{'h':'<h2>And every shop is these six boxes</h2>'+svg_boxes()+
+ '<p style="margin-top:.4em">Every merchant message you will ever read is about <b class="acc">one box</b>.</p>'
+ ,'n':'This is your map for next week. We live in COME BACK. But you cannot help someone in COME BACK if you do not know the other five exist.'},
 
 {'h':'<h2>Your two fears, as arithmetic</h2>'
- '<div class="card" style="margin-bottom:1em"><h3>1 · I keep buying new people who vanish</h3><p class="dim">only ever booking the first table</p></div>'
- '<div class="card"><h3>2 · I keep discounting people who would have paid anyway</h3><p class="dim">the $9, handed to someone already buying</p></div>'
- ,'n':'These are not feelings. They are the two tables you just built. When a merchant sounds scared, they are scared of one of these two things.'},
+ '<div class="card" style="margin-bottom:1em"><h3>1 · I keep buying new people who vanish</h3>'
+ '<p class="dim">only ever booking the first table</p></div>'
+ '<div class="card"><h3>2 · I keep discounting people who would have paid anyway</h3>'
+ '<p class="dim">the $9, handed to someone already buying</p></div>'
+ ,'n':'These are not feelings. They are the two tables you just built. When a merchant sounds scared, it is one of these two.'},
 
-{'k':'drill','h':'<h2>Now you</h2><ul><li>Pairs. A real brand. Teardown sheet <b>§0–1</b></li>'
- '<li>50 minutes, then every pair reports</li></ul>'
+{'k':'drill','h':'<h2>Now you</h2>'
+ '<ul><li>Pairs. A real brand. Teardown sheet <b>§0–1</b></li><li>50 minutes, then every pair reports</li></ul>'
  '<p class="punch" style="margin-top:1em">At that margin, <em>how many orders</em> before they are ahead?</p>'
- ,'n':'Homework: sections 0-1 on two more brands. Classify each bought-once or bought-again, then predict the stack BEFORE you look. Then look, and score yourself.'},
+ ,'n':'Homework: sections 0-1 on two more brands. Classify each bought-once or bought-again. And: what does one order cost YOUR store?'},
 ]
 
-# ─────────────────────────────── SESSION 2 ───────────────────────────────
+# ═══════════════ SESSION 2 — BREAK DOWN A BRAND ═══════════════
 S2=[
-{'h':'<h1>How the order<br>happens</h1><p class="dim" style="margin-top:1em">Session 2 · stops 1–9 · phones out</p>'
- ,'n':'Goal: you can walk any shop as a customer and name where people quit.'},
+{'h':'<h1>Break down<br>a brand</h1><p class="dim" style="margin-top:1em">Session 2 · the method · phones out</p>'
+ ,'n':'Goal: you can open any brand you have never seen and say what it is doing, and where it is losing people.'},
 
-{'h':'<h2>Today we follow one person</h2><div class="card"><h3>Mai</h3>'
- '<p><b>Lumi</b> — one moisturizer, <b class="acc">$42</b>, refill every <b class="acc">8 weeks</b>.<br>'
- 'Lumi paid about <b class="acc">$30</b> in ads to reach her.</p></div>'
- '<p style="margin-top:1em">Last week we did the money. Today we watch it happen to a human being.</p>'
- ,'n':'Keep asking through the session: what is Mai doing right now? Never let it become abstract.'},
+{'h':'<h2>One sheet. Any brand. No login.</h2>'
+ '<p class="punch"><em>Outside-in:</em> if you cannot see it on the public site, it is not on the sheet.</p>'
+ '<p style="margin-top:1.2em">No ad account. No merchant interview. No Joy admin.</p>'
+ '<p class="dim" style="margin-top:.6em">First time ~45 min. By next month, 15.</p>'
+ ,'n':'This is the skill the whole course is built to give you. Everything else is context for this.'},
 
-{'h':'<p class="punch">Every stop is a place where <em>money leaks out.</em></p>'
- '<p style="margin-top:1.2em">Every leak has a name, a number, and a fix.</p>'
- '<p class="punch" style="margin-top:1em">You cannot find the opportunity if you cannot <em>see the journey.</em></p>'
- ,'n':'No merchant will ever write in saying "I have a leak at stop six." They say "conversion is down." Your job is to know which stop they are standing on.'},
-
-{'h':'<h2>The thing that makes all of this possible</h2><table>'
- '<tr><th></th><th>A shop</th><th>Online</th></tr>'
- '<tr><td class="dim">Someone walks in</td><td>you see a body</td><td>you know they came from that ad</td></tr>'
- '<tr><td class="dim">They browse</td><td>no record</td><td>you know they viewed it 3×</td></tr>'
- '<tr><td class="dim">They leave</td><td class="neg"><b>gone forever</b></td><td class="pos">they are on a list</td></tr>'
- '<tr><td class="dim">You learn who they are</td><td>only at the till</td><td><b>at the popup</b></td></tr></table>'
+{'h':'<h2>Why you can do this at all</h2>'+svg_shop_online()
  ,'n':'This is the difference between a shop and a website, and nearly every app in ecom exists because of it.'},
 
 {'h':'<p class="punch">In a shop, someone who leaves is <em>gone.</em></p>'
  '<p class="punch" style="margin-top:.8em">Online, someone who leaves is <em>a list.</em></p>'
- ,'n':'That is why the popup exists. Why retargeting exists. Why abandoned cart email is the most profitable email in ecom. And it is why loyalty works at all — a loyalty program is just identity, applied over time.'},
+ ,'n':'That is why the popup exists, why retargeting exists, why abandoned cart email is the most profitable email in ecom. And it is why loyalty works at all — loyalty is identity applied over time.'},
 
-{'k':'look','h':'<h2>Stops 1–2 · The ad, and where she lands</h2>'
- '<p>Open the Ad Library. Find a live ad for tonight\'s brand. Then click through.</p>'
+{'h':'<h2>The path you are looking for</h2>'+svg_funnel()
+ ,'n':'Nine stops from stranger to paid. Your job walking a brand is to find where people fall out. Not to fix it — to find it.'},
+
+{'k':'look','h':'<h2>Start at the ad</h2>'
+ '<p>Find a live ad for tonight\'s brand. Then click through.</p>'
  '<div class="res">facebook.com/ads/library</div>'
- '<p style="margin-top:1em">Does the page repeat the promise the ad just made?</p>'
- ,'n':'An ad is not a picture of a product. It is an argument aimed at one person: name her problem, prove it, make it urgent. And the most common way to waste thirty dollars in this business is the ad promising one thing and the page saying another. She assumes she misread it and leaves.'},
+ '<p class="punch" style="margin-top:1em">Does the page <em>repeat the promise</em> the ad just made?</p>'
+ ,'n':'An ad is an argument aimed at one person: name her problem, prove it, make it urgent. The most common way to waste thirty dollars is the ad promising one thing and the page saying another.'},
 
-{'k':'look','h':'<h2>Stop 3 · The popup</h2><p class="punch">"10% off your first order"</p>'
+{'k':'look','h':'<h2>The popup</h2><p class="punch">"10% off your first order"</p>'
  '<p style="margin-top:1em">What is actually being bought here?</p>'
- '<p style="margin-top:.6em">Not the sale. <b class="acc">The email.</b> Lumi cannot email a stranger.</p>'
- '<p class="dim" style="margin-top:1em">And the 10% is real: −$6.80. Some who take it would have paid full price.</p>'
- ,'n':'That is owner fear number two, live, in the first thirty seconds. Trigger the popup on the projector so they see it fire.'},
+ '<p style="margin-top:.6em">Not the sale. <b class="acc">The email.</b></p>'
+ '<p class="dim" style="margin-top:1em">And the 10% is real. Some who take it would have paid full price — fear #2, in the first thirty seconds.</p>'
+ ,'n':'Trigger it live on the projector so they watch it fire. Then point out: without this, recovery later is impossible.'},
 
-{'h':'<h2>Stop 4 · The product page</h2>'
+{'h':'<h2>The product page answers three questions</h2>'
  '<p class="punch">Will this work for me?<br>Can I trust you?<br>What if I hate it?</p>'
- '<p style="margin-top:1.2em">Reviews answer all three, cheaper than any copy you could write.</p>'
+ '<p style="margin-top:1.2em">Reviews answer all three, cheaper than any copy.</p>'
  ,'n':'A hidden returns policy kills the sale. A stranger will not risk forty-two dollars on a shop that will not say what happens if it fails.'},
 
-{'h':'<h2>Stop 5 · Subscribe or bundle — not the same thing</h2><table>'
+{'h':'<h2>Subscribe or bundle — not the same thing</h2><table>'
  '<tr><th></th><th>Buys the owner</th><th>Costs</th></tr>'
  '<tr><td><b>Subscription</b></td><td class="acc"><b>LTV</b> — next order agreed</td><td>15% margin, forever</td></tr>'
  '<tr><td><b>Bundle</b></td><td class="acc"><b>AOV</b> — fatter order today</td><td>less per unit, more cash now</td></tr></table>'
- ,'n':'Subscription raises lifetime value. Bundle raises order value. Different problems. A shop with a repeat problem needs the first. A shop with thin orders needs the second. Do not let anyone say them in the same breath.'},
+ ,'n':'Different problems. A shop with a repeat problem needs the first. A shop with thin orders needs the second. Do not let anyone say them in the same breath.'},
 
-{'k':'look','h':'<h2>Stop 6 · The strongest lever in ecom</h2>'
+{'k':'look','h':'<h2>The cart, and the strongest lever in ecom</h2>'
  '<p class="punch">"You are <em>$12 away</em> from free shipping."</p>'
  '<p style="margin-top:1.2em">She would rather add $12 of product than pay $7 of shipping for nothing.</p>'
- ,'n':'Free shipping thresholds move average order value more than almost anything else. And the threshold has to sit above the point where the maths works, or the merchant is just paying postage. Add to cart live so they see the bar move.'},
+ ,'n':'Add to cart live so they watch the bar move. Free shipping thresholds move AOV more than almost anything else.'},
 
-{'h':'<h2>Stop 7 · She leaves</h2><p>Puts the phone down. Dinner. She was never angry.</p>'
- '<p class="punch" style="margin:1em 0"><em>70%</em> of carts are abandoned.</p>'
- '<p>Three exits, three emails: <span class="dim">browse · cart · checkout</span></p>'
- '<p class="punch" style="margin-top:1em">No email captured → no recovery → the <em>$30 is gone.</em></p>'
- ,'n':'This is the whole reason stop three existed. Point back at it. Global cart abandonment is about 70 percent per Baymard — this is normal, not a failure.'},
-
-{'h':'<h2>Stop 8 · Where intent goes to die</h2>'
- '<ul><li><b class="acc">Extra costs are the #1 abandon reason</b> — 39% of people</li>'
- '<li>The discount code box is a <b>leak</b> — they leave to hunt for a code</li>'
- '<li>Express wallets: five fields become one thumbprint</li>'
+{'h':'<h2>Checkout — where intent goes to die</h2>'
+ '<ul><li><b class="acc">Extra costs are the #1 abandon reason — 39%</b></li>'
+ '<li>The discount code box is a <b>leak</b></li>'
+ '<li>Express wallets: five fields → one thumbprint</li>'
  '<li>Guest checkout — do not force an account on a stranger</li></ul>'
+ '<p class="dim" style="margin-top:1em">~70% of carts are abandoned. That is normal, not failure.</p>'
  '<div class="res">baymard.com/lists/cart-abandonment-rate</div>'
- ,'n':'A seven dollar shipping fee on a forty-two dollar order reads as a seventeen percent price rise. That is why it is the number one reason. Not the price of the product — the surprise.'},
-
-{'h':'<h2>Stop 9 · The best real estate in the shop</h2>'
- '<p class="mono dim">"Order confirmed."</p><p class="punch">→ "Add the night cream, $18. <em>One click.</em>"</p>'
- '<p style="margin-top:1.2em">She already trusts them. Her card is already charged.</p>'
- ,'n':'A post-purchase offer cannot lose the sale, because the sale is done. This is also where loyalty enrolment belongs, and where most shops waste it.'},
+ ,'n':'A seven dollar fee on a forty-two dollar order reads as a seventeen percent price rise. It is the surprise, not the price.'},
 
 {'h':'<h2>Every leak has a name</h2><table>'
- '<tr><th>The number</th><th>Stop</th><th>Low means</th></tr>'
- '<tr><td>Site speed</td><td class="dim">2</td><td>she left before it loaded</td></tr>'
- '<tr><td>Email capture</td><td class="dim">3</td><td>you do not know who is visiting</td></tr>'
- '<tr><td><b>Add-to-cart rate</b></td><td class="dim">4</td><td>the page did not convince her</td></tr>'
- '<tr><td><b>AOV</b></td><td class="dim">5–6</td><td>orders are too thin</td></tr>'
- '<tr><td><b>Checkout rate</b></td><td class="dim">8</td><td>shipping shock, friction</td></tr></table>'
- ,'n':'These numbers are not abstract. Each one is a stop on the path you just walked.'},
+ '<tr><th>The number</th><th>Where</th><th>Low means</th></tr>'
+ '<tr><td>Site speed</td><td class="dim">landing</td><td>she left before it loaded</td></tr>'
+ '<tr><td>Email capture</td><td class="dim">popup</td><td>you do not know who is visiting</td></tr>'
+ '<tr><td><b>Add-to-cart rate</b></td><td class="dim">product</td><td>the page did not convince her</td></tr>'
+ '<tr><td><b>AOV</b></td><td class="dim">cart</td><td>orders are too thin</td></tr>'
+ '<tr><td><b>Checkout rate</b></td><td class="dim">checkout</td><td>shipping shock, friction</td></tr></table>'
+ ,'n':'These numbers are not abstract. Each one is a place on the path you just walked.'},
 
 {'h':'<p class="punch">"Conversion is down" is <em>not a problem.</em></p>'
- '<p style="margin-top:1em">It is a symptom of a leak at one specific stop.</p>'
- '<p class="punch" style="margin-top:1.2em">An AM finds the stop.<br><span class="dim">CS forwards the sentence.</span></p>'
+ '<p style="margin-top:1em">It is a symptom of a leak at one specific place.</p>'
+ '<p class="punch" style="margin-top:1.2em">An AM finds the place.<br><span class="dim">CS forwards the sentence.</span></p>'
  ,'n':'That sentence is the difference between the two jobs. That is all it is.'},
 
-{'k':'drill','h':'<h2>Now you</h2><ul><li>Pairs, <b>phones out</b>, real brand, real money in the cart</li>'
- '<li>Walk stops 1–9. Teardown <b>§2–3</b></li>'
+{'k':'look','h':'<h2>Now read what they installed</h2>'
+ '<p class="mono dim">right-click → View Page Source → Ctrl-F</p>'
+ '<div class="res mono">klaviyo · attentive · recharge · appstle · skio · smile<br>'
+ 'yotpo · loyaltylion · rivo · growave · okendo · judge.me<br>gorgias · rebuy · subscribe</div>'
+ '<p style="margin-top:1em">Then the footer · <span class="mono">/account</span> · <span class="mono acc">/pages/rewards</span></p>'
+ ,'n':'Do it live. It is genuinely fun to watch. Sixty seconds and you know more than a discovery call would tell you.'},
+
+{'h':'<h2>The stack is a confession</h2>'+svg_confession()
+ ,'n':'Nobody installs a bundle app for fun. They installed it at 11pm after looking at a number that scared them. The stack tells you what the owner is afraid of before they say a word.'},
+
+{'k':'drill','h':'<h2>Now you — the whole sheet</h2>'
+ '<ul><li>Pairs, <b>phones out</b>, a real brand, real money in the cart</li>'
+ '<li>Walk it as a customer. Fill <b>§0–6</b></li>'
  '<li>Every stop: what you saw · what they wanted · <b>what would make you quit</b></li></ul>'
- '<p class="punch" style="margin-top:1em">The main door — and the <em>one place you would quit.</em></p>'
- ,'n':'Homework: sections 2-3 on two more brands. Walk your own store and mark where you would quit. Three tickets from your queue — which STOP is each one really about?'},
+ '<p class="punch" style="margin-top:1em">The main door, the place you would quit, and <em>what this owner is paying to fix.</em></p>'
+ ,'n':'Homework: a full teardown on two more brands. Walk your own store and mark where you would quit. Three tickets from your queue — which part of the path is each really about?'},
 ]
 
-# ─────────────────────────────── SESSION 3 ───────────────────────────────
+# ═══════════════ SESSION 3 — RETENTION & LOYALTY, DEEP ═══════════════
 S3=[
-{'h':'<h1>After the order,<br>and the second one</h1><p class="dim" style="margin-top:1em">Session 3 · stops 10–14 · where the money is</p>'
- ,'n':'Goal: you can say why someone would buy twice, and what the shop is doing about it.'},
+{'h':'<h1>Why people<br>come back</h1><p class="dim" style="margin-top:1em">Session 3 · retention and loyalty · our actual subject</p>'
+ ,'n':'Goal: you understand why a person buys a second time, and what actually makes them. This is the session about our own product area.'},
 
 {'h':'<h2 class="dim">Last week ended the moment she paid.</h2>'
  '<p class="punch">Every business thinks that is the finish line.</p>'
  '<p class="punch" style="margin-top:.6em">It is <em>the start.</em></p>'
- ,'n':'Stops one to nine are greyed out now. Everything from here is where the money actually is.'},
+ ,'n':'Everything from here is where the money actually is.'},
 
-{'h':'<h2>Stop 10 · The wait</h2>'
+{'h':'<h2>The wait</h2>'
  '<p class="mono dim" style="font-size:clamp(16px,2.4vw,32px)">paid —————— ? —————— arrived</p>'
  '<p style="margin-top:1.2em">Nothing happens here. That is the problem.</p>'
  '<p style="margin-top:.8em">This gap is where every <b class="acc">"where is my order"</b> ticket is born.</p>'
- ,'n':'Usually the single biggest ticket category in ecom. You already know this one — you live in it. A late parcel someone warned you about is fine. A late parcel nobody mentioned is a refund and a one-star review.'},
+ ,'n':'Usually the biggest ticket category in ecom. You live in it already. A late parcel someone warned you about is fine. A late parcel nobody mentioned is a refund and a one-star review.'},
 
-{'h':'<h2>Stop 11 · The emails after</h2><table>'
- '<tr><th>When</th><th>Email</th><th>Job</th></tr>'
- '<tr><td class="dim">Immediately</td><td>confirmation</td><td>reassurance</td></tr>'
- '<tr><td class="dim">Ships</td><td>tracking</td><td>kill the WISMO ticket</td></tr>'
- '<tr><td class="dim">Delivered</td><td>how to use it</td><td><b>make sure she uses it</b></td></tr>'
- '<tr><td class="dim">~Week 2</td><td>review request</td><td>proof for the next stranger</td></tr>'
- '<tr class="tot"><td class="acc">~Week 6</td><td class="acc">"running low?"</td><td class="acc">the money email</td></tr></table>'
- ,'n':'The review comes when she has actually used it, not when it arrived. A review on day one is a review of the packaging.'},
+{'h':'<h2>The eight weeks after she pays</h2>'+svg_timeline()
+ ,'n':'The review comes when she has USED it, not when it arrived. A review on day one is a review of the packaging. And week six is the one that pays — you arrive before she runs out and before she thinks about alternatives.'},
 
-{'h':'<h2>Week six is the one that pays</h2>'
- '<p>Refill window is 8 weeks. You arrive at <b class="acc">week 6</b> — before she runs out, before she thinks about alternatives.</p>'
- '<p class="punch" style="margin-top:1.2em">This email is worth more than <em>the ad from stop 1.</em></p>'
- ,'n':'Say it again in your head. One automated email, sent to someone who already likes them, beats thirty dollars of advertising.'},
+{'h':'<p class="punch">That one email is worth more than <em>the whole ad</em> that found her.</p>'
+ '<p style="margin-top:1.4em">It costs almost nothing. It goes to somebody who already likes them.</p>'
+ ,'n':'Say it twice. One automated email beats thirty dollars of advertising.'},
 
-{'k':'look','h':'<h2>Stop 12 · She is everywhere now</h2>'
- '<ul><li><b>Retargeting</b> — they have her email, so they can find her cheaply</li>'
- '<li><b>Creators / TikTok</b> — an army of small posts, sometimes its own checkout</li>'
- '<li><b>Amazon</b> — discovered on TikTok, bought on Amazon out of habit</li></ul>'
- ,'n':'Retargeting is far cheaper than stop one, because they are no longer paying to find a stranger. They are paying to remind a customer. Open a brand on two channels side by side if you have time.'},
-
-{'h':'<h2 class="dim">Which is why attribution is a swamp</h2>'
+{'h':'<h2>And she is everywhere now</h2>'
  '<p class="mono" style="font-size:clamp(15px,2vw,28px)">saw the ad → got the email → watched a creator → <b class="acc">bought on Amazon</b></p>'
- '<p class="punch" style="margin-top:1.2em">Four arrows. <em>One sale.</em> Who gets the credit?</p>'
- ,'n':'You do not have to solve this. You just have to stop being surprised when a merchant says their numbers do not match. They never match.'},
+ '<p class="punch" style="margin-top:1.4em">Four arrows. <em>One sale.</em> Who gets the credit?</p>'
+ ,'n':'Retargeting is far cheaper than the first ad, because they are no longer paying to find a stranger — they are paying to remind a customer. And this is why attribution is a swamp. You do not have to solve it. Just stop being surprised when a merchant says the numbers do not match.'},
 
-{'h':'<h2>Stop 13 · Referral is a different machine</h2>'
- '<div class="two"><div class="card"><h3 class="acc">Referral</h3><p><b>grows</b> the base</p></div>'
- '<div class="card"><h3 class="acc">Loyalty</h3><p><b>monetises</b> the base</p></div></div>'
- '<p style="margin-top:1.2em">A referred person arrives with trust already loaded. And you pay only when it works —<br>unlike an ad, which you pay <b>on hope</b>.</p>'
- ,'n':'Remember this difference. Next week it decides what you recommend to a real merchant.'},
+{'k':'ask','h':'<p class="punch">Why would a human buy <em>this</em> twice?</p>'
+ ,'n':'Ask it about tonight\'s two brands. Let the room struggle on the weak one. Do not rescue them.'},
 
-{'h':'<h2>Stop 14 · Week eight</h2>'
- '<p>She is nearly out. The refill email arrives.</p>'
- '<p class="punch" style="margin-top:1em">She opens her account. <em>420 points — worth $4.20.</em></p>'
- '<p style="margin-top:1em">She reorders.</p>'
- ,'n':'This is the only thing that ever made this business work.'},
+{'h':'<h2>Sometimes there is no reason</h2>'+svg_once_again()+
+ '<p style="margin-top:.4em">A mattress. A set of pans. That is not a failure of the shop —<br>it is a <b class="acc">fact about the product</b>, and it decides everything they need.</p>'
+ ,'n':'This is the uncomfortable one. If the honest answer is no reason, a points program will not create one. Hold that thought for next week.'},
 
-{'h':'<p class="dim" style="font-size:clamp(20px,3vw,40px)">Look where we are.</p>'
- '<p class="punch" style="margin-top:.6em">Stop <em>14 of 14.</em></p>'
- '<p style="margin-top:1.4em">Loyalty is not the engine of a shop. It is the <b>last mile of a long system</b>, and it only pays if the thirteen stops before it exist.</p>'
- ,'n':'That is why we have not opened Joy once in three sessions.'},
+{'h':'<h2>Lumi, all the way through</h2>'+svg_two_orders('+$2.13',2.13,'+$17.28',17.28,neg1=False)+
+ '<p class="dim" style="margin-top:.4em">Mai spent $61.20 the first time and $42 the second.</p>'
+ ,'n':'The first order paid for the ad and almost nothing else. The second one, with no ad attached, is worth eight of it. Same shop, same product, same customer.'},
 
-{'h':'<h2>The money — order 1</h2><table>'
+{'h':'<h2>Order 1 — where it all went</h2><table>'
  '<tr><td>Ad to reach Mai</td><td class="n neg">−$30.00</td></tr>'
  '<tr><td>Cart: moisturizer + travel size</td><td class="n">+$68.00</td></tr>'
  '<tr><td>Popup 10%</td><td class="n neg">−$6.80</td></tr>'
@@ -350,17 +517,7 @@ S3=[
  '<tr><td>Processing</td><td class="n neg">−$2.07</td></tr>'
  '<tr><td>Products</td><td class="n neg">−$20.00</td></tr>'
  '<tr class="tot"><td>Lumi keeps</td><td class="n acc">+$2.13</td></tr></table>'
- ,'n':'Mai spent sixty-one dollars twenty. The shop kept two dollars thirteen. Stop talking for a second.'},
-
-{'h':'<h2>Order 2 — eight weeks later</h2><table>'
- '<tr><td><b>Ad spend</b></td><td class="n pos">$0.00</td></tr>'
- '<tr><td>Refill</td><td class="n">+$42.00</td></tr>'
- '<tr><td>Points redeemed</td><td class="n neg">−$4.20</td></tr>'
- '<tr><td>Shipping</td><td class="n neg">−$7.00</td></tr>'
- '<tr><td>Processing</td><td class="n neg">−$1.52</td></tr>'
- '<tr><td>Product</td><td class="n neg">−$12.00</td></tr>'
- '<tr class="tot"><td>Lumi keeps</td><td class="n pos">+$17.28</td></tr></table>'
- ,'n':'One order with no ad attached is worth eight of the first one. Same shop, same product, same customer.'},
+ ,'n':'Mai spent sixty-one twenty. The shop kept two thirteen. Stop talking for a second.'},
 
 {'h':'<h2 class="dim">So what did the points actually do?</h2>'
  '<p class="punch">They did not make Mai <em>like</em> Lumi.</p>'
@@ -371,62 +528,52 @@ S3=[
 {'h':'<h2>Three things, not one thing</h2><table>'
  '<tr><th>Subscription</th><th>Loyalty</th><th>Discount</th></tr>'
  '<tr><td>the next box is already agreed</td><td>a reason to choose <b>you</b> next time</td><td>this order is cheaper</td></tr></table>'
- '<p style="margin-top:1.4em">Merchants mix these up constantly.</p>'
- '<p class="punch" style="margin-top:.6em">If you mix them up too, <em>you cannot help them.</em></p>'
- ,'n':'This distinction comes back in session four as the easiest sale we have — Recharge plus Klaviyo plus no loyalty.'},
+ '<p class="punch" style="margin-top:1.4em">Merchants mix these up constantly.<br>If you mix them up too, <em>you cannot help them.</em></p>'
+ ,'n':'A standing order does not mean she chose you. It means she has not cancelled yet. Those are different, and the gap is what we sell.'},
 
-{'k':'ask','h':'<p class="punch">Why would a human buy <em>this</em> twice?</p>'
- '<p style="margin-top:1.4em">Sometimes there is no reason. A mattress. A set of pans.</p>'
- '<p style="margin-top:1em">That is not a failure of the shop. It is a fact about the product —<br>and it tells you everything about what that merchant actually needs.</p>'
- ,'n':'We come back to this next week. It is the whole of session four.'},
+{'h':'<h2>Two machines, opposite jobs</h2>'+svg_grow_vs_keep()
+ ,'n':'A referred person arrives with trust already loaded, and you pay only when it works — unlike an ad, which you pay on hope. Remember this: next week it decides what you recommend to a real merchant.'},
 
-{'k':'drill','h':'<h2>Now you</h2><ul><li>Pairs. <b>Two</b> brands, chosen deliberately</li>'
- '<li>One with a strong repeat reason — refill, consumable</li><li>One with a weak one — bought once</li>'
- '<li>Teardown <b>§4–5</b></li></ul>'
- '<p class="punch" style="margin-top:1em">Why would a human buy this twice — and <em>what is the brand doing about it?</em></p>'
- ,'n':'Homework: sections 4-5 on two brands. What is the real reason someone reorders from YOUR store? Five tickets restated in two sentences each, own words, Vietnamese fine, no questions to the merchant.'},
+{'h':'<h2>And if they want points — or credit?</h2>'+svg_points_credit()
+ ,'n':'Both are real answers. Neither is the default. Considered, expensive, rare purchase — credit is clearer. Refill or consumable — points build the habit. Lots of returns — credit keeps the money in the shop. Wants members — points, named, on brand.'},
+
+{'h':'<p class="punch">Points are the brand&rsquo;s <em>currency.</em></p>'
+ '<p class="punch" style="margin-top:.8em">Store credit is just <em>money with your logo on it.</em></p>'
+ ,'n':'Which is also why on-brand matters and is not decoration. If the widget looks like a generic app bolted on, it is not brand currency any more — it is a coupon machine, and you threw away the only reason you chose points.'},
+
+{'k':'ask','h':'<h2>VIP tiers — spend $500 to reach Gold.</h2>'
+ '<p class="punch">Why <em>$500?</em></p>'
+ ,'n':'Let them flounder. Nobody can defend it, because today the number is guessed. That is the problem.'},
+
+{'h':'<h2>Where the number actually comes from</h2><ul>'
+ '<li>Pull customers with total spend, last 12 months</li><li>Sort, highest first</li>'
+ '<li>Decide the share per tier — commonly <b class="acc">~5% top, ~20% middle</b></li>'
+ '<li>The spend at that cut line <b>is</b> your threshold</li></ul>'
+ '<p style="margin-top:1em">Then check both ways: is the top tier <b>big enough to matter</b>, and is the next tier <b>reachable in a year</b>?</p>'
+ '<p class="punch" style="margin-top:1em">If you cannot say why the number is that number, <em>do not set it.</em></p>'
+ ,'n':'A threshold nobody can reach is decoration. A threshold everybody clears is a discount for everyone — which is fear two with extra steps. And the reason tiers exist at all is fear two: otherwise you hand the same coupon to a first-time buyer and to someone who spends two thousand a year.'},
+
+{'k':'drill','h':'<h2>Now you</h2>'
+ '<ul><li>Pairs. <b>Two</b> brands — one with a strong repeat reason, one with a weak one</li>'
+ '<li>Teardown <b>§4–5</b>, then prescribe</li></ul>'
+ '<p class="punch" style="margin-top:1em">Points, credit, tiers or referral — and <em>what does the option you rejected lose?</em></p>'
+ ,'n':'Homework: what is the real reason someone reorders from YOUR store? Five tickets restated in two sentences each, own words, Vietnamese fine, no questions to the merchant.'},
 ]
 
-# ─────────────────────────────── SESSION 4 ───────────────────────────────
+# ═══════════════ SESSION 4 — BRING IT TOGETHER ═══════════════
 S4=[
-{'h':'<h1>The stack,<br>and is it ours</h1><p class="dim" style="margin-top:1em">Session 4 · the AM read · still no Joy admin</p>'
- ,'n':'Goal: you can read a shop\'s stack and say whether it is ours and whether it even needs us.'},
+{'h':'<h1>Bring it<br>together</h1><p class="dim" style="margin-top:1em">Session 4 · a real merchant, a real call</p>'
+ ,'n':'Goal: given a real merchant, you can say whether it is ours, whether it needs us, and what to do about it.'},
+
+{'h':'<h2>Three weeks ago you could not do any of this</h2><ul>'
+ '<li>How does this shop make money on one order?</li>'
+ '<li>How do people arrive, and where do they quit?</li>'
+ '<li>Why would someone buy twice — and what is the brand doing about it?</li></ul>'
+ '<p class="punch" style="margin-top:1.2em">Tonight we add the last one: <em>so what do we tell them?</em></p>'
+ ,'n':'And you still have not opened Joy once.'},
 
 {'k':'ask','h':'<p class="punch">Is Recharge a <em>subscription app?</em></p>'
- ,'n':'Let them say yes. Then say no. It is a solution for increasing lifetime value. Klaviyo is not an email app — it is a cheap way to talk to everyone at scale, far cheaper than SMS, plus a CRM that remembers birthdays and order history.'},
-
-{'h':'<p class="punch">We do not sell an app.</p><p class="punch" style="margin-top:.6em">We sell <em>the solution the app is made of.</em></p>'
- ,'n':'Which means every app on a merchant\'s site is a clue about what they are afraid of.'},
-
-{'h':'<h2>The stack is a confession</h2>'
- '<p>Every app a merchant installed is money they spent because <b class="acc">they were worried about something.</b></p>'
- '<p class="dim" style="margin-top:1.2em">Nobody installs a bundle app for fun. They installed it at 11pm after looking at a number that scared them.</p>'
- ,'n':'This is the AM read. It is the single most useful thing in this whole course.'},
-
-{'h':'<h2>Read it out</h2><table>'
- '<tr><th>They installed</th><th>So they believe their problem is</th></tr>'
- '<tr><td>Klaviyo / Attentive</td><td>"I cannot reach my visitors again"</td></tr>'
- '<tr><td>A popup tool</td><td>"too many people leave anonymous"</td></tr>'
- '<tr><td>Okendo / Judge.me</td><td>"strangers do not trust me yet"</td></tr>'
- '<tr><td><b>Rebuy / bundle</b></td><td>"my orders are too thin" — <b>AOV</b></td></tr>'
- '<tr><td><b>Recharge / Skio</b></td><td>"customers buy once" — <b>LTV</b></td></tr>'
- '<tr><td>Gorgias / Wonderment</td><td>"I am drowning in <i>where is my order</i>"</td></tr>'
- '<tr><td><b class="acc">A loyalty app</b></td><td>"I have a base and nothing brings them back"</td></tr>'
- '<tr><td class="dim">Nothing at all</td><td class="dim">very early — or nobody is minding the shop</td></tr></table>'
- ,'n':'The stack tells you what the owner is afraid of before they say a word.'},
-
-{'k':'look','h':'<h2>How to check — no login, 60 seconds</h2>'
- '<p class="mono dim">right-click → View Page Source → Ctrl-F</p>'
- '<div class="res mono">klaviyo · attentive · recharge · appstle · skio · smile<br>'
- 'yotpo · loyaltylion · rivo · growave · okendo · judge.me<br>gorgias · rebuy · subscribe</div>'
- '<p style="margin-top:1em">Then: the footer · <span class="mono">/account</span> · try <span class="mono acc">/pages/rewards</span></p>'
- ,'n':'Do this live on the projector. It is genuinely fun to watch. If /pages/rewards 404s, they have no loyalty — and that is a sixty second job that tells you more than a discovery call.'},
-
-{'h':'<h2 class="dim">Now the sharp question</h2>'
- '<p>They installed a bundle app. But their real leak is that <b>nobody comes back.</b></p>'
- '<p class="punch" style="margin:1.2em 0">They are fixing <em>stop 6</em> while bleeding at <em>stop 11.</em></p>'
- '<p class="punch">Do you <em>tell them?</em></p>'
- ,'n':'Yes. That is the service. That is the entire difference between answering the app and owning the outcome. And it costs something — you are telling a paying merchant that the thing they bought is not their problem.'},
+ ,'n':'Let them say yes. Then say no — it is a solution for increasing lifetime value. Klaviyo is not an email app, it is a cheap way to talk to everyone at scale plus a CRM. We do not sell an app. We sell the solution the app is made of.'},
 
 {'h':'<h2>Is it ours? Run the checklist</h2><table>'
  '<tr><td>Shopify or Plus</td><td class="n dim">□</td></tr>'
@@ -435,67 +582,81 @@ S4=[
  '<tr><td><b>Klaviyo or Attentive</b> installed</td><td class="n dim">□</td></tr>'
  '<tr><td>Growing — raise, press, retail, viral</td><td class="n dim">□</td></tr>'
  '<tr><td><b>No</b> Rivo / Yotpo / Smile / LoyaltyLion / Growave</td><td class="n dim">□</td></tr></table>'
- '<p class="acc" style="margin-top:1em">Every line is visible from the public website. You never ask them.</p>'
- ,'n':'This is Joy\'s real ICP, not something I made up for class.'},
+ '<p class="acc" style="margin-top:1em">Every line is visible from the public site. You never ask them.</p>'
+ ,'n':'This is Joy\'s real ICP, not something invented for class. And you already know how to check every line — that was last week.'},
 
 {'h':'<h2>The easiest win to recognise</h2>'
  '<p class="punch">Recharge or Appstle <em>+</em> Klaviyo <em>+</em> no loyalty app</p>'
- '<p style="margin-top:1.4em">They already pay for repeat revenue. They have nothing that gives a reason to return.</p>'
- '<p class="punch" style="margin-top:1em">Subscription is <em>not</em> loyalty.</p>'
- ,'n':'The next box being agreed is not the same as the customer choosing you. It means they have not yet cancelled. Those are different things, and the gap is exactly what we sell.'},
+ '<p style="margin-top:1.4em">They already pay for repeat revenue. They have nothing that gives a reason to <b>return</b>.</p>'
+ ,'n':'Subscription is not loyalty — the next box being agreed is not the same as being chosen. That is exactly the gap we fill, and it is not a rip-and-replace.'},
 
 {'k':'look','h':'<h2>The textbook case</h2><p class="punch">raewellness.co</p>'
  '<ul><li>Recharge, heavily used</li><li>Klaviyo</li><li>Wellness — natural repurchase</li>'
  '<li><b class="acc">/pages/rewards → 404</b></li></ul>'
- ,'n':'Do it live. Thirty seconds. View source, Ctrl-F recharge, Ctrl-F klaviyo — both hit. Ctrl-F smile, loyaltylion, yotpo — nothing. Then type slash pages slash rewards. That 404 is the whole pitch, and they found it themselves without asking the merchant anything.'},
+ ,'n':'Do it live. Thirty seconds. View source, Ctrl-F recharge and klaviyo — both hit. Ctrl-F smile, loyaltylion, yotpo — nothing. Then type slash pages slash rewards. 404. That is the entire pitch, and they found it themselves without asking the merchant anything.'},
 
-{'k':'ask','h':'<p class="punch">Does this shop need a loyalty program <em>at all?</em></p>'
+{'k':'ask','h':'<p class="punch">But does this shop need a loyalty program <em>at all?</em></p>'
  ,'n':'This is the question that separates you from a salesperson. Let it hang.'},
 
-{'h':'<h2>A loyalty program is a multiplier</h2><table>'
- '<tr><th></th><th>Shop A</th><th>Shop B</th></tr>'
- '<tr><td class="dim">Customers</td><td>100</td><td>20,000</td></tr>'
- '<tr><td class="dim">Loyal share</td><td class="acc"><b>100%</b></td><td class="acc"><b>5%</b></td></tr>'
- '<tr><td class="dim">Extra orders</td><td>~100</td><td>~3,000–4,000</td></tr>'
- '<tr class="tot"><td>Verdict</td><td class="neg">still dead</td><td class="pos">real money</td></tr></table>'
- '<p class="punch" style="margin-top:1.2em">Multiply a small number — <em>it is still small.</em></p>'
- ,'n':'Shop A has a perfect loyalty program and is going out of business. A loyalty program is a multiplier on a base you already have. It is not a growth engine.'},
+{'h':'<h2>A loyalty program is a multiplier</h2>'+svg_dots()+
+ '<p class="punch" style="margin-top:.4em">Multiply a small number — <em>it is still small.</em></p>'
+ ,'n':'Shop A has a perfect loyalty program and is going out of business. You cannot multiply your way out of a base of a hundred. A loyalty program is a multiplier on a base you already have. It is not a growth engine.'},
 
-{'h':'<h2>So the first question is stage</h2><table>'
- '<tr><th>Their stage</th><th>What they actually need</th></tr>'
- '<tr><td>Ads to survive, no real base</td><td><b class="acc">expand the base</b> — referral. Not points.</td></tr>'
- '<tr><td>Base exists, people buy once</td><td>a <b>reason to return</b> — points, tiers</td></tr>'
- '<tr><td>Base exists, discounting everyone</td><td><b>stop the blanket discount</b> — VIP tiers</td></tr></table>'
- '<p style="margin-top:1.2em">Remember referral from last week — it <b>grows</b> the base where loyalty <b>monetises</b> it.</p>'
+{'h':'<h2>So the first question is stage</h2>'+svg_stage()+
+ '<p style="margin-top:.4em">Remember from last week — referral <b>grows</b> the base, loyalty <b>monetises</b> it.</p>'
  ,'n':'The shop that must NOT be sold points is often exactly the shop that should run referral. So "not ready" is never a dead end. It is a different recommendation.'},
 
 {'h':'<p class="punch">"Not yet" is a <em>correct answer.</em></p>'
- '<p style="margin-top:1.4em">Telling a survival-stage shop to launch points is not service. It is selling them the wrong thing. It will not produce a result.</p>'
- '<p class="punch" style="margin-top:1em">And they will churn — <em>correctly.</em></p>'
+ '<p style="margin-top:1.4em">Telling a survival-stage shop to launch points is not service. It is selling them the wrong thing, it will not produce a result, and they will churn — <b>correctly</b>.</p>'
  ,'n':'If you cannot say "not yet" out loud, you are selling, not advising. And you lose the account anyway, six months later, with worse feelings.'},
 
-{'h':'<h2>What you can do now — no app</h2><ul>'
- '<li>What does this shop sell, and how does it make money on one order?</li>'
- '<li>How do people arrive, and where do they quit?</li>'
- '<li>Why would someone buy twice — and what is the brand doing about it?</li>'
- '<li>Is it ours, does it need this, and what is the one thing we would change?</li></ul>'
- '<p class="punch" style="margin-top:1.2em">Four weeks ago none of you could answer these.<br><span class="dim">You have not opened Joy once.</span></p>'
- ,'n':'Let that land. This is the moment the course pays off.'},
+{'h':'<h2 class="dim">The hardest thing you will have to say</h2>'
+ '<p>They installed a bundle app. Their real leak is that <b>nobody comes back.</b></p>'
+ '<p class="punch" style="margin:1.2em 0">They are fixing <em>the cart</em> while bleeding at <em>the second order.</em></p>'
+ '<p class="punch">Do you <em>tell them?</em></p>'
+ ,'n':'Yes. That is the service. That is the whole difference between answering the app and owning the outcome. And it costs something — you are telling a paying merchant that the thing they bought is not their problem.'},
+
+{'h':'<h2>The conversation, replaced</h2>'
+ '<p class="dim">Never: <span class="mono">"Points or store credit? OK, I\'ll show you where to turn it on."</span></p>'
+ '<ul style="margin-top:1em"><li><b>1 Stage</b> — is there a base to sell back to?</li>'
+ '<li><b>2 Base</b> — how many, how many return, typical basket</li>'
+ '<li><b>3 Fear</b> — losing new people, or over-discounting?</li>'
+ '<li><b>4 Mechanism</b> — referral, points, credit, tiers</li>'
+ '<li><b>5 Numbers</b> — thresholds from their data, defended</li>'
+ '<li><b>6 Placement</b> — from their journey, not the demo store</li></ul>'
+ ,'n':'Only after all six does a screen appear. Steps one to five are the service. That is what we are actually paid for.'},
+
+{'h':'<p class="punch">Only the last step is <em>a screen.</em></p>'
+ '<p style="margin-top:1.4em">Everything before it is the thing a machine cannot do for them.</p>'
+ ,'n':'Call back to the talk. AI took the execution. What is left for people is the outcome — judgement about one specific business, and being accountable for it.'},
 
 {'h':'<h2>The gate</h2>'
- '<div class="card" style="margin-bottom:.8em"><h3>1 · A cold teardown</h3><p class="dim">a brand you have never seen, 15 minutes, a lead accepts it</p></div>'
- '<div class="card" style="margin-bottom:.8em"><h3>2 · 8 of 12 restatements</h3><p class="dim">timed, from your own queue</p></div>'
- '<div class="card"><h3>3 · Your store, launched, to standard</h3><p class="dim">max three apps, every one defensible</p></div>'
- '<p class="punch" style="margin-top:1.2em">Then: <em>Joy.</em></p>'
- ,'n':'"Not yet" is a normal outcome here too. It means another stack of reps — not another lecture.'},
+ '<div class="card" style="margin-bottom:.8em"><h3>1 · A cold teardown</h3>'
+ '<p class="dim">a brand you have never seen · 15 minutes · a lead accepts it</p></div>'
+ '<div class="card" style="margin-bottom:.8em"><h3>2 · 8 of 12 restatements</h3>'
+ '<p class="dim">timed, from your own queue</p></div>'
+ '<div class="card"><h3>3 · Your store, launched, to standard</h3>'
+ '<p class="dim">max three apps, every one defensible</p></div>'
+ ,'n':'"Not yet" is a normal outcome here too. It means another stack of reps, not another lecture.'},
+
+{'k':'drill','h':'<h2>Now you — the whole thing</h2>'
+ '<ul><li><b>Two</b> brands side by side. One strong fit, one deliberately not ours</li>'
+ '<li>Full teardown, then a <b>verdict out loud</b> with the reason</li>'
+ '<li>Fit is learned by contrast — never one brand alone</li></ul>'
+ '<p class="punch" style="margin-top:1em">Is it ours · does it need this · <em>what is the one thing we would change?</em></p>'
+ ,'n':'A checklist memorised is trivia. A checklist run against a brand that fails it is judgement. That is what we are grading.'},
+
+{'h':'<p class="punch">You have not opened Joy <em>once.</em></p>'
+ '<p style="margin-top:1.4em">And you can already tell a merchant whether we can help them, and why.</p>'
+ '<p class="dim" style="margin-top:1.2em">That was the whole point.</p>'
+ ,'n':'End here. Do not add anything. Sit down.'},
 ]
 
-# ─────────────────────────────── BUILD ───────────────────────────────
 if __name__=='__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    print('Building decks:')
-    build('session-1-money.html','Session 1 — Money on one unit','Session 1 · Money on one unit',S1)
-    build('session-2-first-order.html','Session 2 — How the order happens','Session 2 · How the order happens',S2)
-    build('session-3-second-order.html','Session 3 — After the order','Session 3 · After the order, and the second one',S3)
-    build('session-4-stack.html','Session 4 — The stack, and is it ours','Session 4 · The stack, and is it ours',S4)
-    print('Done. Open any .html in a browser. ← → to move, S for speaker notes, Cmd-P to PDF.')
+    print('Building:')
+    build('session-1-basics.html','Session 1 — How a shop makes money','Session 1 · The basics',S1)
+    build('session-2-breakdown.html','Session 2 — Break down a brand','Session 2 · Break down a brand',S2)
+    build('session-3-retention.html','Session 3 — Why people come back','Session 3 · Retention & loyalty',S3)
+    build('session-4-together.html','Session 4 — Bring it together','Session 4 · Bring it together',S4)
+    print('Done. ← → to move · S for speaker notes · Cmd-P to PDF.')

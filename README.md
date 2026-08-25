@@ -36,14 +36,17 @@ handouts/          WHAT THEY HOLD
 
 ### The four sessions
 
+Each is one topic, one goal. Model → method → domain → judgement.
+
 | | Session | Goal | Lands on |
 |---|---|---|---|
-| **1** | Money on one unit | how a shop makes money on one order | *Order 1 lost $2. Order 2 made $22.* |
-| **2** | How the order happens | walk any shop, name where people quit | *"Conversion is down" is not a problem.* |
-| **3** | After the order | why someone buys twice | *Loyalty buys timing and preference, not affection.* |
-| **4** | The stack, is it ours | read a stack, judge fit and stage | *"Not yet" is a correct answer.* |
+| **1** | **The basics** — how a shop makes money | a shop is a business, not a website | *The business is not the shirt. It is the second shirt.* |
+| **2** | **Break down a brand** | open any brand, say what it does and where it leaks | *"Conversion is down" is not a problem.* |
+| **3** | **Why people come back** — retention & loyalty | why someone buys twice, and what makes them | *Loyalty buys timing and preference, not affection.* |
+| **4** | **Bring it together** | is it ours, does it need us, what do we say | *"Not yet" is a correct answer.* |
 
-Then **Block 2** — Joy on screen, from `material/loyalty/`.
+Joy appears on a screen only **after** the graduation gate — placement and on-brand config,
+from `material/loyalty/5` and `/6`.
 
 ## The shape
 
@@ -52,12 +55,12 @@ TALK  (20–25 min, no Joy)
   │
 BUILD TRACK  ── launch a real store, to standard, runs throughout
   │
-REP 1  money on one unit          → 3-money.md
-REP 2  how the order happens      → 4-journey.md  stops 1–9
-REP 3  after + the second order   → 4-journey.md  stops 10–14
-REP 4  the stack + is it ours     → 6-teardown.md §6–8
+S1  the basics          money, price, the six boxes
+S2  break down a brand   the journey, the leaks, the stack read
+S3  why they come back   retention, points vs credit, tiers, referral
+S4  bring it together    ICP, stage, the verdict, the prescription
 
-       (6-teardown + 7-shop-map are open on the table for all four)
+    (handouts/ teardown-sheet + shop-map are on the table for all four)
   │
 GRADUATION  cold teardown · 8/12 restatements · store launched
   │
