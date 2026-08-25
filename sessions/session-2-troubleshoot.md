@@ -43,6 +43,32 @@ The one to not skip is **"low CVR with high AOV is normal"** — it is the count
 panicking about 0.4% conversion on a $1,700 machine needs reassurance, not a fix, and an AM who cannot
 tell the difference sends people chasing ghosts.
 
+## Running the 45 minutes
+
+The deck timeboxes it on screen. **Write the times on the board too.**
+
+| | |
+|---|---|
+| **3 min** | Get your brand — handed out. Phone, cart empty, not logged in. |
+| **12 min** | Walk it as a customer. Where would *you* quit? |
+| **10 min** | Read the stack — view source, then `/pages/rewards` |
+| **12 min** | **List every problem. All of them. Do not rank yet.** |
+| **5 min** | Rank your top three, with what each costs to fix |
+
+**Separating "list everything" from "rank" is the whole design.** Rank as you go and they stop at the
+first thing they recognise — usually the thing we sell.
+
+### What you do while they work
+Circulate. When a pair says "the site looks bad", make them say **which step and how many people**.
+Vague is the enemy here, not wrong.
+
+Watch for the pair whose top three includes loyalty at number one. Ask them what it would cost to fix,
+and what the *free* fixes are. Usually that reorders it for them without you saying anything.
+
+### Report out
+Three problems, ranked, with the cost of each. **If loyalty is not in their top three, that is a correct
+answer** — say so out loud so nobody thinks they got it wrong.
+
 ## The most senior beat in the session
 **Which one do you fix first?** Anyone can list problems. Ranking them — by *how many people it loses*
 and *what it costs to fix* — is judgement. And the honest order puts **us last**: a merchant with a

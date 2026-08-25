@@ -26,6 +26,29 @@
 | 1:35 | Verdicts out loud, with reasons | — |
 | 1:50 | Graduation brief | — |
 
+## Running the 45 minutes
+
+| | |
+|---|---|
+| **3 min** | Get your two brands. One passes, one fails. **You are not told which.** |
+| **12 min** | Run the checklist on both, line by line, out loud |
+| **10 min** | Do they need it *at all*? Base, stage — **and read the one-star reviews** |
+| **12 min** | Write the verdict: ours / not ours / not yet + **the one thing you would change** |
+| **8 min** | **Defend it to another pair.** They try to talk you out of it. |
+
+**The defend step is what makes this a graduation drill rather than a worksheet.** A verdict you cannot
+defend out loud is not a verdict.
+
+### The standard
+> A verdict is a **decision plus a reason a lead can check.**
+> "Feels like a good fit" is not one. "Rivo is installed, here is the line in the source" is.
+
+### What you do while they work
+Do not confirm which brand passes. Let the checklist do it. If a pair asks, ask them which line they are
+unsure about — the answer is always on the public site.
+
+Pair up the two groups who disagree most for the defend round.
+
 ## The beat everything builds to
 **The 404.** Rae Wellness, cold. Ctrl-F `recharge` — hit. `klaviyo` — hit. `smile`, `loyaltylion`,
 `yotpo` — nothing. Then `/pages/rewards` → **404.** Thirty seconds, no login, no discovery call.

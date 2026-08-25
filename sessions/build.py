@@ -628,6 +628,115 @@ slide(
  'Put this up before they start and leave it up. Without a target they will either write one line or try to research real COGS and burn the whole session. The point of the slide is permission to guess.'),
 ]
 
+def _step(t, bold, rest, win=0):
+    cls = 'fbar win' if win else 'fbar'
+    return ('<div class="frow"><div class="' + cls + '" style="width:110px">' + t + '</div>'
+            '<div class="bs"><b>' + bold + '</b> <span class="mut">' + rest + '</span></div></div>')
+
+# ── SESSION 2 drill ──
+_DRILL2 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">Diagnose a shop you have <em>not</em> seen.</div>')
+ +cell(1,13,2,3,_step('3 min','Get your brand.','One per pair. Open it on a phone, cart empty, not logged in.'),'flat')
+ +cell(1,13,3,4,_step('12 min','Walk it as a customer.','Ad or social &rarr; product &rarr; cart &rarr; checkout. Where would <b>you</b> quit?'),'flat')
+ +cell(1,13,4,5,_step('10 min','Read the stack.','View source, Ctrl-F. Then /pages/rewards. What are they paying to fix?'),'flat')
+ +cell(1,13,5,6,_step('12 min','List every problem you found.','All of them. Messy is fine. Do not rank yet.','1'),'flat')
+ +cell(1,13,6,7,_step('8 min','Rank your top three.','And next to each: <b>what would it cost to fix?</b>'),'flat')
+ +cell(1,13,7,9,'<div class="st">Three problems, ranked, with the cost of each.</div>'
+   '<div class="b mt mut">If loyalty is not in your top three, <b>say so</b>. That is a correct answer and '
+   'we would rather hear it here than from the merchant in six months.</div>','ink'),
+ 'Separating "list everything" from "rank them" matters. If they rank as they go they stop at the first thing they recognise. Make them dump first.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like &mdash; Halfdays, which you already know</div>')
+ +cell(1,13,2,3,'<div class="frow"><div class="fbar" style="width:64px">1</div>'
+   '<div class="bs"><b>A 10% popup on premium outerwear.</b> '
+   '<span class="mut">Free to change. Are they discounting people who were buying a $300 jacket anyway? Fear #2.</span></div></div>','flat')
+ +cell(1,13,3,4,'<div class="frow"><div class="fbar" style="width:64px">2</div>'
+   '<div class="bs"><b>Past buyers may never see the next drop.</b> '
+   '<span class="mut">Cheap. Apparel repeats by season, not refill &mdash; so new arrivals to past purchasers is the lever.</span></div></div>','flat')
+ +cell(1,13,4,5,'<div class="frow"><div class="fbar win" style="width:64px">3</div>'
+   '<div class="bs"><b>Nothing gives a reason to choose them next season.</b> '
+   '<span class="mut">Slowest and last. This is ours &mdash; and it is third, not first.</span></div></div>','flat')
+ +cell(1,7,5,9,'<div class="c3">Why this is good</div><div class="rule"></div>'
+   '<div class="b">Three problems, ordered by <b>people lost</b> and <b>cost to fix</b>. '
+   'Two of them we do not sell. That is what makes the third one credible.</div>')
+ +cell(7,13,5,9,'<div class="c3 lem">What a weak one looks like</div><div class="rule"></div>'
+   '<div class="b">&ldquo;They should add a loyalty program.&rdquo;</div>'
+   '<div class="bs mt2 mut">One item, unranked, no cost, and it happens to be the thing we sell. '
+   'That is a pitch, not a diagnosis.</div>','ink'),
+ 'The weak example is the important half. Everyone can produce the weak version. Show them the difference explicitly or they will hand you the pitch and think it is a diagnosis.'),
+]
+
+# ── SESSION 3 drill ──
+_DRILL3 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">Two brands. One <em>recommendation</em> each.</div>')
+ +cell(1,13,2,3,_step('3 min','Get your two brands.','One with a strong repeat reason, one with a weak one. Handed to you.'),'flat')
+ +cell(1,13,3,4,_step('10 min','Brand A.','Why would a human buy this twice? What does the brand already do about it?'),'flat')
+ +cell(1,13,4,5,_step('10 min','Brand B.','Same two questions. &ldquo;No reason&rdquo; is an allowed answer &mdash; and often the right one.'),'flat')
+ +cell(1,13,5,6,_step('12 min','Prescribe one thing each.','Referral, points, credit, tiers, subscription &mdash; or <b>nothing yet</b>.','1'),'flat')
+ +cell(1,13,6,7,_step('10 min','Name what you rejected.','And what that option would have lost. <b>This is the graded part.</b>'),'flat')
+ +cell(1,13,7,9,'<div class="st">Anyone can pick something. Only somebody who understands it can say '
+   '<em>what the alternative costs.</em></div>','ink'),
+ 'The rejected option is the whole grading criterion. Say that before they start, or they will spend forty minutes on the recommendation and thirty seconds on the part you are actually marking.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like &mdash; both brands from earlier</div>')
+ +cell(1,7,2,6,'<div class="c3">Crown Affair</div><div class="rule"></div>'
+   '<div class="bs mut">refill product, no loyalty, Recharge already installed</div>'
+   '<div class="b mt2"><b>Points, tied to the refill window.</b></div>'
+   '<div class="bs mt2"><b>Rejected: store credit.</b> It would be understood faster &mdash; but credit is '
+   'money with a logo on it. They have spent years building a brand; points can carry it, credit cannot.</div>','lemon')
+ +cell(7,13,2,6,'<div class="c3">HexClad</div><div class="rule"></div>'
+   '<div class="bs mut">$300 pan, five-year cycle, already runs Rivo</div>'
+   '<div class="b mt2"><b>Referral and range &mdash; not a refill points scheme.</b></div>'
+   '<div class="bs mt2"><b>Rejected: points on a repurchase cycle.</b> They would expire before she needs '
+   'another pan. You would have added a cost and produced no second order.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Both name the rejected option <em>and</em> what it loses.</div>'
+   '<div class="b mt mut">Notice the second one recommends something we do not really sell. '
+   'That is not a failure of the exercise &mdash; it is the exercise.</div>'),
+ 'Point at the HexClad half explicitly. If nobody in the room ever recommends something outside our product, they have not understood the job.'),
+]
+
+# ── SESSION 4 drill ──
+_DRILL4 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">Two brands. One <em>verdict</em> each.</div>')
+ +cell(1,13,2,3,_step('3 min','Get your two brands.','One should pass and one should fail. You are not told which.'),'flat')
+ +cell(1,13,3,4,_step('12 min','Run the checklist on both.','Line by line, out loud. Everything is visible from the public site.'),'flat')
+ +cell(1,13,4,5,_step('10 min','Ask the harder question.','Do they need it <b>at all</b>? Base, stage &mdash; and check the one-star reviews.'),'flat')
+ +cell(1,13,5,6,_step('12 min','Write the verdict.','Ours / not ours / not yet &mdash; plus <b>the one thing you would change</b>.','1'),'flat')
+ +cell(1,13,6,7,_step('8 min','Defend it to another pair.','They try to talk you out of it. Change your mind if they are right.'),'flat')
+ +cell(1,13,7,9,'<div class="st">Is it ours &middot; does it need this &middot; <em>what is the one thing we would change?</em></div>','ink'),
+ 'The defend-it step is what makes this a graduation drill rather than a worksheet. A verdict you cannot defend out loud is not a verdict.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like</div>')
+ +cell(1,7,2,7,'<div class="c3">Rae Wellness</div><div class="rule"></div>'
+   '<div class="ch mt">Ours. <em>Now.</em></div>'
+   '<div class="bs mt2">Shopify, wellness, repurchase, Klaviyo, Recharge heavily used, '
+   '<b>/pages/rewards 404s</b>, no competitor.</div>'
+   '<div class="bs mt2"><b>The one thing:</b> nothing gives a reason to choose them. Points on the refill '
+   'window, surfaced in the Klaviyo flow they already run.</div>','lemon')
+ +cell(7,13,2,7,'<div class="c3">HexClad</div><div class="rule"></div>'
+   '<div class="ch mt">Not ours.</div>'
+   '<div class="bs mt2"><b>Rivo is already installed.</b> Fails the checklist on the most visible line there is '
+   '&mdash; found in sixty seconds, no opinion required.</div>'
+   '<div class="bs mt2">And even without it: a $300 pan on a five-year cycle is the wrong shape for points. '
+   'Two reasons, either one enough.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">A verdict is a <em>decision plus a reason a lead can check.</em></div>'
+   '<div class="b mt mut">&ldquo;Feels like a good fit&rdquo; is not a verdict. '
+   '&ldquo;Rivo is installed, here is the line in the source&rdquo; is.</div>'),
+ 'The last line is the standard. Anything that cannot be checked by somebody else in under a minute is an opinion, not a verdict.'),
+]
+
 # ═════════════════ SESSION 2 — BREAK DOWN A BRAND ═════════════════
 S2=[
 TITLE('Goal: open a brand you have never seen and say what it is doing, and where it loses people. Today we do one together, slowly, then you do one alone.',
@@ -899,6 +1008,115 @@ slide(
  +cell(1,13,8,9,'<div class="c3">Nobody looked up a cost. <em>Guess, do not research.</em> '
    'Roughly right and fast beats precisely right and late.</div>','lemon'),
  'Put this up before they start and leave it up. Without a target they will either write one line or try to research real COGS and burn the whole session. The point of the slide is permission to guess.'),
+]
+
+def _step(t, bold, rest, win=0):
+    cls = 'fbar win' if win else 'fbar'
+    return ('<div class="frow"><div class="' + cls + '" style="width:110px">' + t + '</div>'
+            '<div class="bs"><b>' + bold + '</b> <span class="mut">' + rest + '</span></div></div>')
+
+# ── SESSION 2 drill ──
+_DRILL2 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">Diagnose a shop you have <em>not</em> seen.</div>')
+ +cell(1,13,2,3,_step('3 min','Get your brand.','One per pair. Open it on a phone, cart empty, not logged in.'),'flat')
+ +cell(1,13,3,4,_step('12 min','Walk it as a customer.','Ad or social &rarr; product &rarr; cart &rarr; checkout. Where would <b>you</b> quit?'),'flat')
+ +cell(1,13,4,5,_step('10 min','Read the stack.','View source, Ctrl-F. Then /pages/rewards. What are they paying to fix?'),'flat')
+ +cell(1,13,5,6,_step('12 min','List every problem you found.','All of them. Messy is fine. Do not rank yet.','1'),'flat')
+ +cell(1,13,6,7,_step('8 min','Rank your top three.','And next to each: <b>what would it cost to fix?</b>'),'flat')
+ +cell(1,13,7,9,'<div class="st">Three problems, ranked, with the cost of each.</div>'
+   '<div class="b mt mut">If loyalty is not in your top three, <b>say so</b>. That is a correct answer and '
+   'we would rather hear it here than from the merchant in six months.</div>','ink'),
+ 'Separating "list everything" from "rank them" matters. If they rank as they go they stop at the first thing they recognise. Make them dump first.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like &mdash; Halfdays, which you already know</div>')
+ +cell(1,13,2,3,'<div class="frow"><div class="fbar" style="width:64px">1</div>'
+   '<div class="bs"><b>A 10% popup on premium outerwear.</b> '
+   '<span class="mut">Free to change. Are they discounting people who were buying a $300 jacket anyway? Fear #2.</span></div></div>','flat')
+ +cell(1,13,3,4,'<div class="frow"><div class="fbar" style="width:64px">2</div>'
+   '<div class="bs"><b>Past buyers may never see the next drop.</b> '
+   '<span class="mut">Cheap. Apparel repeats by season, not refill &mdash; so new arrivals to past purchasers is the lever.</span></div></div>','flat')
+ +cell(1,13,4,5,'<div class="frow"><div class="fbar win" style="width:64px">3</div>'
+   '<div class="bs"><b>Nothing gives a reason to choose them next season.</b> '
+   '<span class="mut">Slowest and last. This is ours &mdash; and it is third, not first.</span></div></div>','flat')
+ +cell(1,7,5,9,'<div class="c3">Why this is good</div><div class="rule"></div>'
+   '<div class="b">Three problems, ordered by <b>people lost</b> and <b>cost to fix</b>. '
+   'Two of them we do not sell. That is what makes the third one credible.</div>')
+ +cell(7,13,5,9,'<div class="c3 lem">What a weak one looks like</div><div class="rule"></div>'
+   '<div class="b">&ldquo;They should add a loyalty program.&rdquo;</div>'
+   '<div class="bs mt2 mut">One item, unranked, no cost, and it happens to be the thing we sell. '
+   'That is a pitch, not a diagnosis.</div>','ink'),
+ 'The weak example is the important half. Everyone can produce the weak version. Show them the difference explicitly or they will hand you the pitch and think it is a diagnosis.'),
+]
+
+# ── SESSION 3 drill ──
+_DRILL3 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">Two brands. One <em>recommendation</em> each.</div>')
+ +cell(1,13,2,3,_step('3 min','Get your two brands.','One with a strong repeat reason, one with a weak one. Handed to you.'),'flat')
+ +cell(1,13,3,4,_step('10 min','Brand A.','Why would a human buy this twice? What does the brand already do about it?'),'flat')
+ +cell(1,13,4,5,_step('10 min','Brand B.','Same two questions. &ldquo;No reason&rdquo; is an allowed answer &mdash; and often the right one.'),'flat')
+ +cell(1,13,5,6,_step('12 min','Prescribe one thing each.','Referral, points, credit, tiers, subscription &mdash; or <b>nothing yet</b>.','1'),'flat')
+ +cell(1,13,6,7,_step('10 min','Name what you rejected.','And what that option would have lost. <b>This is the graded part.</b>'),'flat')
+ +cell(1,13,7,9,'<div class="st">Anyone can pick something. Only somebody who understands it can say '
+   '<em>what the alternative costs.</em></div>','ink'),
+ 'The rejected option is the whole grading criterion. Say that before they start, or they will spend forty minutes on the recommendation and thirty seconds on the part you are actually marking.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like &mdash; both brands from earlier</div>')
+ +cell(1,7,2,6,'<div class="c3">Crown Affair</div><div class="rule"></div>'
+   '<div class="bs mut">refill product, no loyalty, Recharge already installed</div>'
+   '<div class="b mt2"><b>Points, tied to the refill window.</b></div>'
+   '<div class="bs mt2"><b>Rejected: store credit.</b> It would be understood faster &mdash; but credit is '
+   'money with a logo on it. They have spent years building a brand; points can carry it, credit cannot.</div>','lemon')
+ +cell(7,13,2,6,'<div class="c3">HexClad</div><div class="rule"></div>'
+   '<div class="bs mut">$300 pan, five-year cycle, already runs Rivo</div>'
+   '<div class="b mt2"><b>Referral and range &mdash; not a refill points scheme.</b></div>'
+   '<div class="bs mt2"><b>Rejected: points on a repurchase cycle.</b> They would expire before she needs '
+   'another pan. You would have added a cost and produced no second order.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">Both name the rejected option <em>and</em> what it loses.</div>'
+   '<div class="b mt mut">Notice the second one recommends something we do not really sell. '
+   'That is not a failure of the exercise &mdash; it is the exercise.</div>'),
+ 'Point at the HexClad half explicitly. If nobody in the room ever recommends something outside our product, they have not understood the job.'),
+]
+
+# ── SESSION 4 drill ──
+_DRILL4 = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Now you &middot; 45 minutes, in pairs</div>'
+   '<div class="t mt">Two brands. One <em>verdict</em> each.</div>')
+ +cell(1,13,2,3,_step('3 min','Get your two brands.','One should pass and one should fail. You are not told which.'),'flat')
+ +cell(1,13,3,4,_step('12 min','Run the checklist on both.','Line by line, out loud. Everything is visible from the public site.'),'flat')
+ +cell(1,13,4,5,_step('10 min','Ask the harder question.','Do they need it <b>at all</b>? Base, stage &mdash; and check the one-star reviews.'),'flat')
+ +cell(1,13,5,6,_step('12 min','Write the verdict.','Ours / not ours / not yet &mdash; plus <b>the one thing you would change</b>.','1'),'flat')
+ +cell(1,13,6,7,_step('8 min','Defend it to another pair.','They try to talk you out of it. Change your mind if they are right.'),'flat')
+ +cell(1,13,7,9,'<div class="st">Is it ours &middot; does it need this &middot; <em>what is the one thing we would change?</em></div>','ink'),
+ 'The defend-it step is what makes this a graduation drill rather than a worksheet. A verdict you cannot defend out loud is not a verdict.',
+ kicker='They do it'),
+
+slide(
+ cell(1,13,1,2,'<div class="l mut">What a good one looks like</div>')
+ +cell(1,7,2,7,'<div class="c3">Rae Wellness</div><div class="rule"></div>'
+   '<div class="ch mt">Ours. <em>Now.</em></div>'
+   '<div class="bs mt2">Shopify, wellness, repurchase, Klaviyo, Recharge heavily used, '
+   '<b>/pages/rewards 404s</b>, no competitor.</div>'
+   '<div class="bs mt2"><b>The one thing:</b> nothing gives a reason to choose them. Points on the refill '
+   'window, surfaced in the Klaviyo flow they already run.</div>','lemon')
+ +cell(7,13,2,7,'<div class="c3">HexClad</div><div class="rule"></div>'
+   '<div class="ch mt">Not ours.</div>'
+   '<div class="bs mt2"><b>Rivo is already installed.</b> Fails the checklist on the most visible line there is '
+   '&mdash; found in sixty seconds, no opinion required.</div>'
+   '<div class="bs mt2">And even without it: a $300 pan on a five-year cycle is the wrong shape for points. '
+   'Two reasons, either one enough.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">A verdict is a <em>decision plus a reason a lead can check.</em></div>'
+   '<div class="b mt mut">&ldquo;Feels like a good fit&rdquo; is not a verdict. '
+   '&ldquo;Rivo is installed, here is the line in the source&rdquo; is.</div>'),
+ 'The last line is the standard. Anything that cannot be checked by somebody else in under a minute is an opinion, not a verdict.'),
 ]
 
 # ═════════════════ SESSION 2 — WHY PEOPLE COME BACK ═════════════════
@@ -1779,7 +1997,7 @@ slide(
 ]
 
 # ── merge sessions 1 + 2 into one ──
-S3 = S3[:4] + _PRODUCT + WAYS + S3[4:]
+S3 = S3[:4] + _PRODUCT + WAYS + S3[4:-1] + _DRILL3
 
 _RTRAP = [
 slide(
@@ -1944,7 +2162,7 @@ SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2], _HALFDAYS] + [S1[i
 SESS2 = [TITLE('Goal: given a shop you have never seen, find what is actually wrong with it — and say which problem to fix first. Today we diagnose one together, then you diagnose another alone.',
   'Session Two','What is<br><em>wrong</em><br>with this shop?',
   ('Troubleshooting a real business.','Every merchant complaint is a symptom. Today you learn to find the cause.'),'Trouble-<br>shooting')] \
-  + [_DIAGNOSE] + _WINNER + [S2[i] for i in (1,2,3)] + [_POPUP] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
+  + [_DIAGNOSE] + _WINNER + [S2[i] for i in (1,2,3)] + [_POPUP] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[14]] + _DRILL2
 
 
 S4.insert(4, slide(
@@ -2157,4 +2375,4 @@ if __name__=='__main__':
     build('session-1-money.html','Session 1 — How a shop makes money',SESS1)
     build('session-2-troubleshoot.html','Session 2 — What is wrong with this shop?',SESS2)
     build('session-3-retention.html','Session 3 — Why people come back',S3)
-    build('session-4-together.html','Session 4 — Bring it together',S4)
+    build('session-4-together.html','Session 4 — Bring it together',S4[:-2] + _DRILL4 + [S4[-1]])
