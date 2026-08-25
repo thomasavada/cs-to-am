@@ -15,6 +15,7 @@ def _asset(n):
     import base64
     return 'data:image/jpeg;base64,' + base64.b64encode(open(jpg,'rb').read()).decode()
 SNEAKER, DSC, RAE404 = _asset('sneaker'), _asset('dsc-store'), _asset('rae-404')
+DSCTHUMB, CHASETHUMB = _asset('dsc-thumb'), _asset('chase-thumb')
 CROWN, HALFDAYS, HEXCLAD, HEXPOPUP = _asset('crownaffair'), _asset('halfdays'), _asset('hexclad'), _asset('hexclad-popup')
 
 CSS = """
@@ -240,6 +241,25 @@ def applogo(name, label, size=46):
 def logorow(items, size=46):
     return '<div style="display:flex;flex-wrap:wrap;align-items:center">' + ''.join(applogo(n,l,size) for n,l in items) + '</div>'
 
+def video(vid, title='', thumb=''):
+    """YouTube player with a local thumbnail behind it, so the slide still reads
+    if the embed is blocked or the room is offline. Click the chip to open on YouTube."""
+    back = (f'<img src="{thumb}" alt="" style="position:absolute;inset:0;width:100%;height:100%;'
+            'object-fit:cover;z-index:0">') if thumb else ''
+    play = ('<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1;'
+            'width:78px;height:78px;border-radius:50%;background:rgba(10,10,10,.82);color:#E6FF3D;'
+            'display:flex;align-items:center;justify-content:center;font-size:30px;pointer-events:none">&#9654;</div>')
+    frame = ('<iframe src="https://www.youtube.com/embed/' + vid + '" title="' + title + '" '
+             'allow="accelerometer;autoplay;clipboard-write;encrypted-media;picture-in-picture" '
+             'allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2"></iframe>')
+    return f'<div style="position:relative;width:100%;height:100%;background:#000">{back}{play}{frame}</div>' 
+
+def src_row(mark, label, url, note):
+    return ('<div class="frow" style="margin-bottom:10px">'
+            + logo(mark,40) +
+            '<div class="bs" style="flex:1"><b>' + label + '</b> <span class="mut">' + note + '</span></div>'
+            + link(url) + '</div>')
+
 def link(url, label=None):
     """A clickable chip. The deck's click-to-advance handler ignores <a>, so these open cleanly."""
     return f'<a class="go" href="https://{url}" target="_blank" rel="noopener">{label or url}</a>'
@@ -309,7 +329,7 @@ slide(
  kicker='Real numbers', num='03'),
 
 slide(
- cell(1,7,1,9,'<div class="l mut">Nike</div><div class="n-sm mt">$5</div>'
+ cell(1,7,1,9,f'<div class="l mut">{logo("nike",34)}Nike</div><div class="n-sm mt">$5</div>'
    '<div class="ls mut">kept &middot; 5.3% net margin</div><div class="rule"></div>'
    '<table><tr><td>make it</td><td class="r">$22</td></tr>'
    '<tr><td>ship, insure, customs</td><td class="r">$5</td></tr>'
@@ -317,7 +337,7 @@ slide(
    '<tr><td>staff &amp; everything else</td><td class="r">$11</td></tr>'
    '<tr><td>tax</td><td class="r">$2</td></tr>'
    '<tr><td>the shop</td><td class="r">$50</td></tr></table>')
- +cell(7,13,1,9,'<div class="l">adidas</div><div class="n-sm mt">$2</div>'
+ +cell(7,13,1,9,f'<div class="l">{logo("adidas",34)}adidas</div><div class="n-sm mt">$2</div>'
    '<div class="ls">kept &middot; 2.5% net margin</div><div class="rule"></div>'
    '<table><tr><td>make it</td><td class="r">$21</td></tr>'
    '<tr><td>ship, insure, customs</td><td class="r">$5</td></tr>'
@@ -368,7 +388,7 @@ slide(
  cell(1,7,1,6,'<div class="l mut">Watch together &middot; 90 seconds</div>'
    '<div class="t mt">Dollar<br>Shave<br>Club</div>'
    '<div class="b mt2">March 2012. The video that built a billion-dollar company.</div>')
- +cell(7,13,1,6,img(DSC),'photo')
+ +cell(7,13,1,6,video('RBHMf7BNd8o','Dollar Shave Club 2012',DSCTHUMB),'photo')
  +cell(1,5,6,9,'<div class="n-sm">$4,500</div><div class="ls mut">shot in one day</div>')
  +cell(5,9,6,9,'<div class="n-sm">12,000</div><div class="ls mut">orders in 48 hours &middot; servers fell over</div>','lemon')
  +cell(9,13,6,9,'<div class="n-sm">$1B</div><div class="ls">sold to Unilever, 2016</div>','ink'),
@@ -537,13 +557,13 @@ _STORES = [
 slide(
  cell(1,13,1,2,'<div class="l mut">Open all four. Same rule, four different numbers.</div>'
    '<div class="t mt">Why is free shipping <em>$30</em> here and <em>$95</em> there?</div>')
- +cell(1,4,2,6,'<div class="c3">Rae Wellness</div><div class="n-sm mt">$30</div>'
+ +cell(1,4,2,6,f'{logo("raewellness",34)}'+'<div class="c3" style="display:inline">Rae Wellness</div><div class="n-sm mt">$30</div>'
    '<div class="bs mut">supplements, $19.99&ndash;$30</div><div class="mt">'+link('raewellness.co')+'</div>')
- +cell(4,7,2,6,'<div class="c3">Crown Affair</div><div class="n-sm mt">$75</div>'
+ +cell(4,7,2,6,f'{logo("crownaffair",34)}'+'<div class="c3" style="display:inline">Crown Affair</div><div class="n-sm mt">$75</div>'
    '<div class="bs mut">haircare, mid-price</div><div class="mt">'+link('crownaffair.com')+'</div>','lemon')
- +cell(7,10,2,6,'<div class="c3">Halfdays</div><div class="n-sm mt">$95</div>'
+ +cell(7,10,2,6,f'{logo("halfdays",34)}'+'<div class="c3" style="display:inline">Halfdays</div><div class="n-sm mt">$95</div>'
    '<div class="bs mut">outerwear</div><div class="mt">'+link('halfdays.com')+'</div>')
- +cell(10,13,2,6,'<div class="c3">HexClad</div><div class="n-sm mt">free</div>'
+ +cell(10,13,2,6,f'{logo("hexclad",34)}'+'<div class="c3" style="display:inline">HexClad</div><div class="n-sm mt">free</div>'
    '<div class="bs mut">$100+ pans</div><div class="mt">'+link('hexclad.com')+'</div>','ink')
  +cell(1,13,6,9,'<div class="st">Each number sits <em>just above</em> where that shop&rsquo;s average order '
    'already lands.</div>'
@@ -736,6 +756,78 @@ slide(
    '&ldquo;Rivo is installed, here is the line in the source&rdquo; is.</div>'),
  'The last line is the standard. Anything that cannot be checked by somebody else in under a minute is an opinion, not a verdict.'),
 ]
+
+# ── sources: every claim in the session, clickable ──
+_SRC1 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">Check any of it. <em>None of it is mine.</em></div>')
+ +cell(1,13,2,8,
+   src_row('brandsvietnam','Bài toán chi phí — Nike &amp; adidas','brandsvietnam.com/12953-bai-toan-chi-phi-va-gia-thanh-tren-moi-doi-giay-nike-adidas','&mdash; the $100 shoe, from 2015 filings. In Vietnamese.')
+  +src_row('youtube','Dollar Shave Club, the 2012 film','youtube.com/watch?v=RBHMf7BNd8o','&mdash; 90 seconds, $4,500, 12,000 orders in 48 hours')
+  +src_row('dsc','Dollar Shave Club today','dollarshaveclub.com','&mdash; still a subscription, still a $4.99 starter set')
+  +src_row('halfdays','Halfdays','halfdays.com','&mdash; free shipping $95')
+  +src_row('crownaffair','Crown Affair','crownaffair.com','&mdash; free shipping $75')
+  +src_row('raewellness','Rae Wellness','raewellness.co','&mdash; free shipping $30')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; free shipping always, $100+ pans')
+   ,'flat')
+ +cell(1,13,8,9,'<div class="c3">Send this slide to the team. <em>Reading the source beats trusting the trainer.</em></div>','ink'),
+ 'Give them the links. A cohort whose problem was never English can read a Vietnamese source better than we can — and the shoe article is the single most persuasive thing in the session.',
+ kicker='All clickable')
+
+_SRC2 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">The whole diagnostic tree is <em>somebody else&rsquo;s work.</em></div>')
+ +cell(1,7,2,7,'<div class="c3 mb">Watch this one</div>'
+   +'<div style="height:74%;min-height:250px">'+video('42uhZYnyEXU','Chase Chappell — every ecom metric',CHASETHUMB)+'</div>'
+   +'<div class="mt">'+link('youtube.com/watch?v=42uhZYnyEXU','open on YouTube')+'</div>'
+   +'<div class="bs mt mut">44 min. Every metric, what it means, what to do. '
+   'We use the <b>site and business</b> half; the ad-account half is not our altitude.</div>')
+ +cell(7,13,2,7,
+   src_row('baymard','Baymard Institute','baymard.com/lists/cart-abandonment-rate','&mdash; ~70% abandon, 39% over extra costs')
+  +src_row('meta','Meta Ad Library','facebook.com/ads/library','&mdash; every live ad, any brand, free')
+  +src_row('crownaffair','Crown Affair','crownaffair.com','&mdash; the ICP-matched winner')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; the Plus store, and the 52% popup')
+  +src_row('halfdays','Halfdays','halfdays.com','&mdash; the brand you diagnose')
+   ,'flat')
+ +cell(1,13,7,9,'<div class="c3">The stack map &mdash; 130 apps across 28 fields &mdash; is internal: '
+   '<em>avada-know-the-drill</em>. Ask for access.</div>','ink'),
+ 'Play a minute of the Chase video if you have time — the site walkthrough around six minutes in is the clearest part. Otherwise just point at it and move on.',
+ kicker='All clickable')
+
+_SRC3 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">Two brands, one video, and your own inbox.</div>')
+ +cell(1,7,2,7,'<div class="c3 mb">The retention half of the same video</div>'
+   +'<div style="height:70%;min-height:230px">'+video('42uhZYnyEXU','Chase Chappell — retention diagnostics',CHASETHUMB)+'</div>'
+   +'<div class="mt">'+link('youtube.com/watch?v=42uhZYnyEXU','open on YouTube')+'</div>'
+   +'<div class="bs mt mut">The returning-rate trap and the three product types are from here.</div>')
+ +cell(7,13,2,7,
+   src_row('crownaffair','Crown Affair','crownaffair.com','&mdash; strong repeat, Recharge, no loyalty')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; weak repeat, and runs Rivo anyway')
+  +src_row('rivo2','Rivo case studies','rivo.io','&mdash; 19 studies, one number each, no feature lists')
+  +src_row('klaviyo','Klaviyo','klaviyo.com','&mdash; the cheapest way to reach anyone')
+  +src_row('attentive','Attentive','attentive.com','&mdash; SMS, ~100&times; the cost per message')
+   ,'flat')
+ +cell(1,13,7,9,'<div class="c3">And the best source in this session is <em>your own inbox</em> &mdash; '
+   'the emails you got from your build-track order.</div>','ink'),
+ 'Point at the inbox line. Nothing on this list beats an email they received themselves about an order they placed.',
+ kicker='All clickable')
+
+_SRC4 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">The ICP is <em>ours</em>. Everything else is checkable.</div>')
+ +cell(1,13,2,8,
+   src_row('raewellness','Rae Wellness','raewellness.co','&mdash; Recharge + Klaviyo + /pages/rewards 404')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; Rivo installed. Fails the checklist visibly.')
+  +src_row('rivo2','Rivo &mdash; case studies','rivo.io','&mdash; 55&times; ROI banner, one hero number per card')
+  +src_row('shopify','Shopify Plus signals','shopify.com/plus','&mdash; checkout extensions, markets, B2B')
+  +src_row('recharge','Recharge','rechargepayments.com','&mdash; the subscription half of the easiest win')
+  +src_row('klaviyo','Klaviyo','klaviyo.com','&mdash; the other half')
+   ,'flat')
+ +cell(1,13,8,9,'<div class="c3">Joy&rsquo;s ICP band and exclusions come from the outbound research &mdash; '
+   '<em>Team Joy</em> in Obsidian. Ask for it.</div>','ink'),
+ 'The point of this slide is that nothing in the verdict rests on an opinion. Every line is somewhere they can go and look.',
+ kicker='All clickable')
 
 # ═════════════════ SESSION 2 — BREAK DOWN A BRAND ═════════════════
 S2=[
@@ -919,13 +1011,13 @@ _STORES = [
 slide(
  cell(1,13,1,2,'<div class="l mut">Open all four. Same rule, four different numbers.</div>'
    '<div class="t mt">Why is free shipping <em>$30</em> here and <em>$95</em> there?</div>')
- +cell(1,4,2,6,'<div class="c3">Rae Wellness</div><div class="n-sm mt">$30</div>'
+ +cell(1,4,2,6,f'{logo("raewellness",34)}'+'<div class="c3" style="display:inline">Rae Wellness</div><div class="n-sm mt">$30</div>'
    '<div class="bs mut">supplements, $19.99&ndash;$30</div><div class="mt">'+link('raewellness.co')+'</div>')
- +cell(4,7,2,6,'<div class="c3">Crown Affair</div><div class="n-sm mt">$75</div>'
+ +cell(4,7,2,6,f'{logo("crownaffair",34)}'+'<div class="c3" style="display:inline">Crown Affair</div><div class="n-sm mt">$75</div>'
    '<div class="bs mut">haircare, mid-price</div><div class="mt">'+link('crownaffair.com')+'</div>','lemon')
- +cell(7,10,2,6,'<div class="c3">Halfdays</div><div class="n-sm mt">$95</div>'
+ +cell(7,10,2,6,f'{logo("halfdays",34)}'+'<div class="c3" style="display:inline">Halfdays</div><div class="n-sm mt">$95</div>'
    '<div class="bs mut">outerwear</div><div class="mt">'+link('halfdays.com')+'</div>')
- +cell(10,13,2,6,'<div class="c3">HexClad</div><div class="n-sm mt">free</div>'
+ +cell(10,13,2,6,f'{logo("hexclad",34)}'+'<div class="c3" style="display:inline">HexClad</div><div class="n-sm mt">free</div>'
    '<div class="bs mut">$100+ pans</div><div class="mt">'+link('hexclad.com')+'</div>','ink')
  +cell(1,13,6,9,'<div class="st">Each number sits <em>just above</em> where that shop&rsquo;s average order '
    'already lands.</div>'
@@ -1118,6 +1210,78 @@ slide(
    '&ldquo;Rivo is installed, here is the line in the source&rdquo; is.</div>'),
  'The last line is the standard. Anything that cannot be checked by somebody else in under a minute is an opinion, not a verdict.'),
 ]
+
+# ── sources: every claim in the session, clickable ──
+_SRC1 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">Check any of it. <em>None of it is mine.</em></div>')
+ +cell(1,13,2,8,
+   src_row('brandsvietnam','Bài toán chi phí — Nike &amp; adidas','brandsvietnam.com/12953-bai-toan-chi-phi-va-gia-thanh-tren-moi-doi-giay-nike-adidas','&mdash; the $100 shoe, from 2015 filings. In Vietnamese.')
+  +src_row('youtube','Dollar Shave Club, the 2012 film','youtube.com/watch?v=RBHMf7BNd8o','&mdash; 90 seconds, $4,500, 12,000 orders in 48 hours')
+  +src_row('dsc','Dollar Shave Club today','dollarshaveclub.com','&mdash; still a subscription, still a $4.99 starter set')
+  +src_row('halfdays','Halfdays','halfdays.com','&mdash; free shipping $95')
+  +src_row('crownaffair','Crown Affair','crownaffair.com','&mdash; free shipping $75')
+  +src_row('raewellness','Rae Wellness','raewellness.co','&mdash; free shipping $30')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; free shipping always, $100+ pans')
+   ,'flat')
+ +cell(1,13,8,9,'<div class="c3">Send this slide to the team. <em>Reading the source beats trusting the trainer.</em></div>','ink'),
+ 'Give them the links. A cohort whose problem was never English can read a Vietnamese source better than we can — and the shoe article is the single most persuasive thing in the session.',
+ kicker='All clickable')
+
+_SRC2 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">The whole diagnostic tree is <em>somebody else&rsquo;s work.</em></div>')
+ +cell(1,7,2,7,'<div class="c3 mb">Watch this one</div>'
+   +'<div style="height:74%;min-height:250px">'+video('42uhZYnyEXU','Chase Chappell — every ecom metric',CHASETHUMB)+'</div>'
+   +'<div class="mt">'+link('youtube.com/watch?v=42uhZYnyEXU','open on YouTube')+'</div>'
+   +'<div class="bs mt mut">44 min. Every metric, what it means, what to do. '
+   'We use the <b>site and business</b> half; the ad-account half is not our altitude.</div>')
+ +cell(7,13,2,7,
+   src_row('baymard','Baymard Institute','baymard.com/lists/cart-abandonment-rate','&mdash; ~70% abandon, 39% over extra costs')
+  +src_row('meta','Meta Ad Library','facebook.com/ads/library','&mdash; every live ad, any brand, free')
+  +src_row('crownaffair','Crown Affair','crownaffair.com','&mdash; the ICP-matched winner')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; the Plus store, and the 52% popup')
+  +src_row('halfdays','Halfdays','halfdays.com','&mdash; the brand you diagnose')
+   ,'flat')
+ +cell(1,13,7,9,'<div class="c3">The stack map &mdash; 130 apps across 28 fields &mdash; is internal: '
+   '<em>avada-know-the-drill</em>. Ask for access.</div>','ink'),
+ 'Play a minute of the Chase video if you have time — the site walkthrough around six minutes in is the clearest part. Otherwise just point at it and move on.',
+ kicker='All clickable')
+
+_SRC3 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">Two brands, one video, and your own inbox.</div>')
+ +cell(1,7,2,7,'<div class="c3 mb">The retention half of the same video</div>'
+   +'<div style="height:70%;min-height:230px">'+video('42uhZYnyEXU','Chase Chappell — retention diagnostics',CHASETHUMB)+'</div>'
+   +'<div class="mt">'+link('youtube.com/watch?v=42uhZYnyEXU','open on YouTube')+'</div>'
+   +'<div class="bs mt mut">The returning-rate trap and the three product types are from here.</div>')
+ +cell(7,13,2,7,
+   src_row('crownaffair','Crown Affair','crownaffair.com','&mdash; strong repeat, Recharge, no loyalty')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; weak repeat, and runs Rivo anyway')
+  +src_row('rivo2','Rivo case studies','rivo.io','&mdash; 19 studies, one number each, no feature lists')
+  +src_row('klaviyo','Klaviyo','klaviyo.com','&mdash; the cheapest way to reach anyone')
+  +src_row('attentive','Attentive','attentive.com','&mdash; SMS, ~100&times; the cost per message')
+   ,'flat')
+ +cell(1,13,7,9,'<div class="c3">And the best source in this session is <em>your own inbox</em> &mdash; '
+   'the emails you got from your build-track order.</div>','ink'),
+ 'Point at the inbox line. Nothing on this list beats an email they received themselves about an order they placed.',
+ kicker='All clickable')
+
+_SRC4 = slide(
+ cell(1,13,1,2,'<div class="l mut">Where all of this came from</div>'
+   '<div class="st mt">The ICP is <em>ours</em>. Everything else is checkable.</div>')
+ +cell(1,13,2,8,
+   src_row('raewellness','Rae Wellness','raewellness.co','&mdash; Recharge + Klaviyo + /pages/rewards 404')
+  +src_row('hexclad','HexClad','hexclad.com','&mdash; Rivo installed. Fails the checklist visibly.')
+  +src_row('rivo2','Rivo &mdash; case studies','rivo.io','&mdash; 55&times; ROI banner, one hero number per card')
+  +src_row('shopify','Shopify Plus signals','shopify.com/plus','&mdash; checkout extensions, markets, B2B')
+  +src_row('recharge','Recharge','rechargepayments.com','&mdash; the subscription half of the easiest win')
+  +src_row('klaviyo','Klaviyo','klaviyo.com','&mdash; the other half')
+   ,'flat')
+ +cell(1,13,8,9,'<div class="c3">Joy&rsquo;s ICP band and exclusions come from the outbound research &mdash; '
+   '<em>Team Joy</em> in Obsidian. Ask for it.</div>','ink'),
+ 'The point of this slide is that nothing in the verdict rests on an opinion. Every line is somewhere they can go and look.',
+ kicker='All clickable')
 
 # ═════════════════ SESSION 2 — WHY PEOPLE COME BACK ═════════════════
 S3=[
@@ -1997,7 +2161,7 @@ slide(
 ]
 
 # ── merge sessions 1 + 2 into one ──
-S3 = S3[:4] + _PRODUCT + WAYS + S3[4:-1] + _DRILL3
+S3 = S3[:4] + _PRODUCT + WAYS + S3[4:-1] + _DRILL3 + [_SRC3]
 
 _RTRAP = [
 slide(
@@ -2156,13 +2320,13 @@ _POPUP = slide(
  'This is the single best teaching image in the deck because it is live and enormous. Fifty-two percent, before she has looked at anything. Ask what that trains a customer to do — wait for the sale. Then go to the next slide.',
  kicker='Open it live')
 
-SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2], _HALFDAYS] + [S1[i] for i in (9,10,11,12,13)] + [_STORES[0]] + [S1[i] for i in (14,)] + [_STORES[1]] + [S1[16]] + _DRILL1
+SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7)] + [_STORES[2], _HALFDAYS] + [S1[i] for i in (9,10,11,12,13)] + [_STORES[0]] + [S1[i] for i in (14,)] + [_STORES[1]] + [S1[16]] + _DRILL1 + [_SRC1]
 
 # ── SESSION 2: how to read a shop ──
 SESS2 = [TITLE('Goal: given a shop you have never seen, find what is actually wrong with it — and say which problem to fix first. Today we diagnose one together, then you diagnose another alone.',
   'Session Two','What is<br><em>wrong</em><br>with this shop?',
   ('Troubleshooting a real business.','Every merchant complaint is a symptom. Today you learn to find the cause.'),'Trouble-<br>shooting')] \
-  + [_DIAGNOSE] + _WINNER + [S2[i] for i in (1,2,3)] + [_POPUP] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[14]] + _DRILL2
+  + [_DIAGNOSE] + _WINNER + [S2[i] for i in (1,2,3)] + [_POPUP] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[14]] + _DRILL2 + [_SRC2]
 
 
 S4.insert(4, slide(
@@ -2375,4 +2539,4 @@ if __name__=='__main__':
     build('session-1-money.html','Session 1 — How a shop makes money',SESS1)
     build('session-2-troubleshoot.html','Session 2 — What is wrong with this shop?',SESS2)
     build('session-3-retention.html','Session 3 — Why people come back',S3)
-    build('session-4-together.html','Session 4 — Bring it together',S4[:-2] + _DRILL4 + [S4[-1]])
+    build('session-4-together.html','Session 4 — Bring it together',S4[:-2] + _DRILL4 + [_SRC4, S4[-1]])

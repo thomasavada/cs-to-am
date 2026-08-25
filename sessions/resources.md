@@ -94,6 +94,17 @@ Built as HTML/CSS inside the slides, so they scale on any projector and print to
 - **S3** — the email timeline, week 6 highlighted
 - **S4** — Shop A vs Shop B, the multiplier
 
+## Every session ends with a sources slide
+
+The last slide of each deck lists every claim's source as a **clickable chip** — the Vietnamese shoe
+article, the Chase video (embedded, playable in place), Baymard, the Ad Library, and every brand used.
+
+> Send that slide to the team. Reading the source beats trusting the trainer — and for a cohort whose
+> problem was never English, the Vietnamese shoe article reads better for them than for us.
+
+**Videos are embedded with a local thumbnail behind them**, so the slide still reads if the room is
+offline or YouTube is blocked, and every video also carries an "open on YouTube" chip.
+
 ## Assets already captured
 
 `sessions/assets/` — referenced by the decks, so **keep the folder next to the HTML**.
