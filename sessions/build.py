@@ -5,9 +5,15 @@ Run: python3 build.py"""
 import os, html as H
 
 D = os.path.dirname(os.path.abspath(__file__))
+# Images are referenced from assets/ by default — keeps the HTML small and diffable.
+# Set EMBED=1 to inline them as base64 for a single self-contained file you can email.
+EMBED = os.environ.get('EMBED') == '1'
 def _asset(n):
-    p = os.path.join(D, 'assets', n + '.datauri')
-    return open(p).read().strip() if os.path.exists(p) else ''
+    jpg = os.path.join(D, 'assets', n + '.jpg')
+    if not os.path.exists(jpg): return ''
+    if not EMBED: return f'assets/{n}.jpg'
+    import base64
+    return 'data:image/jpeg;base64,' + base64.b64encode(open(jpg,'rb').read()).decode()
 SNEAKER, DSC, RAE404 = _asset('sneaker'), _asset('dsc-store'), _asset('rae-404')
 
 CSS = """
@@ -63,7 +69,9 @@ td,th{padding:11px 0;text-align:left;border-bottom:2px solid rgba(10,10,10,.13);
   font:400 26px/1.2 'Space Grotesk',Helvetica,Arial,sans-serif}
 .ink td,.ink th{border-color:rgba(245,244,239,.18)}
 th{font:400 16px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;padding-right:56px}
+td.r:last-child{padding-right:0}
+table.duo td{width:25%}table.duo td.r{padding-right:64px}table.duo td.r:last-child{padding-right:0}
 tr.tot td{border-bottom:none;border-top:4px solid var(--ink);font-weight:700;font-size:32px;padding-top:14px}
 .ink tr.tot td{border-top-color:var(--lemon)}
 
@@ -124,8 +132,43 @@ addEventListener('keydown',e=>{
  else if(e.key==='Home')go(0); else if(e.key==='End')go(S.length-1);
  else if(e.key.toLowerCase()==='s'||e.key.toLowerCase()==='n')N.classList.toggle('on');});
 addEventListener('click',e=>{if(e.target.tagName!=='A')go(i+1)});
+/* Cards clip at overflow:hidden, so any cell whose content exceeds its grid rows would
+   silently lose text. autofit() shrinks the card instead. Floor is 0.6 — if a card is still
+   clipped at 0.6 it needs more rows, not more shrinking. Check with the browser sweep in
+   sessions/README-check.md */
+function autofit(){
+ document.querySelectorAll('.card').forEach(c=>{
+  c.style.zoom='';
+  const sl=c.closest('.slide'); const was=sl.classList.contains('active');
+  if(!was) sl.classList.add('active');
+  let k=1;
+  while(c.scrollHeight-c.clientHeight>2 && k>0.6){ k-=0.04; c.style.zoom=k; }
+  if(!was) sl.classList.remove('active');
+ });}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(autofit);}else{addEventListener('load',autofit);}
 fit();go(parseInt(location.hash.slice(1)||'1')-1);
 """
+
+
+class _V(__import__('html.parser',fromlist=['HTMLParser']).HTMLParser):
+    """Catches swallowed markup: an attribute value containing '<' means an unclosed quote
+    ate the rest of the document (the data-x bug). Also counts real slide sections."""
+    def __init__(self):
+        super().__init__(); self.sections=0; self.bad=[]
+    def handle_starttag(self, tag, attrs):
+        if tag=='section': self.sections+=1
+        for k,v in attrs:
+            if v and ('<' in v or len(v)>4000 and 'base64' not in v):
+                self.bad.append(f'<{tag} {k}="{v[:70]}...">')
+
+def validate(fn, expected):
+    p=_V(); p.feed(open(fn).read())
+    errs=[]
+    if p.sections!=expected: errs.append(f'{p.sections} sections parsed, expected {expected}')
+    if p.bad: errs.append(f'{len(p.bad)} swallowed-markup attribute(s): {p.bad[0]}')
+    if errs:
+        print(f'  !! {fn}: ' + ' | '.join(errs)); return False
+    return True
 
 def cell(c1,c2,r1,r2,inner,cls=''):
     return (f'<div class="card {cls}" style="grid-column:{c1}/{c2};grid-row:{r1}/{r2}">{inner}</div>')
@@ -148,7 +191,8 @@ def build(fn, title, slides):
          '<div id="hud"></div><div id="notes"><b>say</b><div id="nb"></div></div>'
          f'<script>{JS}</script></body></html>')
     open(fn,'w').write(doc)
-    print(f'  {fn}  {len(slides)} slides  {len(doc)//1024}KB')
+    ok = validate(fn, len(slides))
+    print(f'  {fn}  {len(slides)} slides  {len(doc)//1024}KB  {"ok" if ok else "BROKEN"}')
 
 # ── small builders ──
 def stack(segs):
@@ -328,7 +372,7 @@ slide(
  +cell(7,13,3,6,'<div class="ls mut">Order 2</div>'
    '<div class="bar mt" style="background:var(--lemon)">+$22</div>'
    '<div class="bs mt mut">she came back on her own.</div>')
- +cell(1,13,6,9,'<div class="d">The business is not the shirt.<br>It is the <em>second shirt.</em></div>','ink'),
+ +cell(1,13,6,9,'<div class="t">The business is not the shirt.<br>It is the <em>second shirt.</em></div>','ink'),
  'Same shirt, same price. Twenty-two dollars instead of minus two. The only difference is nobody had to pay to find her. Tell them to write this down — everything for the next four weeks comes back to it.',
  num='13'),
 
@@ -345,7 +389,7 @@ slide(
  num='14'),
 
 slide(
- cell(1,13,1,2,'<div class="t">Not every product is the same business</div>')
+ cell(1,13,1,2,'<div class="st">Not every product is the same business</div>')
  +cell(1,7,2,6,'<div class="l mut">Bought once</div>'
    '<div class="ch mt">mattress &middot; cookware &middot; luggage</div>'
    '<div class="rule"></div>'
@@ -460,10 +504,10 @@ slide(
 
 slide(
  cell(1,13,1,2,'<div class="l mut">The path you are looking for</div>'
-   '<div class="t mt">Stranger &rarr; paid</div>')
- +cell(1,13,2,6,'<div style="display:flex;align-items:flex-end;height:100%;gap:10px">'
+   '<div class="st mt">Stranger &rarr; paid</div>')
+ +cell(1,13,2,6,'<div style="display:flex;align-items:flex-end;height:calc(100% - 42px);gap:10px">'
    +''.join(f'<div style="flex:1;height:{h}%;background:{c};border:3px solid var(--ink);position:relative">'
-            f'<div class="lx" style="position:absolute;bottom:-30px;left:0;right:0;text-align:center;color:var(--muted)">{t}</div></div>'
+            f'<div class="lx" style="position:absolute;bottom:-26px;left:-4px;right:-4px;text-align:center;color:var(--muted)">{t}</div></div>'
             for t,h,c in [('the ad',100,'var(--lemon)'),('lands',78,'var(--paper)'),('popup',70,'var(--paper)'),
                           ('product',54,'var(--paper)'),('offer',46,'var(--paper)'),('cart',36,'var(--paper)'),
                           ('leaves',22,'var(--ink)'),('checkout',16,'var(--paper)'),('paid',12,'var(--lemon)')])
@@ -648,7 +692,7 @@ WN('Does a loyalty program help this shop?',
  'and decide it is <b>now</b> rather than in three weeks.',
  'HexClad &mdash; premium cookware',
  'A pan is a five-year decision. Give her 400 points and they <b>expire before they are worth anything</b>. '
- 'You added a widget, a cost and a promise &mdash; and produced no second order.',
+ 'You added a widget, a cost and a promise &mdash; and produced no second order. Their second order is <b>an accessory</b>, not a point.',
  'Some very good brands should not run a points program. If you cannot say that out loud you are selling, not advising. HexClad answer is referral and range — sell them a lid, a knife, another size, or get them to bring someone new.',
  num='06'),
 
@@ -659,7 +703,7 @@ slide(
    '<div class="bar mt" style="width:26%;background:var(--paper)">+$2.13</div>')
  +cell(7,13,3,6,'<div class="ls mut">Order 2 &middot; she spent $42.00</div>'
    '<div class="bar mt" style="background:var(--lemon)">+$17.28</div>')
- +cell(1,13,6,9,'<table>'
+ +cell(1,13,6,9,'<table class="duo">'
    '<tr><td>Ad to reach Mai</td><td class="r">&minus;$30.00</td>'
    '<td>Free shipping, Lumi pays it</td><td class="r">&minus;$7.00</td></tr>'
    '<tr><td>Cart: moisturizer + travel size</td><td class="r">+$68.00</td>'
@@ -754,6 +798,128 @@ slide(
    '<b>what the alternative costs.</b></div>','ink'),
  'Homework: what is the real reason someone reorders from YOUR store? Five tickets restated in two sentences each, own words, Vietnamese fine, no questions to the merchant.',
  kicker='They do it', num='15'),
+]
+
+
+S1.append(slide(
+ cell(1,13,1,2,'<div class="l mut">The other way to raise that ceiling</div>'
+   '<div class="t mt">Do not get more customers.<br>Make each order <em>fatter.</em></div>')
+ +cell(1,7,2,6,'<div class="ch">Double AOV, double ROAS &mdash; without touching the ads</div>'
+   '<div class="b mt2">$35 &rarr; $70 takes a 1.2x return to <b>2.4x</b>. Same ads, same spend, same everything.</div>','lemon')
+ +cell(7,13,2,6,'<div class="c3">How merchants actually do it</div><div class="rule"></div>'
+   '<ul><li class="bs">bundles, 4-packs, pre-built pairs</li><li class="bs">upsell in cart, on site, at checkout</li>'
+   '<li class="bs"><b>free-shipping threshold set $1 above current AOV</b></li></ul>')
+ +cell(1,13,6,9,'<div class="st">And a floor worth knowing: below about <em>$35</em> an order, '
+   'almost nothing scales.</div>'
+   '<div class="b mt mut">The ad cost and the shipping eat it. When a merchant with a $22 average order asks why '
+   'ads are not working, that is usually the answer &mdash; and it is not an ads problem.</div>','ink'),
+ 'The threshold rule is the concrete one to remember: one dollar above where their average order sits today. Set it lower and it does nothing; set it far higher and it reads as a wall. Source: Chase Chappell, and it matches what we see in accounts.',
+ num='23'))
+
+# ── the ways back: inserted after the brand beat, before "why would a human buy twice" ──
+WAYS = [
+slide(
+ cell(1,13,1,2,'<div class="l mut">Before we talk about loyalty</div>'
+   '<div class="t mt">How many ways are there to <em>bring her back?</em></div>')
+ +cell(1,5,2,6,'<div class="l">Owned</div><div class="rule"></div>'
+   '<div class="b">email &middot; SMS &middot; WhatsApp &middot; her account &middot; loyalty</div>'
+   '<div class="bs mt2">You can reach her again for <b>almost nothing</b>, forever.</div>','lemon')
+ +cell(5,9,2,6,'<div class="c3">Rented</div><div class="rule"></div>'
+   '<div class="b">organic social &middot; community &middot; creators</div>'
+   '<div class="bs mt2 mut">You built the audience. <b>The algorithm decides</b> who sees it.</div>')
+ +cell(9,13,2,6,'<div class="c3">Paid</div><div class="rule"></div>'
+   '<div class="b">retargeting ads &middot; paid partnerships</div>'
+   '<div class="bs mt2 mut">Works immediately. <b>You pay every single time.</b></div>','ink')
+ +cell(1,13,6,9,'<div class="st">The diagnostic question:</div>'
+   '<div class="ch mt2 lem">How many ways can this shop reach a past customer <em>for free?</em></div>'
+   '<div class="b mt2 mut">If the answer is none, that is the finding &mdash; and it is bigger than any loyalty program.</div>','ink'),
+ 'This is the map for the next ten minutes. Owned, rented, paid. Every merchant conversation about "getting people back" lives in one of these three columns, and most merchants have never separated them.', num='05'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">The cost of one message</div>')
+ +cell(1,13,2,6,'<table>'
+   '<tr><th>Channel</th><th>Roughly costs</th><th>Reach it gets</th><th>Use it for</th></tr>'
+   '<tr><td><b>Email</b></td><td>fractions of a cent</td><td>~20&ndash;40% opened</td><td>everything &mdash; the default</td></tr>'
+   '<tr><td><b>SMS</b></td><td>cents per message</td><td><b>~90%+ read, in minutes</b></td><td>time-boxed moments only</td></tr>'
+   '<tr><td><b>WhatsApp</b></td><td>per conversation</td><td>very high, conversational</td><td>markets where it <b>is</b> the phone</td></tr>'
+   '<tr><td><b>Retargeting</b></td><td>real money, every time</td><td>whoever still matches</td><td>people who did not convert</td></tr>'
+   '<tr><td class="mut">Organic social</td><td class="mut">time, not money</td><td class="mut">whatever the algorithm gives</td><td class="mut">staying in mind</td></tr>'
+   '</table>','flat')
+ +cell(1,13,6,9,'<div class="st">Email is not the best channel. It is the <em>cheapest</em> one.</div>'
+   '<div class="b mt2 mut">Which is why it is the default, why every merchant runs Klaviyo, '
+   'and why an email list is the most valuable thing a small shop owns.</div>','ink'),
+ 'Do not let them think email is old-fashioned. It is the only channel where sending to everyone costs almost nothing, which means it is the only one you can use every week without going broke.', num='06'),
+
+slide(
+ cell(1,7,1,5,'<div class="l mut">SMS</div><div class="t mt">Read in <em>minutes.</em></div>'
+   '<div class="b mt2">Roughly a hundred times more expensive per message than email &mdash; '
+   'and read by almost everyone, almost immediately.</div>')
+ +cell(7,13,1,5,'<div class="c3 lem">So use it for</div>'
+   '<ul><li class="bs">a drop going live</li><li class="bs">a sale ending tonight</li>'
+   '<li class="bs">back in stock</li><li class="bs">an order problem</li></ul>','ink')
+ +cell(1,13,5,9,'<div class="ch">Never for a newsletter.</div>'
+   '<div class="b mt2">Overuse and she does not just ignore it &mdash; <b>she unsubscribes</b>, '
+   'and you have lost the most powerful channel you had, permanently. '
+   'A merchant asking &ldquo;can I text everyone weekly?&rdquo; is about to burn an asset.</div>','lemon'),
+ 'The asymmetry matters: an ignored email costs nothing, an unwanted SMS costs you the channel. That is why the rules are different.', num='07'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">WhatsApp</div><div class="t mt">For most of the world,<br>this <em>is</em> the phone.</div>'
+   '<div class="b mt2">Vietnam, India, Brazil, Indonesia, most of Europe, most of Latin America. '
+   'Not the US &mdash; which is why US-centric advice keeps missing it.</div>')
+ +cell(7,13,1,4,'<div class="c3">What makes it different</div>'
+   '<div class="bs mt">Support and selling happen in <b>the same thread</b>. She can just reply. '
+   'It reads like a person, not a broadcast.</div>')
+ +cell(7,13,4,6,'<div class="c3">What it demands</div>'
+   '<div class="bs mt">Explicit opt-in, and pre-approved templates for anything you send first. '
+   'You cannot just blast.</div>','ink')
+ +cell(1,13,6,9,'<div class="st">If a merchant sells into these markets and is <em>only</em> doing email, '
+   'they are missing the channel their customers actually live in.</div>','lemon'),
+ 'This is a place where our team has an advantage over US-based competitors — they use WhatsApp themselves and understand it natively.', num='08'),
+
+slide(
+ cell(1,7,1,5,'<div class="l mut">Retargeting</div>'
+   '<div class="t mt">Not paying to <em>find</em> her.</div>'
+   '<div class="b mt2">Paying to <b>remind</b> her. She is already matched &mdash; from the pixel, '
+   'or from the email list uploaded as an audience.</div>')
+ +cell(7,13,1,5,'<div class="c3 lem">Why it is cheaper</div>'
+   '<div class="bs mt">Prospecting pays to reach strangers, most of whom will never care. '
+   'Retargeting reaches people who <b>already raised a hand</b>.</div>'
+   '<div class="bs mt">Same ad money, far better odds.</div>','ink')
+ +cell(1,13,5,9,'<div class="ch">But it is shrinking.</div>'
+   '<div class="b mt2">Privacy changes mean fewer people can be matched at all. '
+   'Every year, <b>a bigger share of &ldquo;come back&rdquo; has to happen on channels you own</b> '
+   '&mdash; which is the whole argument for email, SMS, and an account she logs into.</div>','lemon'),
+ 'This is the strategic point: the paid route to bringing people back is getting less reliable, so the owned route matters more every year. That is a tailwind for us.', num='09'),
+
+slide(
+ cell(1,7,1,6,'<div class="l mut">Organic social &amp; content</div>'
+   '<div class="t mt">Rented reach.</div>'
+   '<div class="b mt2">Free in money. <b>Expensive in time.</b> And you do not control who sees it &mdash; '
+   'you built the audience, the algorithm decides.</div>')
+ +cell(7,13,1,3,'<div class="c3">What it is good at</div>'
+   '<div class="bs mt">Staying in her head <b>between</b> purchases, so that when the need comes back, '
+   'you are the name she already knows.</div>')
+ +cell(7,13,3,6,'<div class="c3">What it cannot do</div>'
+   '<div class="bs mt">Reach a <b>specific</b> customer at a <b>specific</b> moment. '
+   'You cannot post at one person who is about to run out.</div>','ink')
+ +cell(1,13,6,9,'<div class="b">Which is exactly the gap email, SMS and loyalty fill. '
+   'Social makes her <b>remember</b> you. Owned channels make her <b>buy</b>.</div>','lemon'),
+ 'Merchants often over-invest here because it feels like marketing. It builds memory, not orders. Both matter — but do not let them confuse the two.', num='10'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">Deals and sales &mdash; the fastest way, and <em>the most dangerous</em></div>')
+ +cell(1,7,2,6,'<div class="c3 lem">It works immediately</div>'
+   '<div class="b mt">Nothing brings people back faster than money off. '
+   'BFCM, a seasonal sale, a winback code &mdash; the orders arrive.</div>','ink')
+ +cell(7,13,2,6,'<div class="c3">And then it keeps working</div>'
+   '<div class="b mt">Which is the problem. Do it every November and people <b>learn to wait for November</b>. '
+   'You did not discover demand. You <b>moved</b> it &mdash; and taught them the real price is lower.</div>','lemon')
+ +cell(1,13,6,9,'<div class="st">This is <em>fear #2</em>, at the scale of a whole calendar.</div>'
+   '<div class="b mt2 mut">A merchant whose only way back is a sale has not built retention. '
+   'They have built a habit of waiting. That is the conversation to have with them &mdash; '
+   'and it is the one nobody else is having.</div>','ink'),
+ 'This is one of the most useful things you can say to a merchant, and almost nobody says it. Everyone sells them more discounting tools.', num='11'),
 ]
 
 # ═════════════════ SESSION 3 — BRING IT TOGETHER ═════════════════
@@ -916,11 +1082,142 @@ slide(
 ]
 
 # ── merge sessions 1 + 2 into one ──
-MERGED = [S1[i] for i in (0,1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3,11,12,13,14,15)]
-for k,s in enumerate(MERGED):
-    s['html'] = s['html'].replace('<div class="pn">','<div class="pn" data-x="').replace('</div><div class="kick"','</div><div class="kick"')
-MERGED[0] = TITLE(MERGED[0]['n'],'Session One','How a shop<br>works &mdash; and<br>how to <em>read one</em>',
-  ('A shop is a business, not a website.','Two and a half hours. No app, no Joy. One real brand, broken down together.'),'The<br>basics')
+S3 = S3[:4] + WAYS + S3[4:]
+
+_RTRAP = [
+slide(
+ cell(1,13,1,3,'<div class="l mut">A trap you will meet in a real account</div>'
+   '<div class="t mt">Sales are flat.<br>But ROAS looks <em>great.</em></div>')
+ +cell(1,7,3,7,'<div class="c3">What is actually happening</div><div class="rule"></div>'
+   '<div class="b">The ads are being shown to <b>people who already buy</b>. They would have bought anyway. '
+   'Meta counts the sale, ROAS looks wonderful, and the business does not grow a dollar.</div>')
+ +cell(7,13,3,7,'<div class="c3 lem">The number that reveals it</div>'
+   '<div class="n-sm mt">80%</div><div class="ls">returning customers</div>'
+   '<div class="bs mt2">Healthy on its own. <b>Fatal</b> if it is also who the ads are hitting.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">A high returning rate is a <em>good thing</em>. '
+   'It becomes a problem only when acquisition stops reaching anyone new.</div>'
+   '<div class="b mt mut">The fix is not our product &mdash; it is excluding past customers and the email list '
+   'from acquisition. But <b>spotting it</b> is exactly the AM read, and almost nobody spots it.</div>','lemon'),
+ 'This is the most valuable diagnostic in the whole session, because the merchant thinks everything is fine — the dashboard is green. You are the one who says: check who those sales are coming from.',
+ num='12a'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">Low returning rate &mdash; the fix depends entirely on <em>what they sell</em></div>')
+ +cell(1,5,2,7,'<div class="l">Consumable</div><div class="ch mt">soap, supplements, skincare</div>'
+   '<div class="rule"></div>'
+   '<div class="b"><b>Subscription</b> is the biggest lever, then reminders and remarketing. '
+   'This is where loyalty works hardest.</div>','lemon')
+ +cell(5,9,2,7,'<div class="c3">Clothing &amp; repeat-catalogue</div><div class="rule"></div>'
+   '<div class="b">Do not just push one hero SKU. Show past buyers the <b>2nd to 5th</b> best sellers, '
+   'new arrivals, the next drop. Loyalty and credit help here, but range does more.</div>')
+ +cell(9,13,2,7,'<div class="c3">High-ticket, bought once</div><div class="rule"></div>'
+   '<div class="b">Sell them a <b>consumable accessory</b> &mdash; the cleaning kit, the refill, the spare. '
+   'That is how a one-time product gets a second order at all.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">So &ldquo;they do not come back&rdquo; is <em>three different problems</em> '
+   'with three different answers.</div>'
+   '<div class="b mt mut">And only one of them is mainly ours.</div>'),
+ 'This upgrades what we said about HexClad. The honest answer for high-ticket is not only referral — it is find the consumable attached to the durable thing. A basketball machine sells balls. A pan sells a cleaning kit.',
+ num='12b'),
+]
+S3 = S3[:12] + _RTRAP + S3[12:]
+
+
+
+# ── Session 1 intro: the CS problem, the AM difference, why now, what it does for you ──
+INTRO = [
+slide(
+ cell(1,10,1,7,'<div class="l mut">Session One</div>'
+   '<div class="d mt">How a shop<br>works &mdash; and<br>how to <em>read one</em></div>','ink')
+ +cell(10,13,1,7,'<div class="l">Joy<br>CS &rarr; AM</div><div class="ch mt2">The<br>basics</div>','lemon')
+ +cell(1,13,7,9,'<div class="st">A shop is a business, not a website.</div>'
+   '<div class="b mt mut">But first: why we are all sitting here on a weekday evening.</div>'),
+ 'Goal: a shop is a business, not a website. Before any of that, ten minutes on why this course exists at all — because if they think it is extra homework for a promotion, they will not do the reps.'),
+
+slide(
+ cell(1,13,1,4,'<div class="l mut">A ticket lands. Right now.</div>'
+   '<div class="d mt">&ldquo;Rewards aren&rsquo;t working.&rdquo;</div>')
+ +cell(1,13,4,9,'<div class="st">What do you write back?</div>'
+   '<div class="b mt2 mut">Out loud. Take three answers before you move on.</div>','lemon'),
+ 'Somebody will say "could you explain more" or "can you send a screenshot". Let it sit. Do not correct it yet — you are about to.',
+ kicker='Ask the room', num='02'),
+
+slide(
+ cell(1,7,1,7,'<div class="l mut">What we write today</div>'
+   '<div class="ch mt">&ldquo;Could you please provide more details?&rdquo;</div>'
+   '<div class="rule"></div>'
+   '<div class="b mut">&rarr; she explains again</div>'
+   '<div class="b mut">&rarr; we copy</div>'
+   '<div class="b mut">&rarr; we forward</div>')
+ +cell(7,13,1,7,'<div class="l">What the other job writes</div>'
+   '<div class="ch mt">&ldquo;Members aren&rsquo;t using the reward, so it isn&rsquo;t creating a second order.&rdquo;</div>'
+   '<div class="rule"></div>'
+   '<div class="b">&ldquo;Do they <b>not see</b> the balance &mdash; or do they see it and it is <b>not worth</b> using?&rdquo;</div>','lemon')
+ +cell(1,13,7,9,'<div class="st">Both take the same number of minutes.</div>'
+   '<div class="ch mt lem">Only one of them <em>did the thinking.</em></div>','ink'),
+ 'Say the loop without shame: merchant talks, I do not get it, can you explain more, they write the ticket for me, I copy, I forward. That is transcription. It is not a character flaw — it is what happens when you have no picture of a shop for their words to land on.',
+ num='03'),
+
+slide(
+ cell(1,13,1,2,'<div class="t">Two jobs</div>')
+ +cell(1,13,2,7,'<table style="font-size:24px">'
+   '<tr><th></th><th>CS</th><th>AM</th></tr>'
+   '<tr><td class="mut">You are judged on</td><td>the <b>ticket</b></td><td>the <b>shop</b></td></tr>'
+   '<tr><td class="mut">Who starts</td><td>they write to you</td><td><b>you</b> open it</td></tr>'
+   '<tr><td class="mut">You must know</td><td>the <b>app</b></td><td>the <b>business</b></td></tr>'
+   '<tr><td class="mut">Done means</td><td>ticket closed</td><td>the <b>result showed up</b></td></tr>'
+   '<tr><td class="mut">You lose when</td><td>backlog, slow reply</td><td>churn you never saw coming</td></tr>'
+   '</table>','flat')
+ +cell(1,13,7,9,'<div class="t">You can close every ticket perfectly<br>and still <em>lose the account.</em></div>','ink'),
+ 'That is not a complaint about CS. It is the reason the second job exists — the two scoreboards barely overlap, so every CS number can be green while every AM number is red.',
+ num='04'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">Why now &middot; 1</div>'
+   '<div class="t mt">The machine already answers<br>&ldquo;<em>where do I click?</em>&rdquo;</div>')
+ +cell(1,7,3,7,'<div class="c3">What it does better than us</div><div class="rule"></div>'
+   '<ul><li class="bs">instantly, 24/7, every language</li><li class="bs">perfect, polite English</li>'
+   '<li class="bs">reads the docs, writes the reply</li><li class="bs">never tired, never annoyed</li></ul>')
+ +cell(7,13,3,7,'<div class="c3">What it cannot do</div><div class="rule"></div>'
+   '<ul><li class="bs">decide if points suit <b>this</b> merchant</li>'
+   '<li class="bs">own whether her customers came back</li>'
+   '<li class="bs">be accountable across a quarter</li></ul>','lemon')
+ +cell(1,13,7,9,'<div class="st">AI does not take the job. It takes <em>the execution.</em></div>'
+   '<div class="b mt mut">Which means the half of the job that is left for people is the <b>outcome</b>. '
+   'Notice too which half the machine is best at: <b>the English.</b> '
+   'If your plan is to win on English, you picked the one race already lost.</div>','ink'),
+ 'Frame this as elevation, not threat. Nobody has automated being accountable for whether it worked.',
+ num='05'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">Why now &middot; 2</div>'
+   '<div class="t mt">Every loyalty app has<br>the <em>same features.</em></div>')
+ +cell(1,7,3,7,'<div class="c3">Rivo &middot; Yotpo &middot; Smile &middot; LoyaltyLion &middot; Growave</div>'
+   '<div class="rule"></div>'
+   '<div class="b">Points. Tiers. Referrals. Widgets. All of them. Any feature we ship, they ship within a quarter.</div>'
+   '<div class="b mt2">So the app <b>cannot</b> be what a merchant chooses us for.</div>')
+ +cell(7,13,3,7,'<div class="ch">What is left to compete on</div>'
+   '<div class="st mt2">Whether the merchant actually <em>gets a result</em> &mdash; and how fast.</div>','lemon')
+ +cell(1,13,7,9,'<div class="st">We are not selling software. We are selling <em>the outcome the software produces.</em></div>'
+   '<div class="b mt mut">Which means the people who can produce that outcome are not a support cost. '
+   'They are the product.</div>','ink'),
+ 'This is the company-level version of the same argument. Features are commoditised in a quarter. Service is not copyable, because it lives in people who understand ecom.',
+ num='06'),
+
+slide(
+ cell(1,13,1,3,'<div class="l mut">And what it does for you on Monday</div>'
+   '<div class="t mt">This is not homework for <em>a promotion later.</em></div>')
+ +cell(1,7,3,7,'<ul><li class="b">You stop being stuck on tickets you do not understand</li>'
+   '<li class="b">You stop asking her to explain &mdash; you already know what she means</li>'
+   '<li class="b">Your forwards get <b>actioned</b>, because &ldquo;I think&hellip;&rdquo; is filled in</li></ul>')
+ +cell(7,13,3,7,'<ul><li class="b">Fewer angry follow-ups, because you solved <b>the real thing</b></li>'
+   '<li class="b">Faster replies, because you are not decoding word by word</li>'
+   '<li class="b">The copy-forward loop &mdash; the part that makes the job feel bad &mdash; <b>stops</b></li></ul>','lemon')
+ +cell(1,13,7,9,'<div class="st">So tonight we do not open Joy. We start with <em>the business.</em></div>','ink'),
+ 'This is the slide that decides whether they do the reps. If they think it is a promotion track they will half-do it. If they believe it makes Monday easier, they will show up.',
+ num='07'),
+]
+
+MERGED = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16)] + [S2[i] for i in (1,2,3,11,12,13,14,15)]
 
 if __name__=='__main__':
     os.chdir(D)
