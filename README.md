@@ -119,11 +119,10 @@ If two files touch the same idea, this is the canonical one.
 
 ## Next
 
-1. **Pick the brand list** — blocking for sessions 2–4. See `sessions/resources.md`.
-2. **Slides for the talk** — the four session decks are done; the talk itself is still an outline.
-3. **Old:** pick the brand list — live Joy merchants + strong-ICP + deliberate non-fits.
-3. **30 ticket subjects + 15 threads**, anonymized. Needed for the talk's beat 2 and the ticket track.
-4. **Run-of-show for rep 1**, minute by minute.
+1. **Pick the brand list** — blocking for sessions 2–4. Slots listed in `sessions/resources.md`.
+2. **30 ticket subjects + 15 threads**, anonymized — for the talk's beat 2 and the ticket track.
+3. **Slides for the talk** — the four session decks are done; the talk itself is still an outline.
+4. Capture the six fallback screenshots in `sessions/resources.md`, in case the wifi dies.
 5. Sanity-check the Lumi and shirt numbers against real merchant data before presenting them as fact.
 6. Decide who pays for the real stores, and when the build track starts.
 
