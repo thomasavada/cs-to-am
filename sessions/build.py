@@ -964,6 +964,60 @@ _RANK = slide(
  'This is the most senior thing in the session. Anyone can list problems. Ranking them by people-lost and cost-to-fix is judgement — and being honest that we come last is what makes the recommendation credible when we finally do come up.',
  num='15')
 
+# ── one deep dive per decoder row ──
+_DD_AOV = slide(
+ cell(1,13,1,3,'<div class="l mut">Decoder row &middot; low AOV</div>'
+   '<div class="t mt">Not enough money <em>per order.</em></div>')
+ +cell(1,7,3,7,'<div class="c3">The fixes, fastest first</div><div class="rule"></div>'
+   '<ul><li class="bs"><b>Multi-packs</b> &mdash; a 4-pack or 6-pack at a discount instead of one unit</li>'
+   '<li class="bs"><b>Pre-built pairs</b> &mdash; moisturizer + exfoliator, chosen for them</li>'
+   '<li class="bs"><b>Variation packs</b> &mdash; three colours of the lip gloss in one box</li>'
+   '<li class="bs">Upsell <b>in cart</b>, <b>on site</b>, and in the <b>popup</b></li>'
+   '<li class="bs">Cross-sell into things that pair</li></ul>')
+ +cell(7,13,3,5,'<div class="ch">The threshold rule</div>'
+   '<div class="b mt">If their average order is <b>$39</b>, set free shipping at <b>$40</b>.</div>'
+   '<div class="bs mt">She has to spend one dollar more &mdash; so she adds a $15 item.</div>','lemon')
+ +cell(7,13,5,7,'<div class="c3">And gift thresholds</div>'
+   '<div class="bs mt">Spend $100, get a free hat. Spend $150, get something better.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">A floor worth knowing: below about <em>$35</em> an order, almost nothing scales.</div>'
+   '<div class="b mt mut">The ad cost and the shipping eat it. When a merchant with a $22 average order asks '
+   'why ads are not working &mdash; that is usually the answer, and it is not an ads problem.</div>'),
+ 'This is the fastest lever in ecom and it needs no new traffic. Note the threshold rule precisely: one dollar above where their average order already sits. Set it lower and it does nothing; set it far higher and it reads as a wall.',
+ num='dd1')
+
+_DD_ROAS = slide(
+ cell(1,13,1,3,'<div class="l mut">Decoder row &middot; low ROAS, but clicks and CVR are fine</div>'
+   '<div class="t mt">Nothing is broken.</div>')
+ +cell(1,7,3,6,'<div class="c3">Read the whole set together</div><div class="rule"></div>'
+   '<table style="font-size:23px">'
+   '<tr><td>Cheap reach</td><td class="r">&#10003;</td></tr>'
+   '<tr><td>Good clicks</td><td class="r">&#10003;</td></tr>'
+   '<tr><td>Good conversion &mdash; 4%</td><td class="r">&#10003;</td></tr>'
+   '<tr class="tot"><td>Return on ad spend</td><td class="r">1.2&times;</td></tr></table>')
+ +cell(7,13,3,6,'<div class="ch">So what is left?</div>'
+   '<div class="st mt2">They are not making <em>enough money per customer.</em></div>','lemon')
+ +cell(1,13,6,9,'<div class="d">Double AOV $35 &rarr; $70 and ROAS goes <em>1.2 &rarr; 2.4</em></div>'
+   '<div class="st mt">&mdash; without touching the ads at all.</div>','ink'),
+ 'Everything looks healthy and the business still does not work. This is the case where a merchant blames the ads and everybody wastes a month on creative. The number to fix is the basket, not the campaign.',
+ num='dd2')
+
+_DD_NORMAL = slide(
+ cell(1,13,1,3,'<div class="l mut">Decoder row &middot; low conversion, high AOV</div>'
+   '<div class="t mt">This one is <em>normal.</em><br>Do not panic. Do not escalate.</div>')
+ +cell(1,7,3,7,'<div class="c3">The example to remember</div><div class="rule"></div>'
+   '<div class="b">A <b>$1,700</b> portable basketball shooting machine.</div>'
+   '<div class="b mt2">It is never going to convert like a $30 candle. '
+   'Nobody buys one on a Tuesday because they saw a reel.</div>')
+ +cell(7,13,3,7,'<div class="c3 lem">And it still works</div>'
+   '<div class="b mt2">Cheap reach, plenty of clicks, few buyers &mdash; but each one is worth so much '
+   'that the maths is fine on their costs.</div>'
+   '<div class="bs mt2">Payment plans nudge it up a little. That is all it needs.</div>','ink')
+ +cell(1,13,7,9,'<div class="st">Knowing which numbers are <em>supposed</em> to look bad is part of the job.</div>'
+   '<div class="b mt mut">A merchant panicking about a 0.4% conversion rate on a $1,700 product '
+   'needs reassurance, not a fix &mdash; and being the person who can say that calmly is worth a lot.</div>','lemon'),
+ 'This is the counterweight to everything else in the session. Not every bad-looking number is a problem, and an AM who cannot tell the difference will send merchants chasing ghosts.',
+ num='dd3')
+
 # ── the real board: every field, filed by funnel step ──
 _STACKMAP = [
 slide(
@@ -1429,7 +1483,7 @@ slide(
  'This upgrades what we said about HexClad. The honest answer for high-ticket is not only referral — it is find the consumable attached to the durable thing. A basketball machine sells balls. A pan sells a cleaning kit.',
  num='12b'),
 ]
-S3 = S3[:12] + _RTRAP + S3[12:]
+
 
 
 
@@ -1534,7 +1588,7 @@ SESS1 = INTRO + [S1[i] for i in (1,2,3,4,5,7,8,9,10,11,12,13,14,16,17)]
 SESS2 = [TITLE('Goal: given a shop you have never seen, find what is actually wrong with it — and say which problem to fix first. Today we diagnose one together, then you diagnose another alone.',
   'Session Two','What is<br><em>wrong</em><br>with this shop?',
   ('Troubleshooting a real business.','Every merchant complaint is a symptom. Today you learn to find the cause.'),'Trouble-<br>shooting')] \
-  + [_DIAGNOSE] + [S2[i] for i in (1,2,3)] + _DECODER + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
+  + [_DIAGNOSE] + [S2[i] for i in (1,2,3)] + _DECODER + [_DD_AOV,_DD_ROAS,_DD_NORMAL] + _RTRAP + [S2[i] for i in (11,12,13)] + _STACKMAP + [_RANK] + [S2[i] for i in (14,15)]
 
 
 S4.insert(4, slide(

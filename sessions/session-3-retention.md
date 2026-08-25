@@ -1,7 +1,7 @@
 # Session 3 — Why people come back
 
 **Goal:** why a person buys a second time, and what actually makes them.
-**Deck:** `session-3-retention.html` · 27 slides — **the heaviest session** · **Resources:** [`resources.md`](resources.md)
+**Deck:** `session-3-retention.html` · 25 slides · **Resources:** [`resources.md`](resources.md)
 **Material:** [`the product comes first`](../material/loyalty/8-the-product-comes-first.md) · [`stops 10–14`](../material/journey/4-stops-10-14.md) · [`money on Mai`](../material/journey/5-money-on-mai.md) · [`referral`](../material/loyalty/4-referral.md) · [`points vs credit`](../material/loyalty/2-points-vs-credit.md) · [`VIP tiers`](../material/loyalty/3-vip-tiers.md) · [`HexClad`](../material/cases/hexclad.md)
 
 ## Prep
@@ -27,8 +27,9 @@
 | 1:02 | **Rep: two brands, teardown §4–5, then prescribe** | ▲ 45 min |
 | 1:47 | Report out — **what did the rejected option lose?** | — |
 
-> **This session is full.** If it runs over, cut the SMS/WhatsApp/social detail before you cut the
-> product ladder or the tier method.
+> The **diagnostic** halves of retention — the returning-rate trap and the three-product-types fix —
+> now live in session 2, where the diagnosis belongs. This session is the **prescription**:
+> does the product deserve a second purchase, and what should they actually run?
 
 ## The beat that reframes everything
 **The product comes first.** Before any channel or mechanism: *why would she buy it again? Because she
